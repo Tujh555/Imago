@@ -1,4 +1,4 @@
-package io.tujh.imago.presentation.editor.draw
+package io.tujh.imago.presentation.editor.components.draw
 
 import androidx.compose.ui.graphics.Paint
 import androidx.compose.ui.graphics.Path

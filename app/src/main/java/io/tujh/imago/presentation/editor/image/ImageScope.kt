@@ -49,7 +49,7 @@ data class ImageScopeImpl(
 }
 
 @Composable
-internal fun ImageScope.getScaledImageBitmap(
+fun ImageScope.getScaledImageBitmap(
     bitmap: ImageBitmap,
     contentScale: ContentScale
 ): ImageBitmap {

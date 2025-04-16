@@ -33,7 +33,7 @@ import androidx.compose.ui.platform.LocalContext
 import cafe.adriel.voyager.navigator.Navigator
 import dagger.hilt.android.AndroidEntryPoint
 import io.tujh.imago.domain.ErrorHandler
-import io.tujh.imago.presentation.editor.draw.DrawComponent
+import io.tujh.imago.presentation.editor.components.draw.DrawComponent
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import javax.inject.Inject

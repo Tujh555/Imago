@@ -1,5 +1,6 @@
 [versions]
 agp = "8.8.2"
+composeExtendedGestures = "4.0.0"
 kotlin = "2.1.10"
 coreKtx = "1.16.0"
 lifecycleRuntimeKtx = "2.8.7"
@@ -27,6 +28,7 @@ androidx-ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling" }
 androidx-ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-tooling-preview" }
 androidx-ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-manifest" }
 androidx-material3 = { group = "androidx.compose.material3", name = "material3" }
+compose-extended-gestures = { module = "com.github.SmartToolFactory:Compose-Extended-Gestures", version.ref = "composeExtendedGestures" }
 okio = { module = "com.squareup.okio:okio", version.ref = "okio" }
 coil = { module = "io.coil-kt.coil3:coil-compose", version.ref = "coil" }
 coil-network = { module = "io.coil-kt.coil3:coil-network-okhttp", version.ref = "coil" }

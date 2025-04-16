@@ -1,4 +1,4 @@
-package io.tujh.imago.presentation.editor.draw
+package io.tujh.imago.presentation.editor.components.draw
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Arrangement
@@ -30,7 +30,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.fastForEach
 import cafe.adriel.voyager.core.screen.uniqueScreenKey
-import io.tujh.imago.presentation.editor.EditingComponent
+import io.tujh.imago.presentation.editor.components.EditingComponent
 import io.tujh.imago.presentation.editor.image.ImageWithConstraints
 import io.tujh.imago.presentation.editor.image.util.MotionEvent
 import io.tujh.imago.presentation.editor.image.util.motionEvents

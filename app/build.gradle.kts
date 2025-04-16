@@ -77,6 +77,7 @@ dependencies {
     implementation(libs.coil.network)
     implementation(libs.androidx.datastore)
     implementation(libs.androidx.datastore.preferences)
+    implementation(libs.compose.extended.gestures)
     ksp(libs.hilt.compiler)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
