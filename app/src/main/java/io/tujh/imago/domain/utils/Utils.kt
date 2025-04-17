@@ -14,3 +14,5 @@ suspend inline fun <T> withMinDelay(delay: Long = 600, block: () -> T): T {
 
 fun String?.toInstantOrNow(): Instant =
     runCatching { Instant.parse(this!!) }.getOrDefault(Instant.now())
+
+fun Result<*>.map() = map { }

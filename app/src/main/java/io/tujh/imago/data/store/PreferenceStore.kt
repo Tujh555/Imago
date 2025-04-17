@@ -24,7 +24,7 @@ fun <T> preferencesStore(
         context.dataStore.edit { value -> value.remove(key) }
     }
 
-    override suspend fun update(item: T) {
+    override suspend fun put(item: T) {
         context.dataStore.edit { value -> value[key] = serialize(item) }
     }
 }
