@@ -1,7 +1,8 @@
+@file:OptIn(ExperimentalSharedTransitionApi::class)
+
 package io.tujh.imago.presentation
 
 import android.annotation.SuppressLint
-import android.graphics.ImageDecoder
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -9,6 +10,13 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.animation.SharedTransitionLayout
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.spring
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.material.icons.Icons
@@ -19,29 +27,24 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.Stable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
-import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.asImageBitmap
-import androidx.compose.ui.platform.LocalContext
+import cafe.adriel.voyager.navigator.CurrentScreen
 import cafe.adriel.voyager.navigator.Navigator
+import cafe.adriel.voyager.transitions.ScreenTransition
 import dagger.hilt.android.AndroidEntryPoint
 import io.tujh.imago.domain.ErrorHandler
-import io.tujh.imago.presentation.editor.components.draw.DrawComponent
+import io.tujh.imago.presentation.components.LocalSharedNavVisibilityScope
+import io.tujh.imago.presentation.components.LocalSharedTransitionScope
+import io.tujh.imago.presentation.screens.edit.ImageEditScreen
+import io.tujh.imago.presentation.screens.splash.SplashScreen
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 import javax.inject.Singleton
-
-val LocalRootNavigator = staticCompositionLocalOf<Navigator> {
-    error("RootNavigator is not provided")
-}
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -59,41 +62,59 @@ class MainActivity : ComponentActivity() {
                 onDispose { handler.scope = null }
             }
             MaterialTheme {
-                val context = LocalContext.current
-                var draw by remember { mutableStateOf<DrawComponent?>(null) }
-                val launcher = rememberLauncherForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
-                    uri?.let {
-                        draw = ImageDecoder
-                            .createSource(context.contentResolver, it)
-                            .let(ImageDecoder::decodeBitmap)
-                            .asImageBitmap()
-                            .let(::DrawComponent)
-                    }
-                }
-
-                Scaffold(
-                    modifier = Modifier.systemBarsPadding(),
-                    snackbarHost = {
-                        SnackbarHost(
-                            hostState = handler.hostState,
-                            modifier = Modifier.imePadding()
-                        )
-                    },
-                    floatingActionButton = {
-                        FloatingActionButton(
-                            onClick = {
-                                launcher.launch(
-                                    PickVisualMediaRequest(
-                                        ActivityResultContracts.PickVisualMedia.ImageOnly
-                                    )
-                                )
+                SharedTransitionLayout {
+                    CompositionLocalProvider(LocalSharedTransitionScope provides this) {
+                        Navigator(SplashScreen()) { navigator ->
+                            val launcher = rememberLauncherForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
+                                if (uri != null) {
+                                    navigator.push(ImageEditScreen(uri))
+                                }
                             }
-                        ) {
-                            Icon(imageVector = Icons.Filled.Add, contentDescription = null)
+
+                            Scaffold(
+                                modifier = Modifier.systemBarsPadding(),
+                                snackbarHost = {
+                                    SnackbarHost(
+                                        hostState = handler.hostState,
+                                        modifier = Modifier.imePadding()
+                                    )
+                                },
+                                floatingActionButton = {
+                                    FloatingActionButton(
+                                        onClick = {
+                                            launcher.launch(
+                                                PickVisualMediaRequest(
+                                                    ActivityResultContracts.PickVisualMedia.ImageOnly
+                                                )
+                                            )
+                                        }
+                                    ) {
+                                        Icon(imageVector = Icons.Filled.Add, contentDescription = null)
+                                    }
+                                }
+                            ) {
+                                CurrentScreen()
+//                        SharedTransitionLayout {
+//                            val sharedTransitionScope = this
+//                            ScreenTransition(
+//                                navigator = navigator,
+//                                transition = {
+//                                    val spec = spring<Float>(stiffness = Spring.StiffnessMediumLow)
+//                                    fadeIn(spec) togetherWith fadeOut(spec)
+//                                },
+//                                content = {
+//                                    CompositionLocalProvider(
+//                                        LocalSharedTransitionScope provides sharedTransitionScope,
+//                                        LocalSharedNavVisibilityScope provides this
+//                                    ) {
+//                                        it.Content()
+//                                    }
+//                                }
+//                            )
+//                        }
+                            }
                         }
                     }
-                ) {
-                    draw?.Content()
                 }
             }
         }

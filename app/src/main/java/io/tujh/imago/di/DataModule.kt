@@ -1,24 +1,35 @@
 package io.tujh.imago.di
 
 import android.content.Context
+import dagger.Binds
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import io.tujh.imago.data.dto.UserDto
+import io.tujh.imago.data.image.Loader
+import io.tujh.imago.data.repository.user.UserFlow
 import io.tujh.imago.data.store.jsonStore
 import io.tujh.imago.data.store.stringStore
+import io.tujh.imago.domain.image.BitmapLoader
+import io.tujh.imago.domain.user.CurrentUser
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
-import okio.FileSystem
 import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
 interface DataModule {
+
+    @Binds
+    fun loader(impl: Loader.Factory): BitmapLoader.Factory
+
+    @Binds
+    fun user(impl: UserFlow): CurrentUser
+
     companion object {
         @Provides
         @Singleton
@@ -27,10 +38,6 @@ interface DataModule {
                 t.printStackTrace()
             }
         )
-
-        @Provides
-        @Singleton
-        fun fs() = FileSystem.SYSTEM
 
         @Provides
         @Singleton

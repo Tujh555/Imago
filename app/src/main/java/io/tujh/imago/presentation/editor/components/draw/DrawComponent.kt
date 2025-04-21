@@ -1,8 +1,10 @@
 package io.tujh.imago.presentation.editor.components.draw
 
+import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Button
@@ -30,103 +32,115 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.fastForEach
 import cafe.adriel.voyager.core.screen.uniqueScreenKey
+import io.tujh.imago.presentation.components.LocalSharedNavVisibilityScope
+import io.tujh.imago.presentation.components.LocalSharedTransitionScope
+import io.tujh.imago.presentation.editor.components.EditScaffold
 import io.tujh.imago.presentation.editor.components.EditingComponent
 import io.tujh.imago.presentation.editor.image.ImageWithConstraints
 import io.tujh.imago.presentation.editor.image.util.MotionEvent
 import io.tujh.imago.presentation.editor.image.util.motionEvents
+import io.tujh.imago.presentation.editor.image.zoom.AnimatedZoomLayout
 import kotlinx.coroutines.launch
 
-class DrawComponent(initial: ImageBitmap) : EditingComponent {
+class DrawComponent(
+    private val bitmap: ImageBitmap,
+    private val listener: EditingComponent.FinishListener
+) : EditingComponent {
     private var width by mutableFloatStateOf(15f)
     private var selectedColor by mutableStateOf(Color.Green)
     private var motionEvent by mutableStateOf<MotionEvent>(MotionEvent.Unspecified)
     private var lastPosition by mutableStateOf(Offset.Unspecified)
     private val paths = mutableStateListOf<DrawingPath>()
     override val key = uniqueScreenKey
-    override var state by mutableStateOf(initial)
-        private set
 
+    @OptIn(ExperimentalSharedTransitionApi::class)
     @Composable
     override fun Content() {
-        Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
-            val graphicsLayer = rememberGraphicsLayer()
-            ImageWithConstraints(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .weight(1f)
-                    .drawWithContent {
-                        graphicsLayer.record {
-                            this@drawWithContent.drawContent()
-                        }
-                        drawLayer(graphicsLayer)
-                    },
-                imageBitmap = state,
-                contentScale = ContentScale.Crop
-            ) {
-                var drawingPath by remember { mutableStateOf<DrawingPath?>(null) }
-                Canvas(
-                    modifier = Modifier
-                        .size(imageWidth, imageHeight)
-                        .clipToBounds()
-                        .motionEvents { motionEvent = it }
-                ) {
-                    when (motionEvent) {
-                        is MotionEvent.Down -> {
-                            drawingPath = path()
-                            drawingPath?.path?.moveTo(motionEvent.x, motionEvent.y)
-                            lastPosition = motionEvent.position
-                        }
+        val scope = rememberCoroutineScope()
+        val graphicsLayer = rememberGraphicsLayer()
 
-                        is MotionEvent.Move -> {
-                            drawingPath?.run {
-                                path.quadraticTo(
-                                    x1 = lastPosition.x,
-                                    y1 = lastPosition.y,
-                                    x2 = (lastPosition.x + motionEvent.x) / 2,
-                                    y2 = (lastPosition.y + motionEvent.y) / 2
-                                )
+        EditScaffold(
+            modifier = Modifier.fillMaxSize(),
+            undo = { paths.removeLastOrNull() },
+            save = {
+                scope.launch {
+                    val edited = graphicsLayer.toImageBitmap()
+                    listener.save(edited)
+                }
+            },
+            close = { listener.close() },
+        ) {
+            with(LocalSharedTransitionScope.current) {
+                ImageWithConstraints(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(1f)
+                        .drawWithContent {
+                            graphicsLayer.record {
+                                this@drawWithContent.drawContent()
+                            }
+                            drawLayer(graphicsLayer)
+                        }
+                        .sharedBounds(
+                            sharedContentState = rememberSharedContentState(
+                                key = "editing-image"
+                            ),
+                            animatedVisibilityScope = LocalSharedNavVisibilityScope.current
+                        ),
+                    imageBitmap = bitmap,
+                    contentScale = ContentScale.Crop
+                ) {
+                    var drawingPath by remember { mutableStateOf<DrawingPath?>(null) }
+                    Canvas(
+                        modifier = Modifier
+                            .size(imageWidth, imageHeight)
+                            .clipToBounds()
+                            .motionEvents { motionEvent = it }
+                    ) {
+                        when (motionEvent) {
+                            is MotionEvent.Down -> {
+                                drawingPath = path()
+                                drawingPath?.path?.moveTo(motionEvent.x, motionEvent.y)
                                 lastPosition = motionEvent.position
                             }
-                        }
 
-                        is MotionEvent.Up -> {
-                            val path = drawingPath
-                            drawingPath = null
-                            if (path != null) {
-                                path.path.lineTo(motionEvent.x, motionEvent.y)
-                                paths.add(path)
+                            is MotionEvent.Move -> {
+                                drawingPath?.run {
+                                    path.quadraticTo(
+                                        x1 = lastPosition.x,
+                                        y1 = lastPosition.y,
+                                        x2 = (lastPosition.x + motionEvent.x) / 2,
+                                        y2 = (lastPosition.y + motionEvent.y) / 2
+                                    )
+                                    lastPosition = motionEvent.position
+                                }
                             }
-                            motionEvent = MotionEvent.Unspecified
-                            lastPosition = motionEvent.position
+
+                            is MotionEvent.Up -> {
+                                val path = drawingPath
+                                drawingPath = null
+                                if (path != null) {
+                                    path.path.lineTo(motionEvent.x, motionEvent.y)
+                                    paths.add(path)
+                                }
+                                motionEvent = MotionEvent.Unspecified
+                                lastPosition = motionEvent.position
+                            }
+
+                            MotionEvent.Unspecified -> Unit
                         }
 
-                        MotionEvent.Unspecified -> Unit
-                    }
-
-                    drawIntoCanvas { canvas ->
-                        paths.fastForEach { path ->
-                            canvas.drawPath(path.path, path.paint)
-                        }
-                        drawingPath?.run {
-                            canvas.drawPath(path, paint)
+                        drawIntoCanvas { canvas ->
+                            paths.fastForEach { path ->
+                                canvas.drawPath(path.path, path.paint)
+                            }
+                            drawingPath?.run {
+                                canvas.drawPath(path, paint)
+                            }
                         }
                     }
                 }
             }
-
-            val scope = rememberCoroutineScope()
-            Button(
-                modifier = Modifier.fillMaxWidth(),
-                onClick = {
-                    scope.launch {
-                        state = graphicsLayer.toImageBitmap()
-                        paths.clear()
-                    }
-                },
-                content = {
-                    Text("Save")
-                }
-            )
         }
     }
 
