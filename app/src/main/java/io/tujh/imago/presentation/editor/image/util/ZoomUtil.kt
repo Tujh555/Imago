@@ -1,10 +1,11 @@
 package io.tujh.imago.presentation.editor.image.util
 
 import androidx.compose.ui.graphics.GraphicsLayerScope
+import io.tujh.imago.presentation.editor.image.crop.TransformState
 import io.tujh.imago.presentation.editor.image.zoom.ZoomLevel
 import io.tujh.imago.presentation.editor.image.zoom.ZoomState
 
-internal fun calculateZoom(
+fun calculateZoom(
     zoomLevel: ZoomLevel,
     initial: Float,
     min: Float,
@@ -31,7 +32,7 @@ internal fun calculateZoom(
     return Pair(newZoomLevel, newZoom)
 }
 
-internal fun getNextZoomLevel(zoomLevel: ZoomLevel): ZoomLevel = when (zoomLevel) {
+fun getNextZoomLevel(zoomLevel: ZoomLevel): ZoomLevel = when (zoomLevel) {
     ZoomLevel.Mid -> {
         ZoomLevel.Max
     }
@@ -43,20 +44,26 @@ internal fun getNextZoomLevel(zoomLevel: ZoomLevel): ZoomLevel = when (zoomLevel
     }
 }
 
-internal fun GraphicsLayerScope.update(zoomState: ZoomState) {
-
-    // Set zoom
+fun GraphicsLayerScope.update(zoomState: ZoomState) {
     val zoom = zoomState.zoom
     this.scaleX = zoom
     this.scaleY = zoom
-
-    // Set pan
     val pan = zoomState.pan
     val translationX = pan.x
     val translationY = pan.y
     this.translationX = translationX
     this.translationY = translationY
-
-    // Set rotation
     this.rotationZ = zoomState.rotation
+}
+
+fun GraphicsLayerScope.update(transformState: TransformState) {
+    val zoom = transformState.zoom
+    this.scaleX = zoom
+    this.scaleY = zoom
+    val pan = transformState.pan
+    val translationX = pan.x
+    val translationY = pan.y
+    this.translationX = translationX
+    this.translationY = translationY
+    this.rotationZ = transformState.rotation
 }

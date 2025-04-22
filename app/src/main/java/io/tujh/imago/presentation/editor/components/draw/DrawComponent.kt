@@ -2,13 +2,9 @@ package io.tujh.imago.presentation.editor.components.draw
 
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.size
-import androidx.compose.material3.Button
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
@@ -29,7 +25,6 @@ import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import androidx.compose.ui.graphics.layer.drawLayer
 import androidx.compose.ui.graphics.rememberGraphicsLayer
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.fastForEach
 import cafe.adriel.voyager.core.screen.uniqueScreenKey
 import io.tujh.imago.presentation.components.LocalSharedNavVisibilityScope
@@ -39,7 +34,7 @@ import io.tujh.imago.presentation.editor.components.EditingComponent
 import io.tujh.imago.presentation.editor.image.ImageWithConstraints
 import io.tujh.imago.presentation.editor.image.util.MotionEvent
 import io.tujh.imago.presentation.editor.image.util.motionEvents
-import io.tujh.imago.presentation.editor.image.zoom.AnimatedZoomLayout
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class DrawComponent(
@@ -62,8 +57,9 @@ class DrawComponent(
         EditScaffold(
             modifier = Modifier.fillMaxSize(),
             undo = { paths.removeLastOrNull() },
+            undoVisible = paths.isNotEmpty(),
             save = {
-                scope.launch {
+                scope.launch(Dispatchers.Default) {
                     val edited = graphicsLayer.toImageBitmap()
                     listener.save(edited)
                 }
@@ -81,8 +77,8 @@ class DrawComponent(
                             }
                             drawLayer(graphicsLayer)
                         }
-                        .sharedBounds(
-                            sharedContentState = rememberSharedContentState(
+                        .sharedElement(
+                            state = rememberSharedContentState(
                                 key = "editing-image"
                             ),
                             animatedVisibilityScope = LocalSharedNavVisibilityScope.current

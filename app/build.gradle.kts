@@ -77,6 +77,10 @@ dependencies {
     implementation(libs.androidx.datastore.preferences)
     implementation(libs.compose.extended.gestures)
     implementation(libs.androidx.exifinterface)
+    implementation(libs.compose.colorful.sliders)
+    implementation(libs.compose.color.picker.bundle) {
+        exclude(group = "com.github.SmartToolFactory", module = "Compose-Image-Cropper")
+    }
     ksp(libs.hilt.compiler)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)

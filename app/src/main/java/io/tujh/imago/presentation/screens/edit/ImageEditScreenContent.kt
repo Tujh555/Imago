@@ -2,7 +2,6 @@ package io.tujh.imago.presentation.screens.edit
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.ExperimentalSharedTransitionApi
-import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
@@ -12,6 +11,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -24,17 +24,11 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.layout.onPlaced
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.util.fastForEachIndexed
@@ -42,8 +36,6 @@ import io.tujh.imago.presentation.components.Colors
 import io.tujh.imago.presentation.components.IconButton
 import io.tujh.imago.presentation.components.LocalSharedNavVisibilityScope
 import io.tujh.imago.presentation.components.LocalSharedTransitionScope
-import io.tujh.imago.presentation.components.SharedTransitionLocals
-import kotlinx.coroutines.delay
 
 @Composable
 fun ImageEditScreenContent(
@@ -108,13 +100,14 @@ private fun SuccessBody(
                 if (editing != null) {
                     editing.Content()
                 } else {
-                    Box(Modifier.fillMaxSize()) {
+                    Column(Modifier.fillMaxSize()) {
                         state.image?.let { image ->
                             Image(
                                 modifier = Modifier
-                                    .fillMaxSize()
-                                    .sharedBounds(
-                                        sharedContentState = rememberSharedContentState(
+                                    .fillMaxWidth()
+                                    .weight(1f)
+                                    .sharedElement(
+                                        state = rememberSharedContentState(
                                             key = "editing-image"
                                         ),
                                         animatedVisibilityScope = this@AnimatedContent
@@ -129,7 +122,6 @@ private fun SuccessBody(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .background(Colors.semitransparent)
-                                .align(Alignment.BottomCenter)
                                 .horizontalScroll(rememberScrollState())
                                 .padding(8.dp)
                                 .animateEnterExit(

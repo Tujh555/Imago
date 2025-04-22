@@ -1,4 +1,4 @@
-package com.smarttoolfactory.image.transform
+package io.tujh.imago.presentation.editor.image.transform
 
 import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.getValue
@@ -17,9 +17,6 @@ import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.DpSize
 import com.smarttoolfactory.gesture.pointerMotionEvents
-import io.tujh.imago.presentation.editor.image.transform.HandlePlacement
-import io.tujh.imago.presentation.editor.image.transform.TouchRegion
-import io.tujh.imago.presentation.editor.image.transform.Transform
 import io.tujh.imago.presentation.editor.image.util.getTouchRegion
 
 fun Modifier.morph(
