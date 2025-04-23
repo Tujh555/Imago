@@ -4,7 +4,6 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.CutCornerShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Immutable
-import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.Shape
@@ -21,10 +20,6 @@ interface CropShape : CropOutline {
 
 interface CropPath : CropOutline {
     val path: Path
-}
-
-interface CropImageMask : CropOutline {
-    val image: ImageBitmap
 }
 
 @Immutable
@@ -83,10 +78,3 @@ data class CustomPathOutline(
     override val title: String,
     override val path: Path
 ) : CropPath
-
-@Immutable
-data class ImageMaskOutline(
-    override val id: Int,
-    override val title: String,
-    override val image: ImageBitmap,
-) : CropImageMask

@@ -22,7 +22,7 @@ data class CropFrame(
 
     fun addOutline(outline: CropOutline): CropFrame {
         outlines.toMutableList().add(outline)
-       return this
+        return this
     }
 }
 
@@ -67,12 +67,6 @@ fun getOutlineContainer(
             )
         }
 
-        OutlineType.ImageMask -> {
-            ImageMaskOutlineContainer(
-                selectedIndex = index,
-                outlines = outlines as List<ImageMaskOutline>
-            )
-        }
         else -> {
             RectOutlineContainer(
                 selectedIndex = index,
@@ -84,5 +78,5 @@ fun getOutlineContainer(
 
 
 enum class OutlineType {
-    Rect, RoundedRect, CutCorner, Oval, Polygon, Custom, ImageMask
+    Rect, RoundedRect, CutCorner, Oval, Polygon, Custom
 }

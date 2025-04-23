@@ -109,23 +109,6 @@ class CropAgent {
                     restore()
                 }
             }
-            is CropImageMask -> {
-
-                val imageMask = Bitmap.createScaledBitmap(
-                    cropOutline.image.asAndroidBitmap(),
-                    cropRect.width.toInt(),
-                    cropRect.height.toInt(),
-                    true
-                ).asImageBitmap()
-
-                Canvas(image = imageToCrop).run {
-                    saveLayer(nativeCanvas.clipBounds.toComposeRect(), imagePaint)
-                    rotate(rotation, cropRect.center.x, cropRect.center.y)
-                    drawImage(imageMask, topLeftOffset = Offset.Zero, paint)
-                    drawImage(image = imageToCrop, topLeftOffset = Offset.Zero, imagePaint)
-                    restore()
-                }
-            }
         }
     }
 

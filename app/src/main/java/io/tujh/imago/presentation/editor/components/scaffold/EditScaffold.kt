@@ -1,4 +1,4 @@
-package io.tujh.imago.presentation.editor.components
+package io.tujh.imago.presentation.editor.components.scaffold
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
@@ -18,27 +18,27 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.Done
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.key
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import io.tujh.imago.R
+import androidx.compose.ui.util.fastForEachIndexed
 import io.tujh.imago.presentation.components.Colors
 import io.tujh.imago.presentation.components.LocalSharedNavVisibilityScope
+
+private val iconsModifier = Modifier
+    .clip(CircleShape)
+    .size(32.dp)
 
 @Composable
 fun EditScaffold(
     modifier: Modifier = Modifier,
-    undoVisible: Boolean = true,
-    undo: () -> Unit,
-    save: () -> Unit,
-    close: () -> Unit,
+    buttons: List<ScaffoldButton>,
     content: @Composable ColumnScope.() -> Unit
 ) {
     Column(modifier = modifier.systemBarsPadding()) {
@@ -54,41 +54,26 @@ fun EditScaffold(
                     ),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                Icon(
-                    modifier = Modifier
-                        .clip(CircleShape)
-                        .size(32.dp)
-                        .clickable(onClick = close),
-                    imageVector = Icons.Filled.Close,
-                    contentDescription = null,
-                    tint = Color.White
-                )
-
-                AnimatedVisibility(
-                    visible = undoVisible,
-                    enter = scaleIn(),
-                    exit = scaleOut()
-                ) {
-                    Icon(
-                        modifier = Modifier
-                            .clip(CircleShape)
-                            .size(32.dp)
-                            .clickable(onClick = undo),
-                        painter = painterResource(R.drawable.ic_arrow_revert),
-                        contentDescription = null,
-                        tint = Color.White
-                    )
+                buttons.fastForEachIndexed { i, button ->
+                    key(i) {
+                        AnimatedVisibility(
+                            visible = button.visible.value,
+                            enter = scaleIn() + fadeIn(),
+                            exit = scaleOut() + fadeOut()
+                        ) {
+                            val painter = when (val source = button.source) {
+                                is IconSource.Resource -> painterResource(source.id)
+                                is IconSource.Vector -> rememberVectorPainter(source.imageVector)
+                            }
+                            Icon(
+                                modifier = iconsModifier.clickable(onClick = button::onClick),
+                                contentDescription = null,
+                                painter = painter,
+                                tint = Color.White
+                            )
+                        }
+                    }
                 }
-
-                Icon(
-                    modifier = Modifier
-                        .clip(CircleShape)
-                        .size(32.dp)
-                        .clickable(onClick = save),
-                    imageVector = Icons.Filled.Done,
-                    contentDescription = null,
-                    tint = Color.White
-                )
             }
         }
 

@@ -90,25 +90,6 @@ fun DrawingOverlay(
                 onDrawGrid = onDrawGrid,
             )
         }
-        is CropImageMask -> {
-            val imageBitmap = cropOutline.image
-
-            DrawingOverlayImpl(
-                modifier = modifier,
-                drawOverlay = drawOverlay,
-                rect = rect,
-                drawGrid = drawGrid,
-                transparentColor = transparentColor,
-                overlayColor = overlayColor,
-                handleColor = handleColor,
-                strokeWidth = strokeWidthPx,
-                drawHandles = drawHandles,
-                handleSize = handleSize,
-                pathHandles = pathHandles,
-                image = imageBitmap,
-                onDrawGrid = onDrawGrid,
-            )
-        }
     }
 }
 
@@ -178,41 +159,6 @@ private fun DrawingOverlayImpl(
             onDrawGrid,
         ) {
             drawCropPath(path)
-        }
-    }
-}
-
-@Composable
-private fun DrawingOverlayImpl(
-    modifier: Modifier,
-    drawOverlay: Boolean,
-    rect: Rect,
-    drawGrid: Boolean,
-    transparentColor: Color,
-    overlayColor: Color,
-    handleColor: Color,
-    strokeWidth: Float,
-    drawHandles: Boolean,
-    handleSize: Float,
-    pathHandles: Path,
-    image: ImageBitmap,
-    onDrawGrid: (DrawScope.(rect: Rect, strokeWidth: Float, color: Color) -> Unit)?,
-) {
-    Canvas(modifier = modifier) {
-        drawOverlay(
-            drawOverlay,
-            rect,
-            drawGrid,
-            transparentColor,
-            overlayColor,
-            handleColor,
-            strokeWidth,
-            drawHandles,
-            handleSize,
-            pathHandles,
-            onDrawGrid,
-        ) {
-            drawCropImage(rect, image)
         }
     }
 }

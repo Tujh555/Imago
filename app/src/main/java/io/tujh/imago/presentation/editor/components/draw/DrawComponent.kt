@@ -12,6 +12,7 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clipToBounds
@@ -27,10 +28,13 @@ import androidx.compose.ui.graphics.rememberGraphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.util.fastForEach
 import cafe.adriel.voyager.core.screen.uniqueScreenKey
+import io.tujh.imago.R
 import io.tujh.imago.presentation.components.LocalSharedNavVisibilityScope
 import io.tujh.imago.presentation.components.LocalSharedTransitionScope
-import io.tujh.imago.presentation.editor.components.EditScaffold
+import io.tujh.imago.presentation.editor.components.scaffold.EditScaffold
 import io.tujh.imago.presentation.editor.components.EditingComponent
+import io.tujh.imago.presentation.editor.components.scaffold.button
+import io.tujh.imago.presentation.editor.components.scaffold.controlButtons
 import io.tujh.imago.presentation.editor.image.ImageWithConstraints
 import io.tujh.imago.presentation.editor.image.util.MotionEvent
 import io.tujh.imago.presentation.editor.image.util.motionEvents
@@ -53,18 +57,25 @@ class DrawComponent(
     override fun Content() {
         val scope = rememberCoroutineScope()
         val graphicsLayer = rememberGraphicsLayer()
-
-        EditScaffold(
-            modifier = Modifier.fillMaxSize(),
-            undo = { paths.removeLastOrNull() },
-            undoVisible = paths.isNotEmpty(),
+        val undoVisible = rememberUpdatedState(paths.isNotEmpty())
+        val buttons = controlButtons(
+            close = listener::close,
             save = {
                 scope.launch(Dispatchers.Default) {
                     val edited = graphicsLayer.toImageBitmap()
                     listener.save(edited)
                 }
             },
-            close = { listener.close() },
+            central = {
+                button(undoVisible, R.drawable.ic_arrow_revert) {
+                    paths.removeLastOrNull()
+                }
+            }
+        )
+
+        EditScaffold(
+            modifier = Modifier.fillMaxSize(),
+            buttons = buttons,
         ) {
             with(LocalSharedTransitionScope.current) {
                 ImageWithConstraints(

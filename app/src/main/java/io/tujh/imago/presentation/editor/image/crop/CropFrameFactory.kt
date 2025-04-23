@@ -75,14 +75,6 @@ class CropFrameFactory(private val defaultImages: List<ImageBitmap>) {
                     cropOutlineContainer = createCropOutlineContainer(outlineType)
                 )
             }
-
-            OutlineType.ImageMask -> {
-                CropFrame(
-                    outlineType = outlineType,
-                    editable = true,
-                    cropOutlineContainer = createCropOutlineContainer(outlineType)
-                )
-            }
         }
     }
 
@@ -149,17 +141,6 @@ class CropFrameFactory(private val defaultImages: List<ImageBitmap>) {
                         CustomPathOutline(id = 0, title = "Custom", path = Paths.Favorite),
                         CustomPathOutline(id = 1, title = "Star", path = Paths.Star)
                     )
-                )
-            }
-
-            OutlineType.ImageMask -> {
-
-                val outlines = defaultImages.mapIndexed { index, image ->
-                    ImageMaskOutline(id = index, title = "ImageMask", image = image)
-
-                }
-                ImageMaskOutlineContainer(
-                    outlines = outlines
                 )
             }
         }

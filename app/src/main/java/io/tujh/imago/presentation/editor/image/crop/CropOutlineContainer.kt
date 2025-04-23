@@ -38,8 +38,3 @@ data class CustomOutlineContainer(
     override var selectedIndex: Int = 0,
     override val outlines: List<CustomPathOutline>
 ) : CropOutlineContainer<CustomPathOutline>
-
-data class ImageMaskOutlineContainer(
-    override var selectedIndex: Int = 0,
-    override val outlines: List<ImageMaskOutline>
-) : CropOutlineContainer<ImageMaskOutline>

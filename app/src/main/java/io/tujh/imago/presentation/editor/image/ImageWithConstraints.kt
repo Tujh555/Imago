@@ -41,14 +41,10 @@ fun ImageWithConstraints(
 
         val (boxWidth: Int, boxHeight: Int) = getParentSize(bitmapWidth, bitmapHeight)
 
-        // Src is Bitmap, Dst is the container(Image) that Bitmap will be displayed
         val srcSize = Size(bitmapWidth.toFloat(), bitmapHeight.toFloat())
         val dstSize = Size(boxWidth.toFloat(), boxHeight.toFloat())
 
         val scaleFactor = contentScale.computeScaleFactor(srcSize, dstSize)
-
-        // Image is the container for bitmap that is located inside Box
-        // image bounds can be smaller or bigger than its parent based on how it's scaled
         val imageWidth = bitmapWidth * scaleFactor.scaleX
         val imageHeight = bitmapHeight * scaleFactor.scaleY
 
