@@ -43,6 +43,12 @@ android {
     }
 }
 
+kotlin {
+    compilerOptions {
+        freeCompilerArgs.add("-Xcontext-receivers")
+    }
+}
+
 composeCompiler {
     featureFlags.add(ComposeFeatureFlag.StrongSkipping)
 }
