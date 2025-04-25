@@ -9,10 +9,13 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import io.tujh.imago.data.dto.UserDto
 import io.tujh.imago.data.image.Loader
+import io.tujh.imago.data.repository.image.DrawRepository
 import io.tujh.imago.data.repository.user.UserFlow
 import io.tujh.imago.data.store.jsonStore
 import io.tujh.imago.data.store.stringStore
 import io.tujh.imago.domain.image.BitmapLoader
+import io.tujh.imago.domain.image.draw.DrawSettings
+import io.tujh.imago.domain.image.draw.DrawSettingsRepository
 import io.tujh.imago.domain.user.CurrentUser
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
@@ -29,6 +32,9 @@ interface DataModule {
 
     @Binds
     fun user(impl: UserFlow): CurrentUser
+
+    @Binds
+    fun drawRepository(impl: DrawRepository) : DrawSettingsRepository
 
     companion object {
         @Provides
@@ -51,6 +57,13 @@ interface DataModule {
         fun tokenStore(@ApplicationContext context: Context) = stringStore(
             context = context,
             name = "token"
+        )
+
+        @Provides
+        @Singleton
+        fun drawSettingsStore(@ApplicationContext context: Context) = jsonStore<DrawSettings>(
+            context = context,
+            name = "draw_settings"
         )
     }
 }

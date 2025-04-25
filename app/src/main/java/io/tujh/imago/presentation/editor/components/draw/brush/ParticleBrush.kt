@@ -10,8 +10,6 @@ import kotlin.math.cos
 import kotlin.math.sin
 import kotlin.random.Random
 
-private const val particleDensity: Int = 5
-private const val particleSize: Float = 20f
 private const val particleSpeed: Float = 15f
 private const val particleAngle: Float = 30f
 
@@ -31,14 +29,13 @@ class ParticleBrush(
     }
 ) {
     override fun move(lastPosition: Offset, currentPosition: Offset) {
-        val numParticles = (size * particleDensity).toInt()
-        for (i in 0 until numParticles) {
+        for (i in 0 until 20) {
             val angle = Math.toRadians((Random.nextDouble() * 2 - 1) * particleAngle).toFloat()
             val dx = particleSpeed * cos(angle)
             val dy = particleSpeed * sin(angle)
             val particleX = lastPosition.x + dx
             val particleY = lastPosition.y + dy
-            path.asAndroidPath().addCircle(particleX, particleY, particleSize / 2, Path.Direction.CW)
+            path.asAndroidPath().addCircle(particleX, particleY, size / 2, Path.Direction.CW)
         }
     }
 }

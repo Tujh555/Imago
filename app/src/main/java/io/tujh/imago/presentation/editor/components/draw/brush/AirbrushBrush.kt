@@ -10,10 +10,10 @@ import kotlin.math.cos
 import kotlin.math.sin
 
 class AirbrushBrush(
-    private val size: Float = 30f,
-    private val brushColor: Color = Color.Green,
-    private val opacity: Float = 1f,
-    private val density: Float = size / 50,
+    private val size: Float,
+    private val brushColor: Color,
+    private val opacity: Float,
+    private val density: Float = size / 40,
     startPosition: Offset
 ) : DrawBrush by DrawBrush(
     startPosition = startPosition,

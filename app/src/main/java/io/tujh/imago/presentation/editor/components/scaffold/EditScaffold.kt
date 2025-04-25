@@ -1,6 +1,7 @@
 package io.tujh.imago.presentation.editor.components.scaffold
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleIn
@@ -21,6 +22,7 @@ import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -61,22 +63,23 @@ fun EditScaffold(
             ) {
                 buttons.fastForEachIndexed { i, button ->
                     key(i) {
-                        AnimatedVisibility(
-                            visible = button.visible.value,
-                            enter = scaleIn() + fadeIn(),
-                            exit = scaleOut() + fadeOut()
-                        ) {
-                            val painter = when (val source = button.source) {
-                                is IconSource.Resource -> painterResource(source.id)
-                                is IconSource.Vector -> rememberVectorPainter(source.imageVector)
+                        val color by animateColorAsState(
+                            targetValue = if (button.active.value) {
+                                Color.White
+                            } else {
+                                Color.White.copy(alpha = 0.5f)
                             }
-                            Icon(
-                                modifier = iconsModifier.clickable(onClick = button::onClick),
-                                contentDescription = null,
-                                painter = painter,
-                                tint = Color.White
-                            )
+                        )
+                        val painter = when (val source = button.source) {
+                            is IconSource.Resource -> painterResource(source.id)
+                            is IconSource.Vector -> rememberVectorPainter(source.imageVector)
                         }
+                        Icon(
+                            modifier = iconsModifier.clickable(onClick = button::onClick),
+                            contentDescription = null,
+                            painter = painter,
+                            tint = color
+                        )
                     }
                 }
             }

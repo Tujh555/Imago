@@ -10,13 +10,14 @@ import androidx.compose.runtime.Stable
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 
-val alwaysVisibleState = mutableStateOf(true)
+val alwaysActiveState = mutableStateOf(true)
 
 @Stable
 interface ScaffoldButton {
-    val visible: State<Boolean>
+    val active: State<Boolean>
     val source: IconSource
 
     fun onClick()
@@ -32,29 +33,29 @@ sealed interface IconSource {
 }
 
 fun ScaffoldButton(
-    visible: State<Boolean>,
+    active: State<Boolean>,
     source: IconSource,
     onClick: () -> Unit
 ): ScaffoldButton = object : ScaffoldButton {
-    override val visible = visible
+    override val active = active
     override val source = source
     override fun onClick() = onClick()
 }
 
 fun MutableList<ScaffoldButton>.button(
-    visible: State<Boolean>,
     @DrawableRes res: Int,
+    active: State<Boolean> = alwaysActiveState,
     onClick: () -> Unit
 ) {
-    ScaffoldButton(visible, IconSource.Resource(res), onClick).let(::add)
+    ScaffoldButton(active, IconSource.Resource(res), onClick).let(::add)
 }
 
 fun MutableList<ScaffoldButton>.button(
-    visible: State<Boolean>,
     vector: ImageVector,
+    active: State<Boolean> = alwaysActiveState,
     onClick: () -> Unit
 ) {
-    ScaffoldButton(visible, IconSource.Vector(vector), onClick).let(::add)
+    ScaffoldButton(active, IconSource.Vector(vector), onClick).let(::add)
 }
 
 @Composable
@@ -64,8 +65,8 @@ fun controlButtons(
     central: MutableList<ScaffoldButton>.() -> Unit = {}
 ) = remember {
     buildList {
-        button(alwaysVisibleState, Icons.Filled.Close, close)
+        button(Icons.Filled.Close, onClick = close)
         central()
-        button(alwaysVisibleState, Icons.Filled.Done, save)
+        button(Icons.Filled.Done, onClick = save)
     }
 }

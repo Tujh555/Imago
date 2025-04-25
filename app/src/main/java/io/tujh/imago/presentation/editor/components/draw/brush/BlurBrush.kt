@@ -19,7 +19,7 @@ class BlurBrush(
         blendMode = BlendMode.SrcOver
         strokeWidth = size
         asFrameworkPaint().apply {
-            val blurRadius = size - 5f
+            val blurRadius = size * 0.5f
             maskFilter = BlurMaskFilter(blurRadius, BlurMaskFilter.Blur.NORMAL)
         }
     }

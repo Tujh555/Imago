@@ -47,6 +47,8 @@ class MainActivity : ComponentActivity() {
 
     @Inject
     lateinit var handler: Handler
+    @Inject
+    lateinit var localProvider: AppLocalProvider
 
     @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -57,49 +59,45 @@ class MainActivity : ComponentActivity() {
             DisposableEffect(Unit) {
                 onDispose { handler.scope = null }
             }
-            ImagoTheme {
-                SharedTransitionLayout {
-                    CompositionLocalProvider(LocalSharedTransitionScope provides this) {
-                        BottomSheetNavigator(
-                            sheetShape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp)
-                        ) {
-                            Navigator(SplashScreen()) { navigator ->
-                                val launcher = rememberLauncherForActivityResult(
-                                    contract = ActivityResultContracts.PickVisualMedia()
-                                ) { uri ->
-                                    if (uri != null) {
-                                        navigator.push(ImageEditScreen(uri))
-                                    }
-                                }
+            localProvider.WithProviders {
+                BottomSheetNavigator(
+                    sheetShape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp)
+                ) {
+                    Navigator(SplashScreen()) { navigator ->
+                        val launcher = rememberLauncherForActivityResult(
+                            contract = ActivityResultContracts.PickVisualMedia()
+                        ) { uri ->
+                            if (uri != null) {
+                                navigator.push(ImageEditScreen(uri))
+                            }
+                        }
 
-                                Scaffold(
-                                    modifier = Modifier.systemBarsPadding(),
-                                    snackbarHost = {
-                                        SnackbarHost(
-                                            hostState = handler.hostState,
-                                            modifier = Modifier.imePadding()
-                                        )
-                                    },
-                                    floatingActionButton = {
-                                        FloatingActionButton(
-                                            onClick = {
-                                                ActivityResultContracts
-                                                    .PickVisualMedia
-                                                    .ImageOnly
-                                                    .let(::PickVisualMediaRequest)
-                                                    .let(launcher::launch)
-                                            }
-                                        ) {
-                                            Icon(
-                                                imageVector = Icons.Filled.Add,
-                                                contentDescription = null
-                                            )
-                                        }
+                        Scaffold(
+                            modifier = Modifier.systemBarsPadding(),
+                            snackbarHost = {
+                                SnackbarHost(
+                                    hostState = handler.hostState,
+                                    modifier = Modifier.imePadding()
+                                )
+                            },
+                            floatingActionButton = {
+                                FloatingActionButton(
+                                    onClick = {
+                                        ActivityResultContracts
+                                            .PickVisualMedia
+                                            .ImageOnly
+                                            .let(::PickVisualMediaRequest)
+                                            .let(launcher::launch)
                                     }
                                 ) {
-                                    CurrentScreen()
+                                    Icon(
+                                        imageVector = Icons.Filled.Add,
+                                        contentDescription = null
+                                    )
                                 }
                             }
+                        ) {
+                            CurrentScreen()
                         }
                     }
                 }

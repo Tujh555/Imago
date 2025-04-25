@@ -19,7 +19,7 @@ import androidx.compose.ui.unit.LayoutDirection
 import cafe.adriel.voyager.navigator.bottomSheet.LocalBottomSheetNavigator
 import io.tujh.imago.presentation.editor.components.EditingComponent
 import io.tujh.imago.presentation.editor.components.scaffold.EditScaffold
-import io.tujh.imago.presentation.editor.components.scaffold.alwaysVisibleState
+import io.tujh.imago.presentation.editor.components.scaffold.alwaysActiveState
 import io.tujh.imago.presentation.editor.components.scaffold.button
 import io.tujh.imago.presentation.editor.components.scaffold.controlButtons
 import io.tujh.imago.presentation.editor.image.crop.CropAgent
@@ -97,10 +97,10 @@ class CropComponent(
                     close = listener::close,
                     save = { save(scope, density) },
                     central = {
-                        button(alwaysVisibleState, Icons.Filled.Settings) {
+                        button(Icons.Filled.Settings) {
                             bottomSheetNavigator.show(settingsSheet(SelectionPage.Properties))
                         }
-                        button(alwaysVisibleState, brushImage) {
+                        button(brushImage) {
                             bottomSheetNavigator.show(settingsSheet(SelectionPage.Style))
                         }
                     }

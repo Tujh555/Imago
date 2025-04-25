@@ -20,7 +20,7 @@ class EraserBrush(
         startPosition = startPosition,
         initPaint = {
             color = Color.Transparent
-            strokeWidth = width
+            strokeWidth = width * 2
             style = PaintingStyle.Stroke
             isAntiAlias = true
             strokeCap = StrokeCap.Round

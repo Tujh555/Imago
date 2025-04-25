@@ -7,22 +7,22 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.BlendMode
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.CompositingStrategy
 import androidx.compose.ui.graphics.ImageBitmap
-import androidx.compose.ui.graphics.drawscope.Fill
 import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.layer.drawLayer
@@ -31,35 +31,31 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.util.fastForEach
 import androidx.compose.ui.zIndex
 import cafe.adriel.voyager.core.screen.uniqueScreenKey
+import cafe.adriel.voyager.navigator.bottomSheet.LocalBottomSheetNavigator
 import io.tujh.imago.R
 import io.tujh.imago.presentation.components.LocalSharedNavVisibilityScope
 import io.tujh.imago.presentation.components.LocalSharedTransitionScope
 import io.tujh.imago.presentation.editor.components.EditingComponent
 import io.tujh.imago.presentation.editor.components.draw.brush.DrawBrush
-import io.tujh.imago.presentation.editor.components.draw.brush.EraserBrush
 import io.tujh.imago.presentation.editor.components.scaffold.EditScaffold
-import io.tujh.imago.presentation.editor.components.scaffold.alwaysVisibleState
+import io.tujh.imago.presentation.editor.components.scaffold.alwaysActiveState
 import io.tujh.imago.presentation.editor.components.scaffold.button
 import io.tujh.imago.presentation.editor.components.scaffold.controlButtons
 import io.tujh.imago.presentation.editor.image.ImageWithConstraints
 import io.tujh.imago.presentation.editor.image.util.MotionEvent
 import io.tujh.imago.presentation.editor.image.util.motionEvents
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
 
 class DrawComponent(
     private val bitmap: ImageBitmap,
     private val listener: EditingComponent.FinishListener
 ) : EditingComponent {
-    private var width by mutableFloatStateOf(30f)
-    private var selectedColor by mutableStateOf(Color.Green)
-    private var opacity by mutableFloatStateOf(1f)
     private var motionEvent by mutableStateOf<MotionEvent>(MotionEvent.Unspecified)
     private var lastPosition by mutableStateOf(Offset.Unspecified)
     private val brushes = mutableStateListOf<DrawBrush>()
     private var currentBrush by mutableStateOf<DrawBrush?>(null)
-    private var brushFactory by mutableStateOf(BrushFactory.Basic)
-    private var latestFactory = BrushFactory.Basic
     override val key = uniqueScreenKey
 
     @OptIn(ExperimentalSharedTransitionApi::class)
@@ -67,7 +63,29 @@ class DrawComponent(
     override fun Content() {
         val scope = rememberCoroutineScope()
         val graphicsLayer = rememberGraphicsLayer()
-        val undoVisible = rememberUpdatedState(brushes.isNotEmpty())
+        val undoActive = rememberUpdatedState(brushes.isNotEmpty())
+        val settingsManager = LocalDrawSettingsManager.current
+        var settings by remember { mutableStateOf(DrawSettings.default) }
+        val sheetNavigator = LocalBottomSheetNavigator.current
+        var brushFactory by remember { mutableStateOf(settings.brushFactory) }
+        val eraserActive = remember { mutableStateOf(false) }
+
+        DisposableEffect(Unit) {
+            onDispose { settingsManager.update(settings) }
+        }
+
+        LaunchedEffect(Unit) {
+            settingsManager.settings.distinctUntilChanged().collect { saved ->
+                settings = saved
+            }
+        }
+
+        LaunchedEffect(Unit) {
+            snapshotFlow { settings.brushFactory }
+                .distinctUntilChanged()
+                .collect { brushFactory = it }
+        }
+
         val buttons = controlButtons(
             close = listener::close,
             save = {
@@ -77,17 +95,18 @@ class DrawComponent(
                 }
             },
             central = {
-                button(undoVisible, R.drawable.ic_arrow_revert) {
+                button(R.drawable.ic_arrow_revert, undoActive) {
                     brushes.removeLastOrNull()
                 }
-                button(alwaysVisibleState, Icons.Filled.Settings) {
-
+                button(Icons.Filled.Settings) {
+                    sheetNavigator.show(DrawSettingsSheet(settings) { settings = it })
                 }
-                button(alwaysVisibleState, R.drawable.ic_eraser) {
+                button(R.drawable.ic_eraser, eraserActive) {
                     brushFactory = if (brushFactory == BrushFactory.Eraser) {
-                        latestFactory
+                        eraserActive.value = false
+                        settings.brushFactory
                     } else {
-                        latestFactory = brushFactory
+                        eraserActive.value = true
                         BrushFactory.Eraser
                     }
                 }
@@ -129,9 +148,9 @@ class DrawComponent(
                                 if (currentBrush == null) {
                                     currentBrush = brushFactory(
                                         startPosition = motionEvent.position,
-                                        size = width,
-                                        color = selectedColor,
-                                        opacity = opacity
+                                        size = settings.size,
+                                        color = settings.selectedColor,
+                                        opacity = settings.opacity
                                     )
                                 }
                                 lastPosition = motionEvent.position
