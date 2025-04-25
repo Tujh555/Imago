@@ -1,14 +1,23 @@
 package io.tujh.imago.presentation.editor.components.draw.brush
 
 import androidx.compose.runtime.Stable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Canvas
 import androidx.compose.ui.graphics.Paint
 import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.graphics.PathFillType
 import androidx.compose.ui.graphics.drawscope.DrawScope
+import io.tujh.imago.presentation.editor.image.util.paint
+import io.tujh.imago.presentation.editor.image.util.path
 
 @Stable
 interface DrawBrush {
+    val path: Path
+    val paint: Paint
+
     fun move(lastPosition: Offset, currentPosition: Offset)
 
     fun dismiss(position: Offset)
@@ -17,19 +26,14 @@ interface DrawBrush {
     fun draw(canvas: Canvas)
 }
 
-interface PathBrush : DrawBrush {
-    val path: Path
-    val paint: Paint
-}
-
-inline fun PathBrush(
+inline fun DrawBrush(
     initPath: Path.() -> Unit,
     initPaint: Paint.() -> Unit
-): PathBrush {
-    val path = Path().apply(initPath)
-    val paint = Paint().apply(initPaint)
+): DrawBrush {
+    val path = path(initPath)
+    val paint = paint(initPaint)
 
-    return object : PathBrush {
+    return object : DrawBrush {
         override val paint = paint
         override val path = path
 
@@ -53,7 +57,7 @@ inline fun PathBrush(
     }
 }
 
-inline fun PathBrush(startPosition: Offset, initPaint: Paint.() -> Unit) = PathBrush(
+inline fun DrawBrush(startPosition: Offset, initPaint: Paint.() -> Unit) = DrawBrush(
     initPaint = initPaint,
     initPath = { moveTo(startPosition.x, startPosition.y) }
 )

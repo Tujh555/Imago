@@ -11,12 +11,13 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.unit.dp
 
+private const val phase: Float = 0.9f
+
 class GlowBrush(
     startPosition: Offset,
-    private val width: Float = 30f,
-    private val glowColor: Color = Color.Yellow,
-    private val phase: Float = 0.9f,
-) : PathBrush by PathBrush(
+    private val width: Float,
+    private val glowColor: Color,
+) : DrawBrush by DrawBrush(
     startPosition = startPosition,
     initPaint = {
         style = PaintingStyle.Stroke

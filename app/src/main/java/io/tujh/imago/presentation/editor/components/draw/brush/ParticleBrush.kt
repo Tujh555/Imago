@@ -10,21 +10,24 @@ import kotlin.math.cos
 import kotlin.math.sin
 import kotlin.random.Random
 
+private const val particleDensity: Int = 5
+private const val particleSize: Float = 20f
+private const val particleSpeed: Float = 15f
+private const val particleAngle: Float = 30f
+
 class ParticleBrush(
-    private val size: Float = 8f,
-    private val brushColor: Color = Color.Red,
-    private val particleDensity: Int = 5,
-    private val particleSize: Float = 20f,
-    private val particleSpeed: Float = 15f,
-    private val particleAngle: Float = 30f,
     startPosition: Offset,
-) : PathBrush by PathBrush(
+    private val size: Float,
+    private val brushColor: Color,
+    private val opacity: Float,
+) : DrawBrush by DrawBrush(
     startPosition = startPosition,
     initPaint = {
         color = brushColor
         style = PaintingStyle.Fill
         isAntiAlias = true
         strokeCap = StrokeCap.Round
+        alpha = opacity
     }
 ) {
     override fun move(lastPosition: Offset, currentPosition: Offset) {

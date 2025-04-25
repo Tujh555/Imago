@@ -7,11 +7,10 @@ import androidx.compose.ui.graphics.PaintingStyle
 import androidx.compose.ui.graphics.StrokeCap
 
 class MarkerBrush(
-    private val width: Float = 20f,
-    private val brushColor: Color = Color.Yellow,
-    private val opacity: Float = 0.5f,
     startPosition: Offset,
-) : PathBrush by PathBrush(
+    private val width: Float,
+    private val brushColor: Color,
+) : DrawBrush by DrawBrush(
     startPosition = startPosition,
     initPaint = {
         color = brushColor
@@ -20,6 +19,6 @@ class MarkerBrush(
         isAntiAlias = true
         strokeCap = StrokeCap.Square
         blendMode = BlendMode.SrcOver
-        alpha = opacity
+        alpha = 0.5f
     }
 )

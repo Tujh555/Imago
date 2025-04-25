@@ -10,16 +10,14 @@ fun PropertySelectionSheet(
     cropProperties: CropProperties,
     onCropPropertiesChange: (CropProperties) -> Unit
 ) {
-    BaseSheet {
-        CropPropertySelectionMenu(
-            cropFrameFactory = cropFrameFactory,
-            cropProperties = cropProperties,
-            onCropPropertiesChange = onCropPropertiesChange
-        )
+    CropPropertySelectionMenu(
+        cropFrameFactory = cropFrameFactory,
+        cropProperties = cropProperties,
+        onCropPropertiesChange = onCropPropertiesChange
+    )
 
-        CropGestureSelectionMenu(
-            cropProperties = cropProperties,
-            onCropPropertiesChange = onCropPropertiesChange
-        )
-    }
+    CropGestureSelectionMenu(
+        cropProperties = cropProperties,
+        onCropPropertiesChange = onCropPropertiesChange
+    )
 }

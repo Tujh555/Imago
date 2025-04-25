@@ -34,89 +34,86 @@ fun CropStyleSelectionMenu(
     cropStyle: CropStyle,
     onCropStyleChange: (CropStyle) -> Unit
 ) {
+    val drawOverlayEnabled = cropStyle.drawOverlay
+    val overlayStrokeWidth = cropStyle.strokeWidth
+    val overlayColor = cropStyle.overlayColor
+    val handleColor = cropStyle.handleColor
+    val backgroundColor = cropStyle.backgroundColor
+    val drawGridEnabled = cropStyle.drawGrid
 
-    BaseSheet {
-        val drawOverlayEnabled = cropStyle.drawOverlay
-        val overlayStrokeWidth = cropStyle.strokeWidth
-        val overlayColor = cropStyle.overlayColor
-        val handleColor = cropStyle.handleColor
-        val backgroundColor = cropStyle.backgroundColor
-        val drawGridEnabled = cropStyle.drawGrid
+    Title("Overlay")
+    FullRowSwitch(
+        label = "Draw overlay",
+        state = drawOverlayEnabled,
+        onStateChange = {
+            onCropStyleChange(
+                cropStyle.copy(drawOverlay = it)
+            )
+        }
+    )
 
-        Title("Overlay")
-        FullRowSwitch(
-            label = "Draw overlay",
-            state = drawOverlayEnabled,
-            onStateChange = {
-                onCropStyleChange(
-                    cropStyle.copy(drawOverlay = it)
-                )
-            }
-        )
+    AnimatedVisibility(
+        visible = drawOverlayEnabled
+    ) {
 
-        AnimatedVisibility(
-            visible = drawOverlayEnabled
-        ) {
-
-            Column {
-                Title("StrokeWidth", fontSize = 16.sp)
-                DpSliderSelection(
-                    value = overlayStrokeWidth,
-                    onValueChange = {
-                        onCropStyleChange(
-                            cropStyle.copy(strokeWidth = it)
-                        )
-                    },
-                    lowerBound = .5.dp,
-                    upperBound = 3.dp
-                )
+        Column {
+            Title("StrokeWidth", fontSize = 16.sp)
+            DpSliderSelection(
+                value = overlayStrokeWidth,
+                onValueChange = {
+                    onCropStyleChange(
+                        cropStyle.copy(strokeWidth = it)
+                    )
+                },
+                lowerBound = .5.dp,
+                upperBound = 3.dp
+            )
 
 
-                ColorSelection(
-                    title = "Overlay Color",
-                    color = overlayColor,
-                    onColorChange = { color: Color ->
-                        onCropStyleChange(
-                            cropStyle.copy(overlayColor = color)
-                        )
-                    }
-                )
-
-                if(cropType== CropType.Dynamic){
-                    Spacer(modifier = Modifier.height(20.dp))
-                    ColorSelection(
-                        title = "Handle Color",
-                        color = handleColor,
-                        onColorChange = { color: Color ->
-                            onCropStyleChange(
-                                cropStyle.copy(handleColor = color)
-                            )
-                        }
+            ColorSelection(
+                title = "Overlay Color",
+                color = overlayColor,
+                onColorChange = { color: Color ->
+                    onCropStyleChange(
+                        cropStyle.copy(overlayColor = color)
                     )
                 }
+            )
 
+            if(cropType== CropType.Dynamic){
                 Spacer(modifier = Modifier.height(20.dp))
                 ColorSelection(
-                    title = "Background Color",
-                    color = backgroundColor,
+                    title = "Handle Color",
+                    color = handleColor,
                     onColorChange = { color: Color ->
                         onCropStyleChange(
-                            cropStyle.copy(backgroundColor = color)
-                        )
-                    }
-                )
-
-                Title("Grid")
-                FullRowSwitch(
-                    label = "Draw grid",
-                    state = drawGridEnabled,
-                    onStateChange = {
-                        onCropStyleChange(
-                            cropStyle.copy(drawGrid = it)
+                            cropStyle.copy(handleColor = color)
                         )
                     }
                 )
             }
+
+            Spacer(modifier = Modifier.height(20.dp))
+            ColorSelection(
+                title = "Background Color",
+                color = backgroundColor,
+                onColorChange = { color: Color ->
+                    onCropStyleChange(
+                        cropStyle.copy(backgroundColor = color)
+                    )
+                }
+            )
+
+            Title("Grid")
+            FullRowSwitch(
+                label = "Draw grid",
+                state = drawGridEnabled,
+                onStateChange = {
+                    onCropStyleChange(
+                        cropStyle.copy(drawGrid = it)
+                    )
+                }
+            )
         }
     }
 }

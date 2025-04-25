@@ -15,7 +15,7 @@ class AirbrushBrush(
     private val opacity: Float = 1f,
     private val density: Float = size / 50,
     startPosition: Offset
-) : PathBrush by PathBrush(
+) : DrawBrush by DrawBrush(
     startPosition = startPosition,
     initPaint = {
         color = brushColor

@@ -9,12 +9,11 @@ import androidx.compose.ui.graphics.StrokeJoin
 import kotlin.random.Random.Default.nextFloat
 
 class PencilBrush(
-    private val width: Float = 20f,
-    private val brushColor: Color = Color.Green,
-    private val opacity: Float = 1f,
-    private val jitter: Float = 0.75f,
-    startPosition: Offset
-) : PathBrush by PathBrush(
+    startPosition: Offset,
+    private val width: Float,
+    private val brushColor: Color,
+    private val opacity: Float,
+) : DrawBrush by DrawBrush(
     startPosition = startPosition,
     initPaint = {
         color = brushColor
@@ -27,6 +26,8 @@ class PencilBrush(
         blendMode = BlendMode.SrcOver
     }
 ) {
+    private val jitter: Float = 0.75f
+
     override fun move(lastPosition: Offset, currentPosition: Offset) {
         val x = currentPosition.x + nextFloat() * width * jitter - width * jitter / 2
         val y = currentPosition.y + nextFloat() * width * jitter - width * jitter / 2

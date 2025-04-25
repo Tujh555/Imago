@@ -1,6 +1,5 @@
 package io.tujh.imago.presentation.editor.components.draw.brush
 
-
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Color
@@ -9,11 +8,11 @@ import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.StrokeJoin
 
 class BasicBrush(
-    width: Float = 20f,
-    brushColor: Color = Color.Green,
-    opacity: Float = 1f,
-    startPosition: Offset
-) : PathBrush by PathBrush(
+    startPosition: Offset,
+    width: Float,
+    brushColor: Color,
+    opacity: Float,
+) : DrawBrush by DrawBrush(
     startPosition = startPosition,
     initPaint = {
         color = brushColor

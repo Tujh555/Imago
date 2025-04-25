@@ -112,7 +112,7 @@ private fun SuccessBody(
                                         ),
                                         animatedVisibilityScope = this@AnimatedContent
                                     ),
-                                contentScale = ContentScale.Crop,
+                                contentScale = ContentScale.Fit,
                                 bitmap = image,
                                 contentDescription = null
                             )

@@ -10,10 +10,14 @@ import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun BaseSheet(content: @Composable () -> Unit) {
+fun BaseSheet(
+    peekColor: Color,
+    content: @Composable () -> Unit
+) {
     Surface {
         Column {
             Box(
@@ -26,17 +30,14 @@ fun BaseSheet(content: @Composable () -> Unit) {
                     modifier = Modifier
                         .width(32.dp)
                         .height(4.dp)
-                        .background(
-                            MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = .4f),
-                            RoundedCornerShape(50)
-                        )
+                        .background(peekColor, RoundedCornerShape(50))
                 )
             }
 
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(400.dp)
+                    .height(450.dp)
                     .padding(horizontal = 16.dp, vertical = 8.dp)
                     .verticalScroll(rememberScrollState())
             ) {

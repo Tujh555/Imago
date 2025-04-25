@@ -8,11 +8,9 @@ import androidx.compose.ui.graphics.PaintingStyle
 
 class BlurBrush(
     private val startPosition: Offset,
-    private val size: Float = 20f,
-    private val brushColor: Color = Color.Yellow,
-    private val blurRadius: Float = 15f,
-    private val opacity: Float = 1f
-) : PathBrush by PathBrush(
+    private val size: Float,
+    private val brushColor: Color,
+) : DrawBrush by DrawBrush(
     startPosition = startPosition,
     initPaint = {
         color = brushColor
@@ -20,8 +18,8 @@ class BlurBrush(
         isAntiAlias = true
         blendMode = BlendMode.SrcOver
         strokeWidth = size
-        alpha = opacity
         asFrameworkPaint().apply {
+            val blurRadius = size - 5f
             maskFilter = BlurMaskFilter(blurRadius, BlurMaskFilter.Blur.NORMAL)
         }
     }
