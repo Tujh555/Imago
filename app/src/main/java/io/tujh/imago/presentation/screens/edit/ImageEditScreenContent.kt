@@ -52,10 +52,8 @@ import androidx.compose.ui.util.fastForEach
 import androidx.compose.ui.util.fastForEachIndexed
 import io.tujh.imago.R
 import io.tujh.imago.presentation.components.Colors
-import io.tujh.imago.presentation.components.IconButton
 import io.tujh.imago.presentation.components.LocalSharedNavVisibilityScope
 import io.tujh.imago.presentation.components.LocalSharedTransitionScope
-import io.tujh.imago.presentation.editor.components.filters.shader.MarbledTexture
 import io.tujh.imago.presentation.editor.components.filters.shader.ShaderFilter
 import io.tujh.imago.presentation.editor.components.filters.shader.rememberShaderFilters
 import kotlinx.coroutines.launch
@@ -155,18 +153,18 @@ private fun SuccessBody(
                         ) {
                             EditFactory.entries.fastForEachIndexed { i, component ->
                                 key(i) {
-                                    IconButton(
-                                        modifier = Modifier.size(48.dp),
-                                        iconRes = component.icon,
-                                        iconTint = Color.White,
-                                        onClick = {
-                                            onAction(
-                                                ImageEditScreen.Action.SelectComponent(
-                                                    component
-                                                )
-                                            )
-                                        }
-                                    )
+//                                    IconButton(
+//                                        modifier = Modifier.size(48.dp),
+//                                        iconRes = component.icon,
+//                                        iconTint = Color.White,
+//                                        onClick = {
+//                                            onAction(
+//                                                ImageEditScreen.Action.SelectComponent(
+//                                                    component
+//                                                )
+//                                            )
+//                                        }
+//                                    )
                                 }
                             }
 
@@ -194,16 +192,16 @@ private fun SuccessBody(
                                     },
                                     state = tooltipState
                                 ) {
-                                    IconButton(
-                                        modifier = Modifier.size(48.dp),
-                                        iconRes = R.drawable.ic_filter,
-                                        iconTint = Color.White,
-                                        onClick = {
-                                            scope.launch {
-                                                tooltipState.show()
-                                            }
-                                        }
-                                    )
+//                                    IconButton(
+//                                        modifier = Modifier.size(48.dp),
+//                                        iconRes = R.drawable.ic_filter,
+//                                        iconTint = Color.White,
+//                                        onClick = {
+//                                            scope.launch {
+//                                                tooltipState.show()
+//                                            }
+//                                        }
+//                                    )
                                 }
                             }
                         }

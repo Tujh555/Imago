@@ -9,10 +9,12 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import io.tujh.imago.data.dto.UserDto
 import io.tujh.imago.data.image.Loader
+import io.tujh.imago.data.repository.auth.AuthRepositoryImpl
 import io.tujh.imago.data.repository.image.DrawRepository
 import io.tujh.imago.data.repository.user.UserFlow
 import io.tujh.imago.data.store.jsonStore
 import io.tujh.imago.data.store.stringStore
+import io.tujh.imago.domain.auth.AuthRepository
 import io.tujh.imago.domain.image.BitmapLoader
 import io.tujh.imago.domain.image.draw.DrawSettings
 import io.tujh.imago.domain.image.draw.DrawSettingsRepository
@@ -35,6 +37,9 @@ interface DataModule {
 
     @Binds
     fun drawRepository(impl: DrawRepository) : DrawSettingsRepository
+
+    @Binds
+    fun auth(impl: AuthRepositoryImpl) : AuthRepository
 
     companion object {
         @Provides

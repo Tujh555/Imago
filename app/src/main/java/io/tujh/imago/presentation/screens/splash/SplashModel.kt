@@ -24,7 +24,7 @@ class SplashModel @Inject constructor(
 
     private fun loadUser() {
         screenModelScope.io {
-            val user = withMinDelay(1000) {
+            val user = withMinDelay(1200) {
                 withTimeoutOrNull(1000) {
                     currentUser.filterNotNull().first()
                 }

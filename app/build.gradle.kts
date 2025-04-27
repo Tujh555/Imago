@@ -88,6 +88,7 @@ dependencies {
         exclude(group = "com.github.SmartToolFactory", module = "Compose-Image-Cropper")
     }
     implementation(libs.compose.animatedlist)
+    implementation(libs.lottie)
     ksp(libs.hilt.compiler)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
