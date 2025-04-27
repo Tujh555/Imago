@@ -8,6 +8,7 @@ import androidx.compose.ui.graphics.ImageBitmap
 import cafe.adriel.voyager.hilt.getScreenModel
 import io.tujh.imago.presentation.base.StateComponent
 import io.tujh.imago.presentation.editor.components.EditingComponent
+import io.tujh.imago.presentation.editor.components.filters.shader.ShaderFilter
 
 class ImageEditScreen(
     private val uri: Uri
@@ -15,6 +16,9 @@ class ImageEditScreen(
     sealed interface Action {
         @JvmInline
         value class SelectComponent(val components: EditFactory) : Action
+
+        @JvmInline
+        value class OpenFilterComponent(val filter: ShaderFilter) : Action
     }
 
     @Immutable

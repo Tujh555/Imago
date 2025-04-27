@@ -1,6 +1,7 @@
 package io.tujh.imago.presentation.screens.edit
 
 import android.net.Uri
+import android.os.Build
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asImageBitmap
 import cafe.adriel.voyager.core.model.screenModelScope
@@ -13,6 +14,7 @@ import io.tujh.imago.domain.utils.withMinDelay
 import io.tujh.imago.presentation.base.StateHolder
 import io.tujh.imago.presentation.base.StateModel
 import io.tujh.imago.presentation.editor.components.EditingComponent
+import io.tujh.imago.presentation.editor.components.filters.FiltersComponent
 import kotlinx.coroutines.launch
 
 class ImageEditScreenModel @AssistedInject constructor(
@@ -34,6 +36,14 @@ class ImageEditScreenModel @AssistedInject constructor(
     override fun onAction(action: ImageEditScreen.Action) {
         when (action) {
             is ImageEditScreen.Action.SelectComponent -> selectComponent(action.components)
+            is ImageEditScreen.Action.OpenFilterComponent -> {
+                state.value.image?.let { image ->
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                        val component = FiltersComponent(action.filter, image, this)
+                        update { it.copy(editingComponent = component) }
+                    }
+                }
+            }
         }
     }
 

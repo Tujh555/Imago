@@ -12,13 +12,13 @@ composeBom = "2025.04.00"
 coil = "3.1.0"
 gson = "2.12.1"
 voyager = "1.1.0-beta03"
-workManager = "2.10.0"
+workManager = "2.10.1"
 retrofit = "2.11.0"
 hilt = "2.56.1"
 okhttp = "4.12.0"
 ksp = "2.1.10-1.0.29"
 datastore = "1.1.4"
-exifinterface = "1.4.0"
+exifinterface = "1.4.1"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }

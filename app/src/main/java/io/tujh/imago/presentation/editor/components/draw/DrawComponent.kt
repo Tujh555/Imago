@@ -38,7 +38,6 @@ import io.tujh.imago.presentation.components.LocalSharedTransitionScope
 import io.tujh.imago.presentation.editor.components.EditingComponent
 import io.tujh.imago.presentation.editor.components.draw.brush.DrawBrush
 import io.tujh.imago.presentation.editor.components.scaffold.EditScaffold
-import io.tujh.imago.presentation.editor.components.scaffold.alwaysActiveState
 import io.tujh.imago.presentation.editor.components.scaffold.button
 import io.tujh.imago.presentation.editor.components.scaffold.controlButtons
 import io.tujh.imago.presentation.editor.image.ImageWithConstraints
@@ -137,7 +136,6 @@ class DrawComponent(
                 ) {
                     Canvas(
                         modifier = Modifier
-                            .zIndex(5f)
                             .size(imageWidth, imageHeight)
                             .clipToBounds()
                             .motionEvents { motionEvent = it }

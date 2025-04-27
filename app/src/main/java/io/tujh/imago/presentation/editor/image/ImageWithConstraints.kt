@@ -138,7 +138,7 @@ private fun ImageImpl(
         val canvasHeight = size.height.toInt()
         translate(top = (-height + canvasHeight) / 2f, left = (-width + canvasWidth) / 2f) {
             drawImage(
-                imageBitmap,
+                image = imageBitmap,
                 srcSize = IntSize(bitmapWidth, bitmapHeight),
                 dstSize = IntSize(width, height),
                 alpha = alpha,
