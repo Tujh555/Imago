@@ -22,7 +22,6 @@ class Loader @AssistedInject constructor(
     @Assisted private val uri: Uri,
     @ApplicationContext context: Context
 ) : BitmapLoader {
-    private val maxSide = 1920
     private val resolver = context.contentResolver
 
     @AssistedFactory
@@ -58,30 +57,6 @@ class Loader @AssistedInject constructor(
 
     private fun Uri.decode(): Bitmap? {
         val stream = resolver.openInputStream(this) ?: return null
-        val realMaxSide = stream.use { input ->
-            val options = options { inJustDecodeBounds = true }
-            BitmapFactory.decodeStream(input, null, options)
-            options.run { max(outWidth, outHeight) }
-        }
-        val resampledStream = resolver.openInputStream(this) ?: return null
-        val sample = calculateInSampleSize(realMaxSide)
-
-        return resampledStream.use { input ->
-            val resampledOptions = options { inSampleSize = sample }
-            BitmapFactory.decodeStream(input, null, resampledOptions)
-        }
+        return BitmapFactory.decodeStream(stream)
     }
-
-    private fun calculateInSampleSize(real: Int): Int {
-        val ratio = real.toFloat() / maxSide
-
-        if (ratio <= 2f) return 2
-
-        val degree = ceil(log2(ratio)).toInt()
-
-        return 1 shl degree
-    }
-
-    private inline fun options(block: BitmapFactory.Options.() -> Unit) =
-        BitmapFactory.Options().apply(block)
 }

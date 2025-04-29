@@ -51,11 +51,11 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.util.fastForEach
 import androidx.compose.ui.util.fastForEachIndexed
 import io.tujh.imago.R
-import io.tujh.imago.presentation.components.Colors
 import io.tujh.imago.presentation.components.LocalSharedNavVisibilityScope
 import io.tujh.imago.presentation.components.LocalSharedTransitionScope
 import io.tujh.imago.presentation.editor.components.filters.shader.ShaderFilter
 import io.tujh.imago.presentation.editor.components.filters.shader.rememberShaderFilters
+import io.tujh.imago.presentation.theme.colors.ImagoColors
 import kotlinx.coroutines.launch
 
 @Composable
@@ -142,7 +142,7 @@ private fun SuccessBody(
                         Row(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .background(Colors.semitransparent)
+                                .background(ImagoColors.semitransparent)
                                 .horizontalScroll(rememberScrollState())
                                 .padding(8.dp)
                                 .animateEnterExit(

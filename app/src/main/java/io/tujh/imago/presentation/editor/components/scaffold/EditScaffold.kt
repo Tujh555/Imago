@@ -32,8 +32,8 @@ import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.fastForEachIndexed
-import io.tujh.imago.presentation.components.Colors
 import io.tujh.imago.presentation.components.LocalSharedNavVisibilityScope
+import io.tujh.imago.presentation.theme.colors.ImagoColors
 
 private val iconsModifier = Modifier
     .clip(CircleShape)
@@ -53,7 +53,7 @@ fun EditScaffold(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .background(Colors.semitransparent)
+                    .background(ImagoColors.semitransparent)
                     .padding(8.dp)
                     .animateEnterExit(
                         enter = fadeIn() + slideInVertically { -it },

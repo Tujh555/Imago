@@ -12,7 +12,8 @@ interface TabComponent<A, S, E> : Tab, Component<A, S, E> {
     override val options @Composable get() = emptyOptions
 
     val title: String
-    val icons: IconPair
+    val icon: Int
+        @DrawableRes get
 
     companion object {
         private val emptyOptions = TabOptions(0u, "", null)
@@ -23,6 +24,3 @@ interface StateTabComponent<A, S> : TabComponent<A, S, Nothing> {
     @Composable
     override fun Event(event: Nothing) = Unit
 }
-
-@Immutable
-data class IconPair(@DrawableRes val selected: Int, @DrawableRes val unselected: Int)

@@ -16,4 +16,6 @@ object ImagoColors {
     val lightPink = Color(0xFFCF8DA7)
     val dustyBlue = Color(0xFF4C6E81)
     val lightDustyBlue = Color(0xFF7AACB3)
+    val semitransparent = Color(0xFF111111).copy(alpha = 0.6f)
+    val red = Color(0xFFE60022)
 }
