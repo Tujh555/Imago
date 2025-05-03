@@ -23,15 +23,6 @@ interface ScaffoldButton {
     fun onClick()
 }
 
-@Immutable
-sealed interface IconSource {
-    @JvmInline
-    value class Resource(@DrawableRes val id: Int) : IconSource
-
-    @JvmInline
-    value class Vector(val imageVector: ImageVector) : IconSource
-}
-
 fun ScaffoldButton(
     active: State<Boolean>,
     source: IconSource,

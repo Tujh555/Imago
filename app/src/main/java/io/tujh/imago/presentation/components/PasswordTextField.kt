@@ -37,6 +37,7 @@ private val passwordVisualTransformation = VisualTransformation { original ->
     val text = AnnotatedString("●".repeat(original.length))
     TransformedText(text, OffsetMapping.Identity)
 }
+private val keyPath = arrayOf("**")
 
 @Composable
 fun PasswordTextField(
@@ -83,9 +84,7 @@ fun PasswordTextField(
                         MaterialTheme.colorScheme.onSurface.hashCode(),
                         BlendModeCompat.SRC_ATOP
                     ),
-                    keyPath = arrayOf(
-                        "**"
-                    )
+                    keyPath = keyPath
                 )
             )
 

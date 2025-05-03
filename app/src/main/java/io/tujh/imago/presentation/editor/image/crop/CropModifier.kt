@@ -1,4 +1,4 @@
-package com.smarttoolfactory.cropper
+package io.tujh.imago.presentation.editor.image.crop
 
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.runtime.LaunchedEffect
@@ -13,11 +13,8 @@ import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
-import io.tujh.imago.presentation.editor.image.crop.CropState
-import io.tujh.imago.presentation.editor.image.crop.cropData
 import com.smarttoolfactory.gesture.detectMotionEventsAsList
 import com.smarttoolfactory.gesture.detectTransformGestures
-import io.tujh.imago.presentation.editor.image.crop.CropData
 import io.tujh.imago.presentation.editor.image.util.getNextZoomLevel
 import io.tujh.imago.presentation.editor.image.util.update
 import io.tujh.imago.presentation.editor.image.zoom.ZoomLevel

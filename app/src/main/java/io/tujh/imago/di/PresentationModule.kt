@@ -10,6 +10,8 @@ import dagger.hilt.InstallIn
 import dagger.hilt.android.components.ActivityComponent
 import dagger.multibindings.IntoMap
 import io.tujh.imago.presentation.screens.edit.ImageEditScreenModel
+import io.tujh.imago.presentation.screens.post.create.PostCreateModel
+import io.tujh.imago.presentation.screens.post.list.PostListModel
 import io.tujh.imago.presentation.screens.signin.SignInModel
 import io.tujh.imago.presentation.screens.signup.SignUpModel
 import io.tujh.imago.presentation.screens.splash.SplashModel
@@ -36,4 +38,14 @@ interface PresentationModule {
     @IntoMap
     @ScreenModelKey(SignUpModel::class)
     fun signUp(model: SignUpModel): ScreenModel
+
+    @Binds
+    @IntoMap
+    @ScreenModelKey(PostListModel::class)
+    fun postList(model: PostListModel) : ScreenModel
+
+    @Binds
+    @IntoMap
+    @ScreenModelKey(PostCreateModel::class)
+    fun postCreate(model: PostCreateModel): ScreenModel
 }

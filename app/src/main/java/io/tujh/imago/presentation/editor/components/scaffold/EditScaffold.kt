@@ -70,14 +70,10 @@ fun EditScaffold(
                                 Color.White.copy(alpha = 0.5f)
                             }
                         )
-                        val painter = when (val source = button.source) {
-                            is IconSource.Resource -> painterResource(source.id)
-                            is IconSource.Vector -> rememberVectorPainter(source.imageVector)
-                        }
                         Icon(
                             modifier = iconsModifier.clickable(onClick = button::onClick),
                             contentDescription = null,
-                            painter = painter,
+                            painter = button.source.painter(),
                             tint = color
                         )
                     }

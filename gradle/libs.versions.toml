@@ -4,12 +4,13 @@ composeAnimatedlist = "0.6.1"
 composeColorfulSliders = "1.2.0"
 composeColorPickerBundle = "1.0.1"
 composeExtendedGestures = "4.0.0"
+composeShimmer = "1.3.2"
 kotlin = "2.1.10"
 coreKtx = "1.16.0"
 lifecycleRuntimeKtx = "2.8.7"
 activityCompose = "1.10.1"
 composeBom = "2025.04.00"
-coil = "3.1.0"
+coil = "2.7.0"
 gson = "2.12.1"
 voyager = "1.1.0-beta03"
 workManager = "2.10.1"
@@ -20,6 +21,8 @@ ksp = "2.1.10-1.0.29"
 datastore = "1.1.4"
 exifinterface = "1.4.1"
 lottie = "6.6.2"
+hiltWork = "1.2.0"
+reorderable = "2.4.3"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -36,8 +39,9 @@ compose-animatedlist = { module = "com.github.SmartToolFactory:Compose-AnimatedL
 compose-color-picker-bundle = { module = "com.github.SmartToolFactory:Compose-Color-Picker-Bundle", version.ref = "composeColorPickerBundle" }
 compose-colorful-sliders = { module = "com.github.SmartToolFactory:Compose-Colorful-Sliders", version.ref = "composeColorfulSliders" }
 compose-extended-gestures = { module = "com.github.SmartToolFactory:Compose-Extended-Gestures", version.ref = "composeExtendedGestures" }
-coil = { module = "io.coil-kt.coil3:coil-compose", version.ref = "coil" }
-coil-network = { module = "io.coil-kt.coil3:coil-network-okhttp", version.ref = "coil" }
+coil = { module = "io.coil-kt:coil-compose", version.ref = "coil" }
+coil-network = { module = "io.coil-kt:coil-network-okhttp", version.ref = "coil" }
+compose-shimmer = { module = "com.valentinilk.shimmer:compose-shimmer", version.ref = "composeShimmer" }
 voyager-navigator = { module = "cafe.adriel.voyager:voyager-navigator", version.ref = "voyager" }
 voyager-model = { module = "cafe.adriel.voyager:voyager-screenmodel", version.ref = "voyager" }
 voyager-bottomsheet = { module = "cafe.adriel.voyager:voyager-bottom-sheet-navigator", version.ref = "voyager" }
@@ -57,6 +61,8 @@ androidx-datastore = { module = "androidx.datastore:datastore", version.ref = "d
 androidx-datastore-preferences = { module = "androidx.datastore:datastore-preferences", version.ref = "datastore" }
 androidx-exifinterface = { group = "androidx.exifinterface", name = "exifinterface", version.ref = "exifinterface" }
 lottie = { module = "com.airbnb.android:lottie-compose", version.ref = "lottie" }
+hilt-work = { module = "androidx.hilt:hilt-work", version.ref = "hiltWork" }
+reorderable = { module = "sh.calvin.reorderable:reorderable", version.ref = "reorderable" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

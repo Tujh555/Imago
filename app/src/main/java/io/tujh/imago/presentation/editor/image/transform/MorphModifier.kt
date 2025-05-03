@@ -110,7 +110,6 @@ fun Modifier.morph(
     },
     inspectorInfo = {
         name = "morph"
-        // add name and value of each argument
         properties["enabled"] = enabled
         properties["initialSize"] = initialSize
         properties["touchRegionRadius"] = touchRegionRadius

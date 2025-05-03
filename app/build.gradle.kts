@@ -89,6 +89,9 @@ dependencies {
     }
     implementation(libs.compose.animatedlist)
     implementation(libs.lottie)
+    implementation(libs.hilt.work)
+    implementation(libs.compose.shimmer)
+    implementation(libs.reorderable)
     ksp(libs.hilt.compiler)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)

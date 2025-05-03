@@ -8,16 +8,24 @@ import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import io.tujh.imago.data.dto.UserDto
+import io.tujh.imago.data.image.GetFullImageLoader
+import io.tujh.imago.data.image.GetPreviewLoader
 import io.tujh.imago.data.image.Loader
 import io.tujh.imago.data.repository.auth.AuthRepositoryImpl
 import io.tujh.imago.data.repository.image.DrawRepository
+import io.tujh.imago.data.repository.post.PostRepositoryImpl
+import io.tujh.imago.data.repository.post.ShortPostSource
 import io.tujh.imago.data.repository.user.UserFlow
 import io.tujh.imago.data.store.jsonStore
 import io.tujh.imago.data.store.stringStore
 import io.tujh.imago.domain.auth.AuthRepository
 import io.tujh.imago.domain.image.BitmapLoader
+import io.tujh.imago.domain.image.FullImageLoader
+import io.tujh.imago.domain.image.PreviewImageLoader
 import io.tujh.imago.domain.image.draw.DrawSettings
 import io.tujh.imago.domain.image.draw.DrawSettingsRepository
+import io.tujh.imago.domain.post.repository.PostRepository
+import io.tujh.imago.domain.post.repository.PostSource
 import io.tujh.imago.domain.user.CurrentUser
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
@@ -40,6 +48,12 @@ interface DataModule {
 
     @Binds
     fun auth(impl: AuthRepositoryImpl) : AuthRepository
+
+    @Binds
+    fun shortPostFactory(impl: ShortPostSource.Factory): PostSource.Factory
+
+    @Binds
+    fun postRepositoryFactory(impl: PostRepositoryImpl): PostRepository
 
     companion object {
         @Provides
@@ -70,5 +84,13 @@ interface DataModule {
             context = context,
             name = "draw_settings"
         )
+
+        @Provides
+        @Singleton
+        fun full(get: GetFullImageLoader) = FullImageLoader(get())
+
+        @Provides
+        @Singleton
+        fun preview(get: GetPreviewLoader) = PreviewImageLoader(get())
     }
 }

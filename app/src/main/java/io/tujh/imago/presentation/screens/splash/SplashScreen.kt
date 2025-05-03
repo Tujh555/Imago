@@ -29,7 +29,7 @@ import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import io.tujh.imago.R
 import io.tujh.imago.presentation.base.StateComponent
-import io.tujh.imago.presentation.screens.main.MainScreen
+import io.tujh.imago.presentation.screens.post.list.PostListScreen
 import io.tujh.imago.presentation.screens.signin.SignInScreen
 
 class SplashScreen : StateComponent<Nothing, Boolean?> {
@@ -53,7 +53,9 @@ class SplashScreen : StateComponent<Nothing, Boolean?> {
             }
 
             Icon(
-                modifier = Modifier.size(512.dp).rotate(angle.value),
+                modifier = Modifier
+                    .size(512.dp)
+                    .rotate(angle.value),
                 painter = painterResource(R.drawable.ic_launcher_atom_foreground),
                 contentDescription = null,
                 tint = MaterialTheme.colorScheme.onSurface
@@ -64,7 +66,7 @@ class SplashScreen : StateComponent<Nothing, Boolean?> {
 
         LaunchedEffect(state) {
             when (state) {
-                true -> navigator.replace(MainScreen())
+                true -> { navigator.replace(PostListScreen()) }
                 false -> navigator.replace(SignInScreen())
                 null -> Unit
             }

@@ -191,7 +191,7 @@ private fun CropFrameDisplay(
             ) {
                 Icon(
                     modifier = Modifier.matchParentSize(),
-                    imageVector = Icons.Outlined.AccountBox, // FIXME check ui
+                    imageVector = Icons.Outlined.AccountBox,
                     tint = color,
                     contentDescription = "Crop with Image Mask"
                 )

@@ -16,14 +16,6 @@ data class CropFrame(
 
     val outlines: List<CropOutline>
         get() = cropOutlineContainer.outlines
-
-    val outlineCount: Int
-        get() = cropOutlineContainer.size
-
-    fun addOutline(outline: CropOutline): CropFrame {
-        outlines.toMutableList().add(outline)
-        return this
-    }
 }
 
 @Suppress("UNCHECKED_CAST")

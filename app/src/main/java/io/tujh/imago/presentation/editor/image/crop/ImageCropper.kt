@@ -24,7 +24,6 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntSize
-import com.smarttoolfactory.cropper.crop
 import io.tujh.imago.presentation.editor.image.ImageWithConstraints
 import io.tujh.imago.presentation.editor.image.getScaledImageBitmap
 

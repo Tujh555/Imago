@@ -117,8 +117,6 @@ fun BeforeAfterImageImpl(
         val coroutineScope = rememberCoroutineScope()
 
         val transformModifier = Modifier.pointerInput(Unit) {
-            // Pass size of this Composable this Modifier is attached for constraining operations
-            // inside this bounds
             zoomState.size = this.size
             detectTransformGestures(
                 onGesture = { centroid: Offset, panChange: Offset, zoomChange: Float, _, _, _ ->

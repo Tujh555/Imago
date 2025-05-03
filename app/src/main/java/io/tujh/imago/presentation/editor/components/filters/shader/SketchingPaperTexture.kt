@@ -69,19 +69,11 @@ class SketchingPaperTexture : ShaderFilter() {
                 return image.eval(fragCoord);
             }
             half4 baseColor = image.eval(fragCoord);
-        
-            // Generate Simplex noise
             float noise = snoise(uv * 200.0) * 0.5 + 0.5;
-            noise = pow(noise, contrast1); // Increase contrast
-        
-            // Create a dot pattern
+            noise = pow(noise, contrast1);
             float dotPattern = (sin(uv.x * 800.0) * sin(uv.y * 800.0)) * 0.5 + 0.5;
-            dotPattern = pow(dotPattern, contrast2); // Increase contrast
-        
-            // Combine the noise and dot pattern
+            dotPattern = pow(dotPattern, contrast2);
             float combinedTexture = mix(noise, dotPattern, 0.6);
-        
-            // Apply the texture to the base color
             half4 outputColor = baseColor + half4(combinedTexture, combinedTexture, combinedTexture, 0.0) * amount;
         
             return outputColor;
