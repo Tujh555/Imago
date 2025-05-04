@@ -14,7 +14,7 @@ import javax.inject.Inject
 class UriProvider @Inject constructor(
     @ApplicationContext private val context: Context
 ) : WriteableUriProvider {
-    private val dir by lazy { context.filesDir.resolve("images").apply(File::mkdirs) }
+    private val dir by lazy { context.filesDir.resolve("root").apply(File::mkdirs) }
 
     override suspend fun temporaryImage(): Uri = withContext(Dispatchers.IO) {
         val file = dir.resolve("${UUID.randomUUID()}.jpg").apply {

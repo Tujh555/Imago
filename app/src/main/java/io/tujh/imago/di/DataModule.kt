@@ -11,6 +11,7 @@ import io.tujh.imago.data.dto.UserDto
 import io.tujh.imago.data.files.UriProvider
 import io.tujh.imago.data.image.GetFullImageLoader
 import io.tujh.imago.data.image.Loader
+import io.tujh.imago.data.image.Saver
 import io.tujh.imago.data.repository.auth.AuthRepositoryImpl
 import io.tujh.imago.data.repository.image.DrawRepository
 import io.tujh.imago.data.repository.post.PostRepositoryImpl
@@ -20,6 +21,7 @@ import io.tujh.imago.data.store.jsonStore
 import io.tujh.imago.data.store.stringStore
 import io.tujh.imago.domain.auth.AuthRepository
 import io.tujh.imago.domain.image.BitmapLoader
+import io.tujh.imago.domain.image.BitmapSaver
 import io.tujh.imago.domain.image.FullImageLoader
 import io.tujh.imago.domain.image.WriteableUriProvider
 import io.tujh.imago.domain.image.draw.DrawSettings
@@ -57,6 +59,9 @@ interface DataModule {
 
     @Binds
     fun uriProvider(impl: UriProvider): WriteableUriProvider
+
+    @Binds
+    fun saver(impl: Saver): BitmapSaver
 
     companion object {
         @Provides

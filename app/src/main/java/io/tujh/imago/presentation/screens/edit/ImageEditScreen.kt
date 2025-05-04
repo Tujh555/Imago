@@ -11,7 +11,9 @@ import io.tujh.imago.presentation.editor.components.EditingComponent
 import io.tujh.imago.presentation.editor.components.filters.shader.ShaderFilter
 
 class ImageEditScreen(
-    private val uri: Uri
+    private val sharedKey: String,
+    private val bitmap: ImageBitmap,
+    private val onEdited: (Uri) -> Unit
 ) : StateComponent<ImageEditScreen.Action, ImageEditScreen.State> {
     sealed interface Action {
         @JvmInline
@@ -19,12 +21,14 @@ class ImageEditScreen(
 
         @JvmInline
         value class OpenFilterComponent(val filter: ShaderFilter) : Action
+
+        data object Save : Action
     }
 
     @Immutable
     data class State(
-        val image: ImageBitmap? = null,
-        val loadingState: LoadingState = LoadingState.Loading,
+        val sharedKey: String,
+        val image: ImageBitmap,
         val editingComponent: EditingComponent? = null
     )
 
@@ -34,6 +38,7 @@ class ImageEditScreen(
         ImageEditScreenContent(state, onAction)
 
     @Composable
-    override fun model() =
-        getScreenModel<ImageEditScreenModel, ImageEditScreenModel.Factory> { it(uri) }
+    override fun model() = getScreenModel<ImageEditScreenModel, ImageEditScreenModel.Factory> {
+        it(sharedKey, bitmap, onEdited)
+    }
 }

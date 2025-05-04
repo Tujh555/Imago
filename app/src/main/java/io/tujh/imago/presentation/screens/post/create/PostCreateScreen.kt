@@ -5,6 +5,9 @@ import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.NonRestartableComposable
+import androidx.compose.ui.util.packInts
+import androidx.compose.ui.util.unpackInt1
+import androidx.compose.ui.util.unpackInt2
 import cafe.adriel.voyager.hilt.getScreenModel
 import cafe.adriel.voyager.navigator.Navigator
 import io.tujh.imago.presentation.base.StateComponent
@@ -25,9 +28,18 @@ class PostCreateScreen : StateComponent<PostCreateScreen.Action, PostCreateScree
             constructor(uri: Uri): this(listOf(uri))
         }
 
-        data class Reorder(val to: Int, val from: Int) : Action
+        @JvmInline
+        value class Reorder(private val packed: Long) : Action {
+            constructor(to: Int, from: Int): this(packInts(to, from))
 
-        data class Edit(val uri: Uri, val navigator: Navigator) : Action
+            val to get() = unpackInt1(packed)
+            val from get() = unpackInt2(packed)
+        }
+
+        data class Edit(val uri: String, val navigator: Navigator) : Action
+
+        @JvmInline
+        value class Remove(val uri: String) : Action
 
         @JvmInline
         value class Title(val value: String) : Action

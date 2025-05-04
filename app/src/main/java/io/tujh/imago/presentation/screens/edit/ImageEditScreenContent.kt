@@ -24,6 +24,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -72,41 +73,11 @@ fun ImageEditScreenContent(
             .systemBarsPadding(),
         contentAlignment = Alignment.Center
     ) {
-        AnimatedContent(
-            targetState = state.loadingState,
-            transitionSpec = { fadeIn() togetherWith fadeOut() }
-        ) { loadingState ->
-            when (loadingState) {
-                LoadingState.Loading -> Box(
-                    modifier = Modifier.fillMaxSize(),
-                    contentAlignment = Alignment.Center,
-                    content = {
-                        CircularProgressIndicator(
-                            modifier = Modifier.size(56.dp),
-                            color = Color.White
-                        )
-                    }
-                )
-
-                LoadingState.Error -> Box(
-                    modifier = Modifier.fillMaxSize(),
-                    contentAlignment = Alignment.Center,
-                    content = {
-                        Text(
-                            text = "Невозможно загрузить фотографию",
-                            fontSize = 24.sp,
-                            color = MaterialTheme.colorScheme.error
-                        )
-                    }
-                )
-
-                LoadingState.Success -> SuccessBody(
-                    modifier = Modifier.fillMaxSize(),
-                    state = state,
-                    onAction = onAction
-                )
-            }
-        }
+        SuccessBody(
+            modifier = Modifier.fillMaxSize(),
+            state = state,
+            onAction = onAction
+        )
     }
 }
 
@@ -124,22 +95,29 @@ private fun SuccessBody(
                     editing.Content()
                 } else {
                     Column(Modifier.fillMaxSize()) {
-                        state.image?.let { image ->
-                            Image(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .weight(1f)
-                                    .sharedElement(
-                                        state = rememberSharedContentState(
-                                            key = "editing-image"
-                                        ),
-                                        animatedVisibilityScope = this@AnimatedContent
+                        Text(
+                            modifier = Modifier
+                                .align(Alignment.End)
+                                .clip(CircleShape)
+                                .clickable { onAction(ImageEditScreen.Action.Save) }
+                                .padding(4.dp),
+                            text = "Save",
+                            fontSize = 16.sp,
+                        )
+                        Image(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .weight(1f)
+                                .sharedElement(
+                                    state = rememberSharedContentState(
+                                        key = "editing-image"
                                     ),
-                                contentScale = ContentScale.Fit,
-                                bitmap = image,
-                                contentDescription = null
-                            )
-                        }
+                                    animatedVisibilityScope = this@AnimatedContent
+                                ),
+                            contentScale = ContentScale.Fit,
+                            bitmap = state.image,
+                            contentDescription = null
+                        )
 
                         Row(
                             modifier = Modifier
@@ -184,11 +162,9 @@ private fun SuccessBody(
                                             title = { Text("Choose filter") },
                                             caretSize = TooltipDefaults.caretSize
                                         ) {
-                                            state.image?.let { image ->
-                                                Filters(image = image) {
-                                                    tooltipState.dismiss()
-                                                    onAction(ImageEditScreen.Action.OpenFilterComponent(it))
-                                                }
+                                            Filters(image = state.image) {
+                                                tooltipState.dismiss()
+                                                onAction(ImageEditScreen.Action.OpenFilterComponent(it))
                                             }
                                         }
                                     },

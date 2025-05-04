@@ -12,6 +12,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.rememberCoroutineScope
@@ -27,6 +28,7 @@ import cafe.adriel.voyager.navigator.bottomSheet.BottomSheetNavigator
 import cafe.adriel.voyager.transitions.FadeTransition
 import dagger.hilt.android.AndroidEntryPoint
 import io.tujh.imago.domain.ErrorHandler
+import io.tujh.imago.presentation.components.LocalSharedNavVisibilityScope
 import io.tujh.imago.presentation.screens.post.create.PostCreateScreen
 import io.tujh.imago.presentation.screens.signin.SignInScreen
 import kotlinx.coroutines.CoroutineScope
@@ -70,7 +72,15 @@ class MainActivity : ComponentActivity() {
                         },
                     ) {
                         // FIXME splash
-                        Navigator(PostCreateScreen()) { navigator -> FadeTransition(navigator) }
+                        Navigator(PostCreateScreen()) { navigator ->
+                            FadeTransition(navigator) {
+                                CompositionLocalProvider(
+                                    LocalSharedNavVisibilityScope provides this
+                                ) {
+                                    it.Content()
+                                }
+                            }
+                        }
                     }
                 }
             }
