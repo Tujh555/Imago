@@ -77,8 +77,7 @@ class ApiProvider {
         private val images = sizes.flatMap { (w, h) ->
             testUrls(w, h).map { url ->
                 PostImageDto(
-                    previewUrl = url,
-                    fullUrl = url,
+                    url = url,
                     originalWidth = w,
                     originalHeight = h
                 )

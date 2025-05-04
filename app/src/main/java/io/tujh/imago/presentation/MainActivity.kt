@@ -27,6 +27,7 @@ import cafe.adriel.voyager.navigator.bottomSheet.BottomSheetNavigator
 import cafe.adriel.voyager.transitions.FadeTransition
 import dagger.hilt.android.AndroidEntryPoint
 import io.tujh.imago.domain.ErrorHandler
+import io.tujh.imago.presentation.screens.post.create.PostCreateScreen
 import io.tujh.imago.presentation.screens.signin.SignInScreen
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -69,7 +70,7 @@ class MainActivity : ComponentActivity() {
                         },
                     ) {
                         // FIXME splash
-                        Navigator(SignInScreen()) { navigator -> FadeTransition(navigator) }
+                        Navigator(PostCreateScreen()) { navigator -> FadeTransition(navigator) }
                     }
                 }
             }

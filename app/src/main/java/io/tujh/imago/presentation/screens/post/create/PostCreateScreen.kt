@@ -1,6 +1,7 @@
 package io.tujh.imago.presentation.screens.post.create
 
 import android.net.Uri
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.NonRestartableComposable
@@ -11,15 +12,18 @@ import io.tujh.imago.presentation.base.StateComponent
 class PostCreateScreen : StateComponent<PostCreateScreen.Action, PostCreateScreen.State> {
     @Immutable
     data class State(
-        val photos: List<Uri> = emptyList(),
+        val photos: List<String> = emptyList(),
         val title: String = "",
+        val listState: LazyListState = LazyListState(),
     ) {
         val canPickCount = (10 - photos.size).coerceAtLeast(0)
     }
 
     sealed interface Action {
         @JvmInline
-        value class Picked(val uri: Uri) : Action
+        value class Picked(val uris: List<Uri>) : Action {
+            constructor(uri: Uri): this(listOf(uri))
+        }
 
         data class Reorder(val to: Int, val from: Int) : Action
 

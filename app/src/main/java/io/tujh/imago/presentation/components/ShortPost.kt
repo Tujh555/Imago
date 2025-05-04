@@ -4,12 +4,14 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -20,6 +22,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.ScaleFactor
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.IntSize
@@ -27,11 +30,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.unit.toSize
 import coil3.compose.AsyncImage
+import coil3.request.ImageRequest
 import com.valentinilk.shimmer.Shimmer
 import com.valentinilk.shimmer.shimmer
+import io.tujh.imago.domain.post.model.ShortPost
 import io.tujh.imago.presentation.locals.LocalFullImageLoader
-import io.tujh.imago.presentation.locals.LocalPreviewImageLoader
 import io.tujh.imago.presentation.models.ShortPostItem
+import io.tujh.imago.presentation.screens.post.list.PostShimmer
 import io.tujh.imago.presentation.theme.colors.ImagoColors
 
 private val textBackgroundBrush = Brush.verticalGradient(
@@ -60,26 +65,16 @@ fun ShortPost(
             modifier = Modifier.size(imageSize),
             contentAlignment = Alignment.Center
         ) {
-            Box(
-                modifier = Modifier
-                    .background(MaterialTheme.colorScheme.outline)
-                    .matchParentSize()
-                    .shimmer(shimmer)
-            )
+            PostShimmer(shimmer = shimmer, height = imageSize.height)
+            val url = post.url
             AsyncImage(
                 modifier = Modifier.matchParentSize(),
-                model = post.urls.second,
+                model = url.requestBuilder().build(),
                 contentDescription = null,
                 contentScale = ContentScale.FillBounds,
                 imageLoader = LocalFullImageLoader.current,
             )
         }
-
-//        BlurredImage(
-//            modifier = Modifier.size(imageSize),
-//            preview = post.urls.first,
-//            full = post.urls.second
-//        )
 
         if (post.title.isNotEmpty()) {
             Box(
@@ -103,6 +98,16 @@ fun ShortPost(
             }
         }
     }
+}
+
+@Composable
+@ReadOnlyComposable
+fun String.requestBuilder(): ImageRequest.Builder {
+    val context = LocalContext.current
+    return ImageRequest
+        .Builder(context)
+        .data(this)
+        .memoryCacheKey(this)
 }
 
 private operator fun IntSize.times(factor: ScaleFactor): Size =

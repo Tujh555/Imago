@@ -17,17 +17,15 @@ data class PostDto(
 )
 
 data class PostImageDto(
-    @SerializedName("preview_url")
-    val previewUrl: String,
-    @SerializedName("full_url")
-    val fullUrl: String,
+    @SerializedName("url")
+    val url: String,
     @SerializedName("original_width")
     val originalWidth: Int,
     @SerializedName("original_height")
     val originalHeight: Int
 )
 
-fun PostImageDto.toDomain() = PostImage(previewUrl, fullUrl, originalWidth, originalHeight)
+fun PostImageDto.toDomain() = PostImage(url, originalWidth, originalHeight)
 
 fun PostDto.toDomain() = ShortPost(
     id = id,

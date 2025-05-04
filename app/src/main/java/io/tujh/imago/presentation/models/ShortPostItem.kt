@@ -7,14 +7,14 @@ import io.tujh.imago.domain.post.model.ShortPost
 @Immutable
 data class ShortPostItem(
     val id: String,
-    val urls: Pair<String, String>,
+    val url: String,
     val originalSize: IntSize,
     val title: String
 )
 
 fun ShortPost.toUi() = ShortPostItem(
     id = id,
-    urls = firstImage.run { previewUrl to fullUrl },
+    url = firstImage.url,
     originalSize = IntSize(firstImage.originalWidth, firstImage.originalHeight),
     title = title
 )

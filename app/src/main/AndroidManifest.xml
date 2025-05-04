@@ -37,6 +37,17 @@
                 android:value="androidx.startup"
                 tools:node="remove" />
         </provider>
+        <provider
+            android:name=".data.files.AppFileProvider"
+            android:authorities="${applicationId}.imagoAppFileProvider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/paths" />
+
+        </provider>
     </application>
 
 </manifest>

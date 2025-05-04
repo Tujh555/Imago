@@ -15,7 +15,7 @@ class PostCreateModel @Inject constructor(
     override fun onAction(action: PostCreateScreen.Action) {
         when (action) {
             is PostCreateScreen.Action.Edit -> edit(action.uri, action.navigator)
-            is PostCreateScreen.Action.Picked -> picked(action.uri)
+            is PostCreateScreen.Action.Picked -> picked(action.uris)
             is PostCreateScreen.Action.Reorder -> reorder(action.from, action.to)
             is PostCreateScreen.Action.Title -> title(action.value)
         }
@@ -23,7 +23,9 @@ class PostCreateModel @Inject constructor(
 
     private fun title(value: String) = update { it.copy(title = value) }
 
-    private fun picked(uri: Uri) = update { it.copy(photos = it.photos + uri) }
+    private fun picked(uris: List<Uri>) = update {
+        it.copy(photos = it.photos + uris.map(Uri::toString))
+    }
 
     private fun edit(uri: Uri, navigator: Navigator) {
         navigator.push(ImageEditScreen(uri))
