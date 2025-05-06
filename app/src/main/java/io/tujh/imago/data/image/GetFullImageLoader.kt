@@ -16,6 +16,7 @@ class GetFullImageLoader @Inject constructor(
 ) {
     operator fun invoke(): ImageLoader {
         val memory = MemoryCache.Builder().maxSizePercent(context, 0.4)
+        // TODO disk cache
         return ImageLoader
             .Builder(context)
             .components { add(ScreenSizeInterceptor(context)) }
