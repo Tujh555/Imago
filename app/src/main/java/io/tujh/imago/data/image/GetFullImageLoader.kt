@@ -2,27 +2,39 @@ package io.tujh.imago.data.image
 
 import android.content.Context
 import coil3.ImageLoader
+import coil3.disk.DiskCache
+import coil3.disk.directory
 import coil3.memory.MemoryCache
 import coil3.request.CachePolicy
 import coil3.request.crossfade
 import dagger.hilt.android.qualifiers.ApplicationContext
 import io.tujh.imago.data.utils.ScreenSizeInterceptor
 import javax.inject.Inject
-import javax.inject.Singleton
 
-@Singleton
 class GetFullImageLoader @Inject constructor(
     @ApplicationContext private val context: Context,
 ) {
+    private val maxDiskSize = 2L * 1024 * 1024 * 1024 // 2GB
+
     operator fun invoke(): ImageLoader {
-        val memory = MemoryCache.Builder().maxSizePercent(context, 0.4)
-        // TODO disk cache
+        val memory = MemoryCache
+            .Builder()
+            .maxSizePercent(context, 0.4)
+            .build()
+        val disk = DiskCache
+            .Builder()
+            .directory(context.filesDir)
+            .maxSizePercent(0.5)
+            .maximumMaxSizeBytes(maxDiskSize)
+            .build()
+
         return ImageLoader
             .Builder(context)
             .components { add(ScreenSizeInterceptor(context)) }
             .memoryCachePolicy(CachePolicy.ENABLED)
-            .diskCachePolicy(CachePolicy.DISABLED)
-            .memoryCache(memory::build)
+            .diskCachePolicy(CachePolicy.ENABLED)
+            .memoryCache(memory)
+            .diskCache(disk)
             .crossfade(true)
             .logger(CoilLogger)
             .build()

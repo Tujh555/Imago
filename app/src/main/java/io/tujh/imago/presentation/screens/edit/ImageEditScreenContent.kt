@@ -51,10 +51,15 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.util.fastForEach
 import androidx.compose.ui.util.fastForEachIndexed
+import cafe.adriel.voyager.navigator.LocalNavigator
+import cafe.adriel.voyager.navigator.currentOrThrow
 import io.tujh.imago.R
 import io.tujh.imago.presentation.components.IconButton
 import io.tujh.imago.presentation.components.LocalSharedNavVisibilityScope
 import io.tujh.imago.presentation.components.LocalSharedTransitionScope
+import io.tujh.imago.presentation.components.applyIf
+import io.tujh.imago.presentation.components.applyWith
+import io.tujh.imago.presentation.editor.components.filters.FiltersComponent
 import io.tujh.imago.presentation.editor.components.filters.shader.ShaderFilter
 import io.tujh.imago.presentation.editor.components.filters.shader.rememberShaderFilters
 import io.tujh.imago.presentation.editor.components.scaffold.asSource
@@ -88,102 +93,121 @@ private fun SuccessBody(
     state: ImageEditScreen.State,
     onAction: (ImageEditScreen.Action) -> Unit
 ) {
-    with(LocalSharedTransitionScope.current) {
-        AnimatedContent(modifier = modifier, targetState = state.editingComponent) { editing ->
-            CompositionLocalProvider(LocalSharedNavVisibilityScope provides this) {
-                if (editing != null) {
-                    editing.Content()
-                } else {
-                    Column(Modifier.fillMaxSize()) {
-                        Text(
-                            modifier = Modifier
-                                .align(Alignment.End)
-                                .clip(CircleShape)
-                                .clickable { onAction(ImageEditScreen.Action.Save) }
-                                .padding(4.dp),
-                            text = "Save",
-                            fontSize = 16.sp,
-                        )
-                        Image(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .weight(1f)
-                                .sharedElement(
-                                    state = rememberSharedContentState(
-                                        key = "editing-image"
-                                    ),
-                                    animatedVisibilityScope = this@AnimatedContent
-                                ),
-                            contentScale = ContentScale.Fit,
-                            bitmap = state.image,
-                            contentDescription = null
-                        )
+    val sharedScope = LocalSharedTransitionScope.current
+    val navVisibilityScope = LocalSharedNavVisibilityScope.current
+    val navigator = LocalNavigator.currentOrThrow
 
-                        Row(
+    Column(modifier) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Text(
+                modifier = Modifier
+                    .clip(CircleShape)
+                    .clickable { navigator.pop() }
+                    .padding(4.dp),
+                text = "Cancel",
+                fontSize = 16.sp,
+            )
+
+            Text(
+                modifier = Modifier
+                    .clip(CircleShape)
+                    .clickable { onAction(ImageEditScreen.Action.Save) }
+                    .padding(4.dp),
+                text = "Save",
+                fontSize = 16.sp,
+            )
+        }
+        Image(
+            modifier = Modifier
+                .fillMaxWidth()
+                .weight(1f)
+                .applyWith(sharedScope) {
+                    it.sharedElement(
+                        state = rememberSharedContentState(
+                            key = state.sharedKey
+                        ),
+                        animatedVisibilityScope = navVisibilityScope
+                    )
+                },
+            contentScale = ContentScale.Fit,
+            bitmap = state.image,
+            contentDescription = null
+        )
+
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(ImagoColors.semitransparent)
+                .horizontalScroll(rememberScrollState())
+                .padding(8.dp)
+                .applyWith(navVisibilityScope) {
+                    it.animateEnterExit(
+                        enter = fadeIn() + slideInVertically { it },
+                        exit = fadeOut() + slideOutVertically { it },
+                    )
+                },
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            EditFactory.entries.fastForEachIndexed { i, factory ->
+                key(i) {
+                    IconButton(
+                        modifier = Modifier.size(48.dp),
+                        iconSource = factory.icon.asSource(),
+                        tint = Color.White,
+                        onClick = {
+                            val component = factory(
+                                bitmap = state.image,
+                                sharedKey = state.sharedKey,
+                                saver = {
+                                    onAction(ImageEditScreen.Action.Update(it))
+                                    navigator.pop()
+                                }
+                            )
+                            navigator.push(component)
+                        }
+                    )
+                }
+            }
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                val tooltipState = rememberTooltipState(isPersistent = true)
+                val scope = rememberCoroutineScope()
+                TooltipBox(
+                    positionProvider = TooltipDefaults.rememberRichTooltipPositionProvider(),
+                    tooltip = {
+                        RichTooltip(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .background(ImagoColors.semitransparent)
-                                .horizontalScroll(rememberScrollState())
-                                .padding(8.dp)
-                                .animateEnterExit(
-                                    enter = fadeIn() + slideInVertically { it },
-                                    exit = fadeOut() + slideOutVertically { it },
-                                ),
-                            verticalAlignment = Alignment.CenterVertically
+                                .widthIn(max = 530.dp)
+                                .padding(horizontal = 16.dp),
+                            title = { Text("Choose filter") },
+                            caretSize = TooltipDefaults.caretSize
                         ) {
-                            EditFactory.entries.fastForEachIndexed { i, component ->
-                                key(i) {
-                                    IconButton(
-                                        modifier = Modifier.size(48.dp),
-                                        iconSource = component.icon.asSource(),
-                                        tint = Color.White,
-                                        onClick = {
-                                            onAction(
-                                                ImageEditScreen.Action.SelectComponent(
-                                                    component
-                                                )
-                                            )
-                                        }
-                                    )
+                            Filters(image = state.image) {
+                                tooltipState.dismiss()
+                                val component = FiltersComponent(state.sharedKey, it, state.image) {
+                                    onAction(ImageEditScreen.Action.Update(it))
+                                    navigator.pop()
                                 }
-                            }
-
-                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                                val tooltipState = rememberTooltipState(isPersistent = true)
-                                val scope = rememberCoroutineScope()
-                                TooltipBox(
-                                    positionProvider = TooltipDefaults.rememberRichTooltipPositionProvider(),
-                                    tooltip = {
-                                        RichTooltip(
-                                            modifier = Modifier
-                                                .fillMaxWidth()
-                                                .widthIn(max = 530.dp)
-                                                .padding(horizontal = 16.dp),
-                                            title = { Text("Choose filter") },
-                                            caretSize = TooltipDefaults.caretSize
-                                        ) {
-                                            Filters(image = state.image) {
-                                                tooltipState.dismiss()
-                                                onAction(ImageEditScreen.Action.OpenFilterComponent(it))
-                                            }
-                                        }
-                                    },
-                                    state = tooltipState
-                                ) {
-                                    IconButton(
-                                        modifier = Modifier.size(48.dp),
-                                        iconSource = R.drawable.ic_filter.asSource(),
-                                        tint = Color.White,
-                                        onClick = {
-                                            scope.launch {
-                                                tooltipState.show()
-                                            }
-                                        }
-                                    )
-                                }
+                                navigator.push(component)
                             }
                         }
-                    }
+                    },
+                    state = tooltipState
+                ) {
+                    IconButton(
+                        modifier = Modifier.size(48.dp),
+                        iconSource = R.drawable.ic_filter.asSource(),
+                        tint = Color.White,
+                        onClick = {
+                            scope.launch {
+                                tooltipState.show()
+                            }
+                        }
+                    )
                 }
             }
         }

@@ -1,5 +1,6 @@
 package io.tujh.imago.presentation.editor.components.crop
 
+import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.icons.Icons
@@ -16,7 +17,12 @@ import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.LayoutDirection
+import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.bottomSheet.LocalBottomSheetNavigator
+import cafe.adriel.voyager.navigator.currentOrThrow
+import io.tujh.imago.presentation.components.LocalSharedNavVisibilityScope
+import io.tujh.imago.presentation.components.LocalSharedTransitionScope
+import io.tujh.imago.presentation.components.applyWith
 import io.tujh.imago.presentation.editor.components.EditingComponent
 import io.tujh.imago.presentation.editor.components.scaffold.EditScaffold
 import io.tujh.imago.presentation.editor.components.scaffold.alwaysActiveState
@@ -35,7 +41,8 @@ import kotlinx.coroutines.launch
 
 class CropComponent(
     private val bitmap: ImageBitmap,
-    private val listener: EditingComponent.FinishListener
+    private val sharedKey: String,
+    private val saver: EditingComponent.Saver
 ) : EditingComponent {
     private val cropAgent = CropAgent()
     private var cropState: CropState? = null
@@ -55,7 +62,7 @@ class CropComponent(
         val state = cropState
         val scaledImage = scaledBitmap
         if (state == null || scaledImage == null) {
-            listener.save(bitmap)
+            saver(bitmap)
             return
         }
 
@@ -73,7 +80,7 @@ class CropComponent(
             } else {
                 cropped
             }
-            listener.save(resized)
+            saver(resized)
         }
     }
 
@@ -85,16 +92,18 @@ class CropComponent(
         onPropertiesChanged = { properties = it }
     )
 
+    @OptIn(ExperimentalSharedTransitionApi::class)
     @Composable
     override fun Content() {
         val scope = rememberCoroutineScope()
         val density = LocalDensity.current
         val bottomSheetNavigator = LocalBottomSheetNavigator.current
         Box(modifier = Modifier.fillMaxSize()) {
+            val navigator = LocalNavigator.currentOrThrow
             EditScaffold(
                 modifier = Modifier.fillMaxSize(),
                 buttons = controlButtons(
-                    close = listener::close,
+                    close = navigator::pop,
                     save = { save(scope, density) },
                     central = {
                         button(Icons.Filled.Settings) {
@@ -107,6 +116,14 @@ class CropComponent(
                 ),
             ) {
                 ImageCropper(
+                    modifier = Modifier.applyWith(LocalSharedTransitionScope.current) {
+                        it.sharedElement(
+                            state = rememberSharedContentState(
+                                key = sharedKey
+                            ),
+                            animatedVisibilityScope = LocalSharedNavVisibilityScope.current
+                        )
+                    },
                     imageBitmap = bitmap,
                     cropProperties = properties,
                     cropStyle = style,

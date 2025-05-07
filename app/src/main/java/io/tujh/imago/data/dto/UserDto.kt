@@ -12,16 +12,7 @@ data class UserDto(
     val name: String,
     @SerializedName("email")
     val email: String
-) {
-    companion object {
-        val unknown = UserDto(
-            id = "",
-            avatar = null,
-            name = "unknown",
-            email = ""
-        )
-    }
-}
+)
 
 fun UserDto.toDomain() = User(id, avatar, name, email)
 

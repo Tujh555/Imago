@@ -98,7 +98,7 @@ class ApiProvider {
         private fun nextPage(size: Int) = List(size) {
             PostDto(
                 id = UUID.randomUUID().toString(),
-                image = images[(size + it) % images.size],
+                images = listOf(images[(size + it) % images.size]),
                 title = "Title #${it}",
                 createdAt = Instant.now().toString()
             )

@@ -8,9 +8,5 @@ import io.tujh.imago.presentation.base.sub.SubComponent
 @Stable
 interface EditingComponent : Screen {
     @Stable
-    interface FinishListener {
-        fun save(bitmap: ImageBitmap)
-
-        fun close()
-    }
+    fun interface Saver : (ImageBitmap) -> Unit
 }

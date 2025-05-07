@@ -86,6 +86,7 @@ import coil3.compose.AsyncImage
 import io.tujh.imago.R
 import io.tujh.imago.presentation.components.LocalSharedNavVisibilityScope
 import io.tujh.imago.presentation.components.LocalSharedTransitionScope
+import io.tujh.imago.presentation.components.applyWith
 import io.tujh.imago.presentation.components.end
 import io.tujh.imago.presentation.components.move
 import io.tujh.imago.presentation.components.rememberReorderHapticFeedback
@@ -208,10 +209,19 @@ private fun Images(
                         }
                     ) {
                         val navigator = LocalNavigator.currentOrThrow
+                        val sharedKey = "editing-image-$index"
                         AsyncImage(
                             modifier = Modifier
                                 .fillMaxHeight()
                                 .widthIn(max = width)
+                                .applyWith(LocalSharedTransitionScope.current) {
+                                    it.sharedElement(
+                                        state = rememberSharedContentState(
+                                            key = sharedKey
+                                        ),
+                                        animatedVisibilityScope = LocalSharedNavVisibilityScope.current
+                                    )
+                                }
                                 .semantics {
                                     customActions = listOf(
                                         CustomAccessibilityAction(
@@ -254,10 +264,7 @@ private fun Images(
                                 .clearAndSetSemantics { }
                                 .clickable {
                                     onAction(
-                                        PostCreateScreen.Action.Edit(
-                                            uri,
-                                            navigator
-                                        )
+                                        PostCreateScreen.Action.Edit(sharedKey, uri, navigator)
                                     )
                                 },
                             contentDescription = null,

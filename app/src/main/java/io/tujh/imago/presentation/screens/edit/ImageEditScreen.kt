@@ -7,8 +7,6 @@ import androidx.compose.runtime.NonRestartableComposable
 import androidx.compose.ui.graphics.ImageBitmap
 import cafe.adriel.voyager.hilt.getScreenModel
 import io.tujh.imago.presentation.base.StateComponent
-import io.tujh.imago.presentation.editor.components.EditingComponent
-import io.tujh.imago.presentation.editor.components.filters.shader.ShaderFilter
 
 class ImageEditScreen(
     private val sharedKey: String,
@@ -17,10 +15,7 @@ class ImageEditScreen(
 ) : StateComponent<ImageEditScreen.Action, ImageEditScreen.State> {
     sealed interface Action {
         @JvmInline
-        value class SelectComponent(val components: EditFactory) : Action
-
-        @JvmInline
-        value class OpenFilterComponent(val filter: ShaderFilter) : Action
+        value class Update(val bitmap: ImageBitmap) : Action
 
         data object Save : Action
     }
@@ -28,8 +23,7 @@ class ImageEditScreen(
     @Immutable
     data class State(
         val sharedKey: String,
-        val image: ImageBitmap,
-        val editingComponent: EditingComponent? = null
+        val image: ImageBitmap
     )
 
     @Composable

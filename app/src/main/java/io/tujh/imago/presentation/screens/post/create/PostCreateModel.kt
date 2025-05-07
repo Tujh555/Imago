@@ -21,7 +21,7 @@ class PostCreateModel @Inject constructor(
 
     override fun onAction(action: PostCreateScreen.Action) {
         when (action) {
-            is PostCreateScreen.Action.Edit -> edit(action.uri, action.navigator)
+            is PostCreateScreen.Action.Edit -> edit(action.key, action.uri, action.navigator)
             is PostCreateScreen.Action.Picked -> picked(action.uris)
             is PostCreateScreen.Action.Reorder -> reorder(action.from, action.to)
             is PostCreateScreen.Action.Title -> title(action.value)
@@ -37,11 +37,11 @@ class PostCreateModel @Inject constructor(
         it.copy(photos = it.photos + uris.map(Uri::toString))
     }
 
-    private fun edit(uri: String, navigator: Navigator) {
+    private fun edit(sharedKey: String, uri: String, navigator: Navigator) {
         imageLoader.memoryCache?.let { cache ->
             val bitmapImage = (cache[MemoryCache.Key(uri)]?.image) as? BitmapImage
             bitmapImage?.bitmap?.let { bitmap ->
-                val screen = ImageEditScreen(uri, bitmap.asImageBitmap()) { edited ->
+                val screen = ImageEditScreen(sharedKey, bitmap.asImageBitmap()) { edited ->
                     update {
                         it.copy(
                             photos = it.photos.map { element ->

@@ -24,6 +24,8 @@ import androidx.compose.ui.graphics.layer.drawLayer
 import androidx.compose.ui.graphics.rememberGraphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.onSizeChanged
+import cafe.adriel.voyager.navigator.LocalNavigator
+import cafe.adriel.voyager.navigator.currentOrThrow
 import io.tujh.imago.presentation.components.LocalSharedNavVisibilityScope
 import io.tujh.imago.presentation.components.LocalSharedTransitionScope
 import io.tujh.imago.presentation.editor.components.EditingComponent
@@ -35,9 +37,10 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class FiltersComponent(
+    private val sharedKey: String,
     private val filter: ShaderFilter,
     private val bitmap: ImageBitmap,
-    private val listener: EditingComponent.FinishListener
+    private val saver: EditingComponent.Saver
 ) : EditingComponent {
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     @OptIn(ExperimentalSharedTransitionApi::class)
@@ -45,12 +48,13 @@ class FiltersComponent(
     override fun Content() {
         val scope = rememberCoroutineScope()
         val graphicsLayer = rememberGraphicsLayer()
+        val navigator = LocalNavigator.currentOrThrow
         val buttons = controlButtons(
-            close = listener::close,
+            close = navigator::pop,
             save = {
                 scope.launch(Dispatchers.Default) {
                     val edited = graphicsLayer.toImageBitmap()
-                    listener.save(edited)
+                    saver(edited)
                 }
             },
         )
@@ -64,7 +68,7 @@ class FiltersComponent(
                         Modifier
                             .sharedElement(
                                 state = rememberSharedContentState(
-                                    key = "editing-image"
+                                    key = sharedKey
                                 ),
                                 animatedVisibilityScope = LocalSharedNavVisibilityScope.current
                             )

@@ -4,11 +4,9 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.ReadOnlyComposable
@@ -32,8 +30,6 @@ import androidx.compose.ui.unit.toSize
 import coil3.compose.AsyncImage
 import coil3.request.ImageRequest
 import com.valentinilk.shimmer.Shimmer
-import com.valentinilk.shimmer.shimmer
-import io.tujh.imago.domain.post.model.ShortPost
 import io.tujh.imago.presentation.locals.LocalFullImageLoader
 import io.tujh.imago.presentation.models.ShortPostItem
 import io.tujh.imago.presentation.screens.post.list.PostShimmer

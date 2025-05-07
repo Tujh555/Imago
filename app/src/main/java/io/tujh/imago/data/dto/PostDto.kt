@@ -2,14 +2,14 @@ package io.tujh.imago.data.dto
 
 import com.google.gson.annotations.SerializedName
 import io.tujh.imago.domain.post.model.PostImage
-import io.tujh.imago.domain.post.model.ShortPost
+import io.tujh.imago.domain.post.model.Post
 import io.tujh.imago.domain.utils.toInstantOrNow
 
 data class PostDto(
     @SerializedName("id")
     val id: String,
-    @SerializedName("first_image")
-    val image: PostImageDto,
+    @SerializedName("images")
+    val images: List<PostImageDto>,
     @SerializedName("title")
     val title: String,
     @SerializedName("created_at")
@@ -27,9 +27,9 @@ data class PostImageDto(
 
 fun PostImageDto.toDomain() = PostImage(url, originalWidth, originalHeight)
 
-fun PostDto.toDomain() = ShortPost(
+fun PostDto.toDomain() = Post(
     id = id,
-    firstImage = image.toDomain(),
+    images = images.map(PostImageDto::toDomain),
     title = title,
     createdAt = createdAt.toInstantOrNow()
 )

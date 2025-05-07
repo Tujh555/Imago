@@ -11,12 +11,3 @@ data class ZoomData(
     val pan: Offset = Offset.Zero,
     val rotation: Float = 0f
 )
-
-@Immutable
-data class EnhancedZoomData(
-    val zoom: Float = 1f,
-    val pan: Offset = Offset.Zero,
-    val rotation: Float = 0f,
-    val imageRegion: Rect,
-    val visibleRegion: IntRect
-)

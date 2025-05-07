@@ -36,7 +36,7 @@ class PostCreateScreen : StateComponent<PostCreateScreen.Action, PostCreateScree
             val from get() = unpackInt2(packed)
         }
 
-        data class Edit(val uri: String, val navigator: Navigator) : Action
+        data class Edit(val key: String, val uri: String, val navigator: Navigator) : Action
 
         @JvmInline
         value class Remove(val uri: String) : Action

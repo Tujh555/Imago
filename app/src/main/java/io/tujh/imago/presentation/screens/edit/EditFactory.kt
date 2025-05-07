@@ -8,12 +8,12 @@ import io.tujh.imago.presentation.editor.components.draw.DrawComponent
 
 enum class EditFactory(
     val icon: Int,
-    private val factory: (ImageBitmap, EditingComponent.FinishListener) -> EditingComponent
+    private val factory: (ImageBitmap, String, EditingComponent.Saver) -> EditingComponent
 ) {
     Draw(R.drawable.ic_pencil, ::DrawComponent),
     Crop(R.drawable.ic_crop, ::CropComponent);
 
-    operator fun invoke(bitmap: ImageBitmap, listener: EditingComponent.FinishListener) =
-        factory(bitmap, listener)
+    operator fun invoke(bitmap: ImageBitmap, sharedKey: String, saver: EditingComponent.Saver) =
+        factory(bitmap, sharedKey, saver)
 }
 

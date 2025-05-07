@@ -31,10 +31,13 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.util.fastForEach
 import androidx.compose.ui.zIndex
 import cafe.adriel.voyager.core.screen.uniqueScreenKey
+import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.bottomSheet.LocalBottomSheetNavigator
+import cafe.adriel.voyager.navigator.currentOrThrow
 import io.tujh.imago.R
 import io.tujh.imago.presentation.components.LocalSharedNavVisibilityScope
 import io.tujh.imago.presentation.components.LocalSharedTransitionScope
+import io.tujh.imago.presentation.components.applyWith
 import io.tujh.imago.presentation.editor.components.EditingComponent
 import io.tujh.imago.presentation.editor.components.draw.brush.DrawBrush
 import io.tujh.imago.presentation.editor.components.scaffold.EditScaffold
@@ -49,7 +52,8 @@ import kotlinx.coroutines.launch
 
 class DrawComponent(
     private val bitmap: ImageBitmap,
-    private val listener: EditingComponent.FinishListener
+    private val sharedKey: String,
+    private val saver: EditingComponent.Saver
 ) : EditingComponent {
     private var motionEvent by mutableStateOf<MotionEvent>(MotionEvent.Unspecified)
     private var lastPosition by mutableStateOf(Offset.Unspecified)
@@ -85,12 +89,13 @@ class DrawComponent(
                 .collect { brushFactory = it }
         }
 
+        val navigator = LocalNavigator.currentOrThrow
         val buttons = controlButtons(
-            close = listener::close,
+            close = navigator::pop,
             save = {
                 scope.launch(Dispatchers.Default) {
                     val edited = graphicsLayer.toImageBitmap()
-                    listener.save(edited)
+                    saver(edited)
                 }
             },
             central = {
@@ -116,66 +121,66 @@ class DrawComponent(
             modifier = Modifier.fillMaxSize(),
             buttons = buttons,
         ) {
-            with(LocalSharedTransitionScope.current) {
-                ImageWithConstraints(
-                    modifier = Modifier
-                        .sharedElement(
+            ImageWithConstraints(
+                modifier = Modifier
+                    .applyWith(LocalSharedTransitionScope.current) {
+                        it.sharedElement(
                             state = rememberSharedContentState(
-                                key = "editing-image"
+                                key = sharedKey
                             ),
                             animatedVisibilityScope = LocalSharedNavVisibilityScope.current
                         )
-                        .drawWithContent {
-                            graphicsLayer.record {
-                                this@drawWithContent.drawContent()
-                            }
-                            drawLayer(graphicsLayer)
-                        },
-                    imageBitmap = bitmap,
-                    contentScale = ContentScale.Fit,
+                    }
+                    .drawWithContent {
+                        graphicsLayer.record {
+                            this@drawWithContent.drawContent()
+                        }
+                        drawLayer(graphicsLayer)
+                    },
+                imageBitmap = bitmap,
+                contentScale = ContentScale.Fit,
+            ) {
+                Canvas(
+                    modifier = Modifier
+                        .size(imageWidth, imageHeight)
+                        .clipToBounds()
+                        .motionEvents { motionEvent = it }
+                        .graphicsLayer { compositingStrategy = CompositingStrategy.Offscreen }
                 ) {
-                    Canvas(
-                        modifier = Modifier
-                            .size(imageWidth, imageHeight)
-                            .clipToBounds()
-                            .motionEvents { motionEvent = it }
-                            .graphicsLayer { compositingStrategy = CompositingStrategy.Offscreen }
-                    ) {
-                        when (motionEvent) {
-                            is MotionEvent.Down -> {
-                                if (currentBrush == null) {
-                                    currentBrush = brushFactory(
-                                        startPosition = motionEvent.position,
-                                        size = settings.size,
-                                        color = settings.selectedColor,
-                                        opacity = settings.opacity
-                                    )
-                                }
-                                lastPosition = motionEvent.position
+                    when (motionEvent) {
+                        is MotionEvent.Down -> {
+                            if (currentBrush == null) {
+                                currentBrush = brushFactory(
+                                    startPosition = motionEvent.position,
+                                    size = settings.size,
+                                    color = settings.selectedColor,
+                                    opacity = settings.opacity
+                                )
                             }
-
-                            is MotionEvent.Move -> {
-                                currentBrush?.move(lastPosition, motionEvent.position)
-                                lastPosition = motionEvent.position
-                            }
-
-                            is MotionEvent.Up -> {
-                                val brush = currentBrush
-                                currentBrush = null
-                                if (brush != null) {
-                                    brush.dismiss(motionEvent.position)
-                                    brushes.add(brush)
-                                }
-                                motionEvent = MotionEvent.Unspecified
-                                lastPosition = motionEvent.position
-                            }
-
-                            MotionEvent.Unspecified -> Unit
+                            lastPosition = motionEvent.position
                         }
-                        drawIntoCanvas { canvas ->
-                            brushes.fastForEach { brush -> brush.draw(canvas) }
-                            currentBrush?.draw(canvas)
+
+                        is MotionEvent.Move -> {
+                            currentBrush?.move(lastPosition, motionEvent.position)
+                            lastPosition = motionEvent.position
                         }
+
+                        is MotionEvent.Up -> {
+                            val brush = currentBrush
+                            currentBrush = null
+                            if (brush != null) {
+                                brush.dismiss(motionEvent.position)
+                                brushes.add(brush)
+                            }
+                            motionEvent = MotionEvent.Unspecified
+                            lastPosition = motionEvent.position
+                        }
+
+                        MotionEvent.Unspecified -> Unit
+                    }
+                    drawIntoCanvas { canvas ->
+                        brushes.fastForEach { brush -> brush.draw(canvas) }
+                        currentBrush?.draw(canvas)
                     }
                 }
             }

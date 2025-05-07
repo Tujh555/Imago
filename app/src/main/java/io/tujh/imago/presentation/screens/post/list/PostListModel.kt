@@ -1,13 +1,11 @@
 package io.tujh.imago.presentation.screens.post.list
 
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.ui.util.fastMap
 import cafe.adriel.voyager.core.model.screenModelScope
 import io.tujh.imago.domain.ErrorHandler
 import io.tujh.imago.domain.paging.paginator.LoadState
-import io.tujh.imago.domain.post.model.ShortPost
-import io.tujh.imago.domain.post.uc.ShortPostPager
-import io.tujh.imago.domain.utils.withMinDelay
+import io.tujh.imago.domain.post.model.Post
+import io.tujh.imago.domain.post.uc.AllPostPager
 import io.tujh.imago.presentation.base.StateHolder
 import io.tujh.imago.presentation.base.StateModel
 import io.tujh.imago.presentation.base.io
@@ -17,7 +15,7 @@ import kotlinx.coroutines.flow.onEach
 import javax.inject.Inject
 
 class PostListModel @Inject constructor(
-    pager: ShortPostPager,
+    pager: AllPostPager,
     private val errorHandler: ErrorHandler
 ) : StateModel<PostListScreen.Action, PostListScreen.State>,
     StateHolder<PostListScreen.State> by StateHolder(PostListScreen.State()) {
@@ -46,7 +44,7 @@ class PostListModel @Inject constructor(
                 }
                 update {
                     it.copy(
-                        posts = elements.fastMap(ShortPost::toUi),
+                        posts = elements.fastMap(Post::toUi),
                         loadState = loadState,
                         isRefreshing = false,
                         isEmpty = loadState == LoadState.Loaded && elements.isEmpty()

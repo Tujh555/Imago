@@ -26,8 +26,7 @@ class ImageEditScreenModel @AssistedInject constructor(
     @Assisted private val onEdited: @JvmSuppressWildcards (Uri) -> Unit,
     private val saveBitmap: SaveBitmap
 ) : StateModel<ImageEditScreen.Action, ImageEditScreen.State>,
-    StateHolder<ImageEditScreen.State> by StateHolder(ImageEditScreen.State(sharedKey, bitmap)),
-    EditingComponent.FinishListener {
+    StateHolder<ImageEditScreen.State> by StateHolder(ImageEditScreen.State(sharedKey, bitmap)) {
 
     @AssistedFactory
     interface Factory : ScreenModelFactory,
@@ -35,17 +34,8 @@ class ImageEditScreenModel @AssistedInject constructor(
 
     override fun onAction(action: ImageEditScreen.Action) {
         when (action) {
-            is ImageEditScreen.Action.SelectComponent -> selectComponent(action.components)
-            is ImageEditScreen.Action.OpenFilterComponent -> {
-                state.value.image.let { image ->
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                        val component = FiltersComponent(action.filter, image, this)
-                        update { it.copy(editingComponent = component) }
-                    }
-                }
-            }
-
             ImageEditScreen.Action.Save -> save()
+            is ImageEditScreen.Action.Update -> updateImage(action.bitmap)
         }
     }
 
@@ -58,18 +48,7 @@ class ImageEditScreenModel @AssistedInject constructor(
         }
     }
 
-    override fun save(bitmap: ImageBitmap) {
-        update { it.copy(image = bitmap, editingComponent = null) }
-    }
-
-    override fun close() {
-        update { it.copy(editingComponent = null) }
-    }
-
-    private fun selectComponent(factory: EditFactory) {
-        state.value.image.let { image ->
-            val component = factory(image, this)
-            update { it.copy(editingComponent = component) }
-        }
+    private fun updateImage(bitmap: ImageBitmap) {
+        update { it.copy(image = bitmap) }
     }
 }
