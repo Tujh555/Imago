@@ -93,6 +93,7 @@ dependencies {
     implementation(libs.compose.shimmer)
     implementation(libs.reorderable)
     ksp(libs.hilt.compiler)
+    ksp(libs.androidx.hilt.compiler)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
 }

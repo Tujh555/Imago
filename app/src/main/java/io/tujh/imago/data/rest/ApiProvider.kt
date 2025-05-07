@@ -123,7 +123,8 @@ class ApiProvider {
             title: RequestBody,
             images: List<MultipartBody.Part>
         ): Result<Unit> {
-            TODO("Not yet implemented")
+            delay(50_000)
+            return Result.success(Unit)
         }
 
     }

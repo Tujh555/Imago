@@ -20,6 +20,7 @@ class PostCreateScreen : StateComponent<PostCreateScreen.Action, PostCreateScree
         val listState: LazyListState = LazyListState(),
     ) {
         val canPickCount = (10 - photos.size).coerceAtLeast(0)
+        val createVisible = photos.isNotEmpty()
     }
 
     sealed interface Action {
@@ -43,6 +44,9 @@ class PostCreateScreen : StateComponent<PostCreateScreen.Action, PostCreateScree
 
         @JvmInline
         value class Title(val value: String) : Action
+
+        @JvmInline
+        value class Create(val navigator: Navigator) : Action
     }
 
     @Composable

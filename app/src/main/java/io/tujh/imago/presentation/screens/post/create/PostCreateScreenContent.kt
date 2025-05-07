@@ -45,9 +45,11 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RichTooltip
@@ -94,6 +96,7 @@ import io.tujh.imago.presentation.components.requestBuilder
 import io.tujh.imago.presentation.components.start
 import io.tujh.imago.presentation.locals.LocalFullImageLoader
 import io.tujh.imago.presentation.locals.LocalUriProvider
+import io.tujh.imago.presentation.theme.colors.ImagoColors
 import kotlinx.coroutines.launch
 import sh.calvin.reorderable.ReorderableItem
 import sh.calvin.reorderable.rememberReorderableLazyListState
@@ -161,6 +164,27 @@ fun PostCreateScreenContent(
             }
 
             AddImageButton(state.canPickCount, onAction)
+        }
+
+        val navigator = LocalNavigator.currentOrThrow
+        AnimatedVisibility(
+            modifier = Modifier.align(Alignment.BottomEnd).padding(end = 24.dp, bottom = 24.dp),
+            visible = state.createVisible,
+            enter = fadeIn(),
+            exit = fadeOut()
+        ) {
+            FloatingActionButton(
+                onClick = { onAction(PostCreateScreen.Action.Create(navigator)) },
+                shape = CircleShape,
+                containerColor = ImagoColors.red,
+                contentColor = Color.White
+            ) {
+                Icon(
+                    modifier = Modifier.size(32.dp),
+                    imageVector = Icons.Filled.Check,
+                    contentDescription = null
+                )
+            }
         }
 
         InputDialog(
