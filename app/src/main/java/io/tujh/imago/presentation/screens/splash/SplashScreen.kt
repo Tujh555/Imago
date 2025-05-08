@@ -30,6 +30,7 @@ import cafe.adriel.voyager.navigator.currentOrThrow
 import io.tujh.imago.R
 import io.tujh.imago.presentation.base.StateComponent
 import io.tujh.imago.presentation.screens.post.list.PostListScreen
+import io.tujh.imago.presentation.screens.post.tab.PostTabsScreen
 import io.tujh.imago.presentation.screens.signin.SignInScreen
 
 class SplashScreen : StateComponent<Nothing, Boolean?> {
@@ -66,7 +67,7 @@ class SplashScreen : StateComponent<Nothing, Boolean?> {
 
         LaunchedEffect(state) {
             when (state) {
-                true -> { navigator.replace(PostListScreen()) }
+                true -> { navigator.replace(PostTabsScreen()) }
                 false -> navigator.replace(SignInScreen())
                 null -> Unit
             }

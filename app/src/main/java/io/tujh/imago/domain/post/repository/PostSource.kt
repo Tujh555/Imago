@@ -6,6 +6,10 @@ import java.time.Instant
 
 interface PostSource : PageableSource<Instant, Post> {
     interface Factory {
-        operator fun invoke(limit: Int) : PostSource
+        operator fun invoke(limit: Int): PostSource
     }
+
+    interface AllFactory : Factory
+    interface OwnFactory : Factory
+    interface FavoritesFactory : Factory
 }

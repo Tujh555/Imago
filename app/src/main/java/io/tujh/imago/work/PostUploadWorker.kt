@@ -6,6 +6,7 @@ import android.content.Context
 import android.content.pm.ServiceInfo
 import android.net.Uri
 import android.os.Build
+import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.hilt.work.HiltWorker
 import androidx.work.Constraints
@@ -38,9 +39,10 @@ class PostUploadWorker @AssistedInject constructor(
 
     override suspend fun doWork(): Result {
         val (title, uris) = inputData.parse()
+
         setForeground(buildInfo())
+
         val res = withContext(Dispatchers.IO) {
-            delay(100000)
             repository.create(title, uris)
         }
 
@@ -64,7 +66,7 @@ class PostUploadWorker @AssistedInject constructor(
             .createCancelPendingIntent(id)
 
         val notification = NotificationCompat.Builder(applicationContext, CHANNEL_ID)
-            .setSmallIcon(R.drawable.ic_launcher_atom_foreground) // TODO check
+            .setSmallIcon(R.drawable.ic_launcher_atom_foreground)
             .setContentTitle(title)
             .setTicker(title)
             .setOngoing(true)

@@ -35,7 +35,6 @@ class PostCreateModel @Inject constructor(
     }
 
     private fun create(navigator: Navigator) {
-        // TODO запросить разрешение на показ уведомлений
         state.value.run {
             PostUploadWorker.start(context, title, photos.map(Uri::parse))
         }

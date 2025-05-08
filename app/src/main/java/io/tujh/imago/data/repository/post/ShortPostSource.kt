@@ -12,15 +12,41 @@ import io.tujh.imago.domain.post.model.Post
 import io.tujh.imago.domain.post.repository.PostSource
 import java.time.Instant
 
-class ShortPostSource @AssistedInject constructor(
+class AllSource @AssistedInject constructor(
     @Assisted private val limit: @JvmSuppressWildcards Int,
-    private val api: PostApi,
+    api: PostApi,
 ) : PostSource, PageableSource<Instant, Post> by StateSource(
     getKey = Post::createdAt,
-    doFetch = { key -> api.short(limit, key.toString()).map { it.map(PostDto::toDomain) } },
+    doFetch = { key -> api.all(limit, key.toString()).map { it.map(PostDto::toDomain) } },
 ) {
     @AssistedFactory
-    interface Factory : PostSource.Factory {
-        override fun invoke(limit: Int): ShortPostSource
+    interface Factory : PostSource.AllFactory {
+        override fun invoke(limit: Int): AllSource
+    }
+}
+
+class OwnSource @AssistedInject constructor(
+    @Assisted private val limit: @JvmSuppressWildcards Int,
+    api: PostApi,
+) : PostSource, PageableSource<Instant, Post> by StateSource(
+    getKey = Post::createdAt,
+    doFetch = { key -> api.my(limit, key.toString()).map { it.map(PostDto::toDomain) } },
+) {
+    @AssistedFactory
+    interface Factory : PostSource.OwnFactory {
+        override fun invoke(limit: Int): OwnSource
+    }
+}
+
+class FavoritesSource @AssistedInject constructor(
+    @Assisted private val limit: @JvmSuppressWildcards Int,
+    api: PostApi,
+) : PostSource, PageableSource<Instant, Post> by StateSource(
+    getKey = Post::createdAt,
+    doFetch = { key -> api.favorites(limit, key.toString()).map { it.map(PostDto::toDomain) } },
+) {
+    @AssistedFactory
+    interface Factory : PostSource.FavoritesFactory {
+        override fun invoke(limit: Int): FavoritesSource
     }
 }

@@ -7,13 +7,21 @@ import io.tujh.imago.domain.post.repository.PostSource
 import java.time.Instant
 import javax.inject.Inject
 
-class AllPostPager @Inject constructor(
-    private val sourceFactory: PostSource.Factory
+class PostList @Inject constructor(
+    private val allFactory: PostSource.AllFactory,
+    private val ownFactory: PostSource.OwnFactory,
+    private val favoritesFactory: PostSource.FavoritesFactory
 ) {
     private val limit = 30
 
-    operator fun invoke(): PageableSourcePager<Post> {
-        val source = sourceFactory(limit)
+    fun all() = create(allFactory)
+
+    fun own() = create(ownFactory)
+
+    fun favorite() = create(favoritesFactory)
+
+    private fun create(factory: PostSource.Factory): PageableSourcePager<Post> {
+        val source = factory(limit)
         val paginator = statePaginator(
             initialKey = Instant.now(),
             limit = limit,

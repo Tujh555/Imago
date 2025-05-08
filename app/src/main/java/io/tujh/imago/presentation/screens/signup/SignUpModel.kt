@@ -16,6 +16,7 @@ import io.tujh.imago.presentation.base.StateHolder
 import io.tujh.imago.presentation.base.StateModel
 import io.tujh.imago.presentation.base.io
 import io.tujh.imago.presentation.screens.post.list.PostListScreen
+import io.tujh.imago.presentation.screens.post.tab.PostTabsScreen
 import javax.inject.Inject
 
 class SignUpModel @Inject constructor(
@@ -64,7 +65,7 @@ class SignUpModel @Inject constructor(
                 val authData = state.value.run { AuthData(email, password, name) }
                 authRepository
                     .signUp(authData)
-                    .onSuccess { navigator.replaceAll(PostListScreen()) }
+                    .onSuccess { navigator.replaceAll(PostTabsScreen()) }
                     .onFailure {
                         update { it.copy(isLoading = false) }
                         errorHandler("Something went wrong")

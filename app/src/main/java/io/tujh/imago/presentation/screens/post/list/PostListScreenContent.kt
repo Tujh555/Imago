@@ -4,30 +4,20 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.foundation.lazy.staggeredgrid.items
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FloatingActionButton
-import androidx.compose.material3.FloatingActionButtonElevation
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
@@ -35,21 +25,13 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import cafe.adriel.voyager.navigator.LocalNavigator
-import cafe.adriel.voyager.navigator.currentOrThrow
 import com.valentinilk.shimmer.Shimmer
 import com.valentinilk.shimmer.ShimmerBounds
 import com.valentinilk.shimmer.rememberShimmer
 import com.valentinilk.shimmer.shimmer
-import io.tujh.imago.R
 import io.tujh.imago.domain.paging.paginator.LoadState
-import io.tujh.imago.presentation.components.BlurredBackground
-import io.tujh.imago.presentation.components.IconButton
 import io.tujh.imago.presentation.components.ShortPost
 import io.tujh.imago.presentation.components.postShape
-import io.tujh.imago.presentation.editor.components.scaffold.asSource
-import io.tujh.imago.presentation.screens.post.create.PostCreateScreen
-import io.tujh.imago.presentation.theme.colors.ImagoColors
 
 private val shimmerHeights = (200..400 step 20).map(Int::dp).shuffled()
 
@@ -58,70 +40,40 @@ fun randomShimmerHeight() = shimmerHeights.random()
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PostListScreenContent(state: PostListScreen.State, onAction: (PostListScreen.Action) -> Unit) {
-    BlurredBackground(modifier = Modifier.fillMaxSize()) {
-        PullToRefreshBox(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(horizontal = 16.dp)
-                .systemBarsPadding(),
-            isRefreshing = state.isRefreshing,
-            onRefresh = { onAction(PostListScreen.Action.Refresh) },
-        ) {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .align(Alignment.TopCenter),
-                horizontalArrangement = Arrangement.SpaceBetween
+    PullToRefreshBox(
+        modifier = Modifier.fillMaxSize().padding(horizontal = 16.dp),
+        isRefreshing = state.isRefreshing,
+        onRefresh = { onAction(PostListScreen.Action.Refresh) },
+    ) {
+        if (state.isEmpty) {
+            Text(
+                text = "There will be something interesting here in the future.",
+                color = Color.White,
+                fontSize = 24.sp
+            )
+        } else {
+            val shimmer = rememberShimmer(ShimmerBounds.View)
+            LazyVerticalStaggeredGrid(
+                modifier = Modifier.fillMaxSize(),
+                state = state.gridState,
+                columns = StaggeredGridCells.Adaptive(180.dp),
+                reverseLayout = false,
+                verticalItemSpacing = 16.dp,
+                horizontalArrangement = Arrangement.spacedBy(16.dp),
             ) {
-                IconButton(iconSource = R.drawable.ic_profile.asSource(), padding = 10.dp) { }
-                IconButton(iconSource = Icons.Outlined.FavoriteBorder.asSource(), padding = 10.dp) { }
-            }
+                items(state.posts, key = { it.id }, contentType = { "post" }) { post ->
+                    ShortPost(
+                        modifier = Modifier.fillMaxWidth(),
+                        post = post,
+                        shimmer = shimmer
+                    )
+                }
 
-            if (state.isEmpty) {
-                Text(
-                    text = "There will be something interesting here in the future.",
-                    color = Color.White,
-                    fontSize = 24.sp
-                )
-            } else {
-                val shimmer = rememberShimmer(ShimmerBounds.View)
-                LazyVerticalStaggeredGrid(
-                    modifier = Modifier.fillMaxSize(),
-                    state = state.gridState,
-                    columns = StaggeredGridCells.Adaptive(180.dp),
-                    reverseLayout = false,
-                    verticalItemSpacing = 16.dp,
-                    horizontalArrangement = Arrangement.spacedBy(16.dp),
-                ) {
-                    items(state.posts, key = { it.id }, contentType = { "post" }) { post ->
-                        ShortPost(
-                            modifier = Modifier.fillMaxWidth(),
-                            post = post,
-                            shimmer = shimmer
-                        )
-                    }
-
-                    if (state.loadState.isLoading()) {
-                        items(30, contentType = { "shimmer" }) {
-                            PostShimmer(Modifier, shimmer, randomShimmerHeight())
-                        }
+                if (state.loadState.isLoading()) {
+                    items(30, contentType = { "shimmer" }) {
+                        PostShimmer(Modifier, shimmer, randomShimmerHeight())
                     }
                 }
-            }
-
-            val navigator = LocalNavigator.currentOrThrow
-            FloatingActionButton(
-                onClick = { navigator.push(PostCreateScreen()) },
-                modifier = Modifier.align(Alignment.BottomEnd).padding(end = 8.dp, bottom = 24.dp),
-                shape = CircleShape,
-                containerColor = ImagoColors.red,
-                contentColor = Color.White
-            ) {
-                Icon(
-                    modifier = Modifier.size(32.dp),
-                    imageVector = Icons.Filled.Add,
-                    contentDescription = null
-                )
             }
         }
     }

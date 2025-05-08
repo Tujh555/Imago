@@ -3,6 +3,7 @@ package io.tujh.imago.presentation.screens.post.create
 import android.Manifest
 import android.content.pm.PackageManager
 import android.net.Uri
+import android.os.Build
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
@@ -167,8 +168,11 @@ fun PostCreateScreenContent(
         }
 
         val navigator = LocalNavigator.currentOrThrow
+
         AnimatedVisibility(
-            modifier = Modifier.align(Alignment.BottomEnd).padding(end = 24.dp, bottom = 24.dp),
+            modifier = Modifier
+                .align(Alignment.BottomEnd)
+                .padding(end = 24.dp, bottom = 24.dp),
             visible = state.createVisible,
             enter = fadeIn(),
             exit = fadeOut()

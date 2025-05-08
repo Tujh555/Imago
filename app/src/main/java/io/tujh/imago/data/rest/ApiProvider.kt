@@ -87,11 +87,11 @@ class ApiProvider {
         private fun testUrls(w: Int, h: Int): List<String> {
             val size = "${w}x${h}"
             return listOf(
-                "https://dummyimage.com/$size/ffffff/000000&text=$size-Black",
-                "https://dummyimage.com/$size/ffffff/ff0000&text=$size-Red",
-                "https://dummyimage.com/$size/ffffff/00ff00&text=$size-Green",
-                "https://dummyimage.com/$size/ffffff/0000ff&text=$size-Blue",
-                "https://dummyimage.com/$size/ffffff/ffff00&text=$size-Yellow",
+                "https://dummyimage.com/$size/000000/000000&text=$size-Black",
+                "https://dummyimage.com/$size/000000/ff0000&text=$size-Red",
+                "https://dummyimage.com/$size/000000/00ff00&text=$size-Green",
+                "https://dummyimage.com/$size/000000/0000ff&text=$size-Blue",
+                "https://dummyimage.com/$size/000000/ffff00&text=$size-Yellow",
             )
         }
 
@@ -103,12 +103,14 @@ class ApiProvider {
                 createdAt = Instant.now().toString()
             )
         }
-        private var shortCount = 0
+        private var allCnt = 0
+        private var myCnt = 0
+        private var favCnt = 0
 
-        override suspend fun short(limit: Int, cursor: String): Result<List<PostDto>> {
+        override suspend fun all(limit: Int, cursor: String): Result<List<PostDto>> {
             delay(1500)
-            shortCount++
-            if (shortCount == 5) {
+            allCnt++
+            if (allCnt == 5) {
                 return nextPage(limit - 1).let { Result.success(it) }
             }
 
@@ -116,7 +118,23 @@ class ApiProvider {
         }
 
         override suspend fun my(limit: Int, cursor: String): Result<List<PostDto>> {
-            TODO("Not yet implemented")
+            delay(1500)
+            myCnt++
+            if (myCnt == 5) {
+                return nextPage(limit - 1).let { Result.success(it) }
+            }
+
+            return nextPage(limit).let { Result.success(it) }
+        }
+
+        override suspend fun favorites(limit: Int, cursor: String): Result<List<PostDto>> {
+            delay(1500)
+            favCnt++
+            if (favCnt == 5) {
+                return nextPage(limit - 1).let { Result.success(it) }
+            }
+
+            return nextPage(limit).let { Result.success(it) }
         }
 
         override suspend fun add(

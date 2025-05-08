@@ -9,6 +9,7 @@ import io.tujh.imago.presentation.base.StateHolder
 import io.tujh.imago.presentation.base.StateModel
 import io.tujh.imago.presentation.base.io
 import io.tujh.imago.presentation.screens.post.list.PostListScreen
+import io.tujh.imago.presentation.screens.post.tab.PostTabsScreen
 import javax.inject.Inject
 
 class SignInModel @Inject constructor(
@@ -31,7 +32,7 @@ class SignInModel @Inject constructor(
                 }
 
                 result
-                    .onSuccess { action.navigator.replaceAll(PostListScreen()) }
+                    .onSuccess { action.navigator.replaceAll(PostTabsScreen()) }
                     .onFailure {
                         update { it.copy(isLoading = false) }
                         errorHandler("Failed to sign in")

@@ -14,8 +14,10 @@ import io.tujh.imago.data.image.Loader
 import io.tujh.imago.data.image.Saver
 import io.tujh.imago.data.repository.auth.AuthRepositoryImpl
 import io.tujh.imago.data.repository.image.DrawRepository
+import io.tujh.imago.data.repository.post.AllSource
+import io.tujh.imago.data.repository.post.FavoritesSource
+import io.tujh.imago.data.repository.post.OwnSource
 import io.tujh.imago.data.repository.post.PostRepositoryImpl
-import io.tujh.imago.data.repository.post.ShortPostSource
 import io.tujh.imago.data.repository.user.UserFlow
 import io.tujh.imago.data.store.jsonStore
 import io.tujh.imago.data.store.stringStore
@@ -52,7 +54,13 @@ interface DataModule {
     fun auth(impl: AuthRepositoryImpl) : AuthRepository
 
     @Binds
-    fun shortPostFactory(impl: ShortPostSource.Factory): PostSource.Factory
+    fun allPostFactory(impl: AllSource.Factory): PostSource.AllFactory
+
+    @Binds
+    fun ownPostFactory(impl: OwnSource.Factory): PostSource.OwnFactory
+
+    @Binds
+    fun favoritesPostFactory(impl: FavoritesSource.Factory): PostSource.FavoritesFactory
 
     @Binds
     fun postRepositoryFactory(impl: PostRepositoryImpl): PostRepository

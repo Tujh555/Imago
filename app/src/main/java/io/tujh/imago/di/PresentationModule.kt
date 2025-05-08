@@ -12,6 +12,7 @@ import dagger.multibindings.IntoMap
 import io.tujh.imago.presentation.screens.edit.ImageEditScreenModel
 import io.tujh.imago.presentation.screens.post.create.PostCreateModel
 import io.tujh.imago.presentation.screens.post.list.PostListModel
+import io.tujh.imago.presentation.screens.post.tab.PostTabsModel
 import io.tujh.imago.presentation.screens.signin.SignInModel
 import io.tujh.imago.presentation.screens.signup.SignUpModel
 import io.tujh.imago.presentation.screens.splash.SplashModel
@@ -41,11 +42,16 @@ interface PresentationModule {
 
     @Binds
     @IntoMap
-    @ScreenModelKey(PostListModel::class)
-    fun postList(model: PostListModel) : ScreenModel
+    @ScreenModelFactoryKey(PostListModel.Factory::class)
+    fun postList(factory: PostListModel.Factory) : ScreenModelFactory
 
     @Binds
     @IntoMap
     @ScreenModelKey(PostCreateModel::class)
     fun postCreate(model: PostCreateModel): ScreenModel
+
+    @Binds
+    @IntoMap
+    @ScreenModelKey(PostTabsModel::class)
+    fun postTabs(model: PostTabsModel): ScreenModel
 }

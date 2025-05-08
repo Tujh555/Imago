@@ -4,13 +4,21 @@ import androidx.compose.foundation.lazy.staggeredgrid.LazyStaggeredGridState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.NonRestartableComposable
+import cafe.adriel.voyager.core.screen.ScreenKey
+import cafe.adriel.voyager.core.screen.uniqueScreenKey
 import cafe.adriel.voyager.hilt.getScreenModel
 import io.tujh.imago.domain.paging.paginator.LoadState
 import io.tujh.imago.presentation.base.StateComponent
 import io.tujh.imago.presentation.lastVisibleItemIndex
 import io.tujh.imago.presentation.models.ShortPostItem
+import io.tujh.imago.presentation.screens.post.tab.InnerTabComponent
 
-class PostListScreen : StateComponent<PostListScreen.Action, PostListScreen.State> {
+class PostListScreen(
+    private val type: PostListType
+) : StateComponent<PostListScreen.Action, PostListScreen.State>, InnerTabComponent {
+    override val key: ScreenKey = uniqueScreenKey
+    override val title: String = type.title
+
     @Immutable
     data class State(
         val gridState: LazyStaggeredGridState = LazyStaggeredGridState(),
@@ -32,5 +40,5 @@ class PostListScreen : StateComponent<PostListScreen.Action, PostListScreen.Stat
         PostListScreenContent(state, onAction)
 
     @Composable
-    override fun model(): PostListModel = getScreenModel()
+    override fun model() = getScreenModel<PostListModel, PostListModel.Factory> { it(type) }
 }

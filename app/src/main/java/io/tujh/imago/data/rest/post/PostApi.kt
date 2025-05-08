@@ -10,14 +10,20 @@ import retrofit2.http.Part
 import retrofit2.http.Query
 
 interface PostApi {
-    @GET("/posts/short")
-    suspend fun short(
+    @GET("/posts/all")
+    suspend fun all(
         @Query("limit") limit: Int,
         @Query("cursor") cursor: String,
     ): Result<List<PostDto>>
 
     @GET("/posts/my")
     suspend fun my(
+        @Query("limit") limit: Int,
+        @Query("cursor") cursor: String,
+    ): Result<List<PostDto>>
+
+    @GET("/posts/favorite")
+    suspend fun favorites(
         @Query("limit") limit: Int,
         @Query("cursor") cursor: String,
     ): Result<List<PostDto>>
