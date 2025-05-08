@@ -22,13 +22,7 @@ class PostList @Inject constructor(
 
     private fun create(factory: PostSource.Factory): PageableSourcePager<Post> {
         val source = factory(limit)
-        val paginator = statePaginator(
-            initialKey = Instant.now(),
-            limit = limit,
-            pageableSource = source,
-            getKey = Post::createdAt
-        )
-
+        val paginator = statePaginator(Instant.now(), limit, source, Post::createdAt)
         return PageableSourcePager(source, paginator)
     }
 }

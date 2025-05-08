@@ -15,8 +15,10 @@ import io.tujh.imago.data.image.Saver
 import io.tujh.imago.data.repository.auth.AuthRepositoryImpl
 import io.tujh.imago.data.repository.image.DrawRepository
 import io.tujh.imago.data.repository.post.AllSource
+import io.tujh.imago.data.repository.post.CommentSourceImpl
 import io.tujh.imago.data.repository.post.FavoritesSource
 import io.tujh.imago.data.repository.post.OwnSource
+import io.tujh.imago.data.repository.post.PostEditorImpl
 import io.tujh.imago.data.repository.post.PostRepositoryImpl
 import io.tujh.imago.data.repository.user.UserFlow
 import io.tujh.imago.data.store.jsonStore
@@ -28,6 +30,8 @@ import io.tujh.imago.domain.image.FullImageLoader
 import io.tujh.imago.domain.image.WriteableUriProvider
 import io.tujh.imago.domain.image.draw.DrawSettings
 import io.tujh.imago.domain.image.draw.DrawSettingsRepository
+import io.tujh.imago.domain.post.repository.CommentsSource
+import io.tujh.imago.domain.post.repository.PostEditor
 import io.tujh.imago.domain.post.repository.PostRepository
 import io.tujh.imago.domain.post.repository.PostSource
 import io.tujh.imago.domain.user.CurrentUser
@@ -67,6 +71,12 @@ interface DataModule {
 
     @Binds
     fun uriProvider(impl: UriProvider): WriteableUriProvider
+
+    @Binds
+    fun postEditorFactory(impl: PostEditorImpl.Factory): PostEditor.Factory
+
+    @Binds
+    fun commentSourceFactory(impl: CommentSourceImpl.Factory): CommentsSource.Factory
 
     @Binds
     fun saver(impl: Saver): BitmapSaver

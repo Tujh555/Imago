@@ -10,6 +10,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -214,7 +215,7 @@ private fun Images(
     }
     val configuration = LocalConfiguration.current
     val (height, width) = remember(configuration.screenHeightDp, configuration.screenWidthDp) {
-        (configuration.screenHeightDp * 0.4f).dp to (configuration.screenWidthDp / 2f).dp
+        (configuration.screenHeightDp * 0.4f).dp to (configuration.screenWidthDp * 0.8f).dp
     }
 
     Box {
@@ -244,6 +245,7 @@ private fun Images(
                                 .widthIn(max = width)
                                 .applyWith(LocalSharedTransitionScope.current) {
                                     it.sharedElement(
+                                        placeHolderSize = SharedTransitionScope.PlaceHolderSize.animatedSize,
                                         state = rememberSharedContentState(
                                             key = sharedKey
                                         ),
@@ -328,7 +330,10 @@ private fun Images(
                     .height(height)
                     .fillMaxWidth()
                     .clip(RoundedCornerShape(16.dp))
-                    .background(MaterialTheme.colorScheme.inverseOnSurface),
+                    .background(MaterialTheme.colorScheme.inverseOnSurface)
+                    .applyWith(LocalSharedNavVisibilityScope.current) {
+                        it.animateEnterExit(fadeIn(), fadeOut())
+                    },
                 contentAlignment = Alignment.Center
             ) {
                 Text(
@@ -413,6 +418,7 @@ private fun ColumnScope.AddImageButton(
                                                 singleGalleryLauncher.launch(request)
                                             }
                                         }
+                                        tooltipState.dismiss()
                                     },
                                 contentDescription = null,
                                 painter = painterResource(R.drawable.ic_galerry),
@@ -429,6 +435,7 @@ private fun ColumnScope.AddImageButton(
                                                 val uri = uriProvider.temporaryImage()
                                                 uriForCamera = uri
                                                 cameraLauncher.launch(uri)
+                                                tooltipState.dismiss()
                                             }
                                         } else {
                                             getPermissions.launch(

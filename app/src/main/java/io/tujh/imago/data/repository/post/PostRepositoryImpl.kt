@@ -4,6 +4,7 @@ import android.content.Context
 import android.net.Uri
 import dagger.hilt.android.qualifiers.ApplicationContext
 import io.tujh.imago.data.rest.post.PostApi
+import io.tujh.imago.data.rest.post.RequestId
 import io.tujh.imago.data.retrofit.formDataOf
 import io.tujh.imago.domain.post.repository.PostRepository
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
@@ -20,4 +21,6 @@ class PostRepositoryImpl @Inject constructor(
 
         return api.add(titleBody, images)
     }
+
+    override suspend fun addToFavorite(id: String) = api.addToFavorite(RequestId(id))
 }

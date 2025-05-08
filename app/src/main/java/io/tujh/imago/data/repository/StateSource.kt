@@ -5,7 +5,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
 
 class StateSource<K : Any, T : Any>(
-    private val getKey: (T) -> K,
+    private val getKey: (T) -> String,
     private val doFetch: suspend (K) -> Result<List<T>>
 ) : PageableSource<K, T> {
     private val items = MutableStateFlow(emptyList<T>())

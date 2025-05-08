@@ -15,5 +15,3 @@ data class UserDto(
 )
 
 fun UserDto.toDomain() = User(id, avatar, name, email)
-
-fun User.toDto() = UserDto(id, avatar, name, email)

@@ -16,7 +16,7 @@ class AllSource @AssistedInject constructor(
     @Assisted private val limit: @JvmSuppressWildcards Int,
     api: PostApi,
 ) : PostSource, PageableSource<Instant, Post> by StateSource(
-    getKey = Post::createdAt,
+    getKey = Post::id,
     doFetch = { key -> api.all(limit, key.toString()).map { it.map(PostDto::toDomain) } },
 ) {
     @AssistedFactory
@@ -29,7 +29,7 @@ class OwnSource @AssistedInject constructor(
     @Assisted private val limit: @JvmSuppressWildcards Int,
     api: PostApi,
 ) : PostSource, PageableSource<Instant, Post> by StateSource(
-    getKey = Post::createdAt,
+    getKey = Post::id,
     doFetch = { key -> api.my(limit, key.toString()).map { it.map(PostDto::toDomain) } },
 ) {
     @AssistedFactory
@@ -42,7 +42,7 @@ class FavoritesSource @AssistedInject constructor(
     @Assisted private val limit: @JvmSuppressWildcards Int,
     api: PostApi,
 ) : PostSource, PageableSource<Instant, Post> by StateSource(
-    getKey = Post::createdAt,
+    getKey = Post::id,
     doFetch = { key -> api.favorites(limit, key.toString()).map { it.map(PostDto::toDomain) } },
 ) {
     @AssistedFactory

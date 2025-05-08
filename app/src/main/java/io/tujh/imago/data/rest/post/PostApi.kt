@@ -1,8 +1,10 @@
 package io.tujh.imago.data.rest.post
 
+import io.tujh.imago.data.dto.CommentDto
 import io.tujh.imago.data.dto.PostDto
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
+import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.Multipart
 import retrofit2.http.POST
@@ -34,4 +36,17 @@ interface PostApi {
         @Part("title") title: RequestBody,
         @Part images: List<MultipartBody.Part>
     ): Result<Unit>
+
+    @POST("/posts/favorites/add")
+    suspend fun addToFavorite(@Body body: RequestId): Result<Unit>
+
+    @GET("/posts/comments")
+    suspend fun comments(
+        @Query("postId") postId: String,
+        @Query("limit") limit: Int,
+        @Query("cursor") cursor: String,
+    ): Result<List<CommentDto>>
+
+    @POST("/comments/add")
+    suspend fun comment(@Body body: CommentRequest): Result<CommentDto>
 }
