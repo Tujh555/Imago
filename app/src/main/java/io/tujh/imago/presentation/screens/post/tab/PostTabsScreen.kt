@@ -4,6 +4,7 @@ import androidx.compose.foundation.pager.PagerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.NonRestartableComposable
+import androidx.work.Operation
 import cafe.adriel.voyager.hilt.getScreenModel
 import io.tujh.imago.presentation.base.StateComponent
 import io.tujh.imago.presentation.screens.post.list.PostListScreen
@@ -16,7 +17,9 @@ class PostTabsScreen : StateComponent<PostTabsScreen.Action, PostTabsScreen.Stat
         val pagerState: PagerState = PagerState { tabs.size }
     )
 
-    sealed interface Action
+    sealed interface Action {
+        data class OnAdded(val operation: Operation): Action
+    }
 
     @Composable
     @NonRestartableComposable

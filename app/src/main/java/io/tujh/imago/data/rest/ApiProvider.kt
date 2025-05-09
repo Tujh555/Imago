@@ -4,6 +4,7 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import io.tujh.imago.data.dto.CommentDto
 import io.tujh.imago.data.dto.PostDto
 import io.tujh.imago.data.dto.PostImageDto
 import io.tujh.imago.data.dto.UserDto
@@ -11,7 +12,10 @@ import io.tujh.imago.data.rest.auth.AuthApi
 import io.tujh.imago.data.rest.auth.AuthRequest
 import io.tujh.imago.data.rest.auth.AuthResponse
 import io.tujh.imago.data.rest.auth.LogoutRequest
+import io.tujh.imago.data.rest.post.CommentRequest
+import io.tujh.imago.data.rest.post.FavoriteResponse
 import io.tujh.imago.data.rest.post.PostApi
+import io.tujh.imago.data.rest.post.RequestId
 import io.tujh.imago.data.retrofit.ResultAdapterFactory
 import kotlinx.coroutines.delay
 import okhttp3.MultipartBody
@@ -22,6 +26,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.create
 import java.time.Instant
 import java.util.UUID
+import java.util.concurrent.ConcurrentHashMap
 import javax.inject.Singleton
 
 @Module
@@ -74,7 +79,29 @@ class ApiProvider {
     @Provides
     fun postApi(retrofit: Retrofit): PostApi = object : PostApi {
         private val sizes = listOf(800 to 2500, 1920 to 1080, 2560 to 1440, 1920 to 1200, 3840 to 2160)
-        private val images = sizes.flatMap { (w, h) ->
+        private val another = listOf(
+            PostImageDto(
+                url = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSNAkB1j2W0ejEMyWFYmTpvMoKYCzy99XwD_Q&s",
+                originalWidth = 10212, originalHeight = 6806
+            ),
+            PostImageDto(
+                url = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQJxo2NFiYcR35GzCk5T3nxA7rGlSsXvIfJwg&s",
+                originalWidth = 1280, originalHeight = 720
+            ),
+            PostImageDto(
+                url = "https://static.vecteezy.com/system/resources/thumbnails/036/324/708/small/ai-generated-picture-of-a-tiger-walking-in-the-forest-photo.jpg",
+                originalWidth = 300, originalHeight = 200
+            ),
+            PostImageDto(
+                url = "https://images.ctfassets.net/hrltx12pl8hq/28ECAQiPJZ78hxatLTa7Ts/2f695d869736ae3b0de3e56ceaca3958/free-nature-images.jpg?fit=fill&w=1200&h=630",
+                originalWidth = 1200, originalHeight = 630
+            ),
+            PostImageDto(
+                url = "https://img.freepik.com/free-photo/closeup-scarlet-macaw-from-side-view-scarlet-macaw-closeup-head_488145-3540.jpg?semt=ais_hybrid&w=740",
+                originalWidth = 740, originalHeight = 1109
+            )
+        )
+        private val images = another + sizes.flatMap { (w, h) ->
             testUrls(w, h).map { url ->
                 PostImageDto(
                     url = url,
@@ -98,7 +125,7 @@ class ApiProvider {
         private fun nextPage(size: Int) = List(size) {
             PostDto(
                 id = UUID.randomUUID().toString(),
-                images = listOf(images[(size + it) % images.size]),
+                images = List(10) { i -> images[(size + i + it) % images.size] },
                 title = "Title #${it}",
                 createdAt = Instant.now().toString()
             )
@@ -141,9 +168,28 @@ class ApiProvider {
             title: RequestBody,
             images: List<MultipartBody.Part>
         ): Result<Unit> {
-            delay(50_000)
+            delay(10_000)
             return Result.success(Unit)
         }
 
+        private val fm = ConcurrentHashMap<String, Boolean>()
+        override suspend fun addToFavorite(body: RequestId): Result<FavoriteResponse> {
+            delay(1500)
+            val res = (fm[body.id] ?: false).not()
+            fm[body.id] = res
+            return Result.success(FavoriteResponse(res))
+        }
+
+        override suspend fun comments(
+            postId: String,
+            limit: Int,
+            cursor: String
+        ): Result<List<CommentDto>> {
+            TODO("Not yet implemented")
+        }
+
+        override suspend fun comment(body: CommentRequest): Result<CommentDto> {
+            TODO("Not yet implemented")
+        }
     }
 }

@@ -6,6 +6,9 @@ import coil3.disk.DiskCache
 import coil3.disk.directory
 import coil3.memory.MemoryCache
 import coil3.request.CachePolicy
+import coil3.request.allowConversionToBitmap
+import coil3.request.allowHardware
+import coil3.request.allowRgb565
 import coil3.request.crossfade
 import dagger.hilt.android.qualifiers.ApplicationContext
 import io.tujh.imago.data.utils.ScreenSizeInterceptor
@@ -35,6 +38,9 @@ class GetFullImageLoader @Inject constructor(
             .diskCachePolicy(CachePolicy.ENABLED)
             .memoryCache(memory)
             .diskCache(disk)
+            .allowHardware(true)
+            .allowRgb565(false)
+            .allowConversionToBitmap(true)
             .crossfade(true)
             .logger(CoilLogger)
             .build()

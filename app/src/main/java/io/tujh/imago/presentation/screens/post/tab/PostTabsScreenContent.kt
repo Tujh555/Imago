@@ -5,7 +5,11 @@ import android.content.pm.PackageManager
 import android.os.Build
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -49,12 +53,16 @@ import cafe.adriel.voyager.navigator.currentOrThrow
 import io.tujh.imago.R
 import io.tujh.imago.presentation.components.BlurredBackground
 import io.tujh.imago.presentation.components.IconButton
+import io.tujh.imago.presentation.components.LocalSharedNavVisibilityScope
+import io.tujh.imago.presentation.components.LocalSharedTransitionScope
+import io.tujh.imago.presentation.components.applyWith
 import io.tujh.imago.presentation.editor.components.scaffold.asSource
 import io.tujh.imago.presentation.screens.post.create.PostCreateScreen
 import io.tujh.imago.presentation.screens.profile.ProfileScreen
 import io.tujh.imago.presentation.theme.colors.ImagoColors
 import kotlinx.coroutines.launch
 
+@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 fun PostTabsScreenContent(state: PostTabsScreen.State, onAction: (PostTabsScreen.Action) -> Unit) {
     BlurredBackground(modifier = Modifier.fillMaxSize()) {
@@ -85,7 +93,11 @@ fun PostTabsScreenContent(state: PostTabsScreen.State, onAction: (PostTabsScreen
         val scope = rememberCoroutineScope()
         val navigator = LocalNavigator.currentOrThrow
 
-        Column(modifier = Modifier.fillMaxSize().statusBarsPadding()) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .statusBarsPadding()
+        ) {
             IconButton(
                 modifier = Modifier.padding(start = 24.dp),
                 iconSource = R.drawable.ic_profile.asSource(),
@@ -95,7 +107,19 @@ fun PostTabsScreenContent(state: PostTabsScreen.State, onAction: (PostTabsScreen
             }
 
             Row(
-                modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 16.dp)
+                    .applyWith(LocalSharedTransitionScope.current) { modifier ->
+                        with(LocalSharedNavVisibilityScope.current) {
+                            modifier
+                                .renderInSharedTransitionScopeOverlay(zIndexInOverlay = 2f)
+                                .animateEnterExit(
+                                    enter = fadeIn() + slideInVertically { -it },
+                                    exit = fadeOut() + slideOutVertically { -it }
+                                )
+                        }
+                    },
                 horizontalArrangement = Arrangement.Center
             ) {
                 state.tabs.fastForEachIndexed { index, component ->
@@ -149,8 +173,15 @@ fun PostTabsScreenContent(state: PostTabsScreen.State, onAction: (PostTabsScreen
         }
 
         FloatingActionButton(
-            onClick = { navigator.push(PostCreateScreen()) },
-            modifier = Modifier.align(Alignment.BottomEnd).padding(end = 24.dp, bottom = 24.dp),
+            onClick = {
+                val screen = PostCreateScreen { operation ->
+                    onAction(PostTabsScreen.Action.OnAdded(operation))
+                }
+                navigator.push(screen)
+            },
+            modifier = Modifier
+                .align(Alignment.BottomEnd)
+                .padding(end = 24.dp, bottom = 24.dp),
             shape = CircleShape,
             containerColor = ImagoColors.red,
             contentColor = Color.White

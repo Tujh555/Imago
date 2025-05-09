@@ -13,6 +13,7 @@ import androidx.work.Data
 import androidx.work.ForegroundInfo
 import androidx.work.NetworkType
 import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.Operation
 import androidx.work.WorkManager
 import androidx.work.WorkerParameters
 import androidx.work.workDataOf
@@ -83,12 +84,12 @@ class PostUploadWorker @AssistedInject constructor(
         private const val TITLE = "title"
         private const val URIS = "uris"
 
-        fun start(context: Context, title: String, uris: List<Uri>) {
+        fun start(context: Context, title: String, uris: List<Uri>): Operation {
             val constraints = Constraints.Builder()
                 .setRequiredNetworkType(NetworkType.CONNECTED)
                 .build()
 
-            OneTimeWorkRequestBuilder<PostUploadWorker>()
+            return OneTimeWorkRequestBuilder<PostUploadWorker>()
                 .setConstraints(constraints)
                 .setInputData(buildData(title, uris))
                 .build()

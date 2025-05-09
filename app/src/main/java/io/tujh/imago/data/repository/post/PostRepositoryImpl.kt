@@ -21,6 +21,4 @@ class PostRepositoryImpl @Inject constructor(
 
         return api.add(titleBody, images)
     }
-
-    override suspend fun addToFavorite(id: String) = api.addToFavorite(RequestId(id))
 }

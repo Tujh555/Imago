@@ -16,7 +16,6 @@ import io.tujh.imago.presentation.base.io
 import io.tujh.imago.presentation.models.toUi
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
-import javax.inject.Inject
 
 class PostListModel @AssistedInject constructor(
     @Assisted private val type: PostListType,
@@ -54,6 +53,7 @@ class PostListModel @AssistedInject constructor(
                 if (loadState == LoadState.Failed) {
                     errorHandler("Something went wrong")
                 }
+
                 update {
                     it.copy(
                         posts = elements.fastMap(Post::toUi),

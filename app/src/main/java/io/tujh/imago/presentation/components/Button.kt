@@ -18,6 +18,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -82,7 +83,7 @@ fun TextButton(
 fun IconButton(
     modifier: Modifier = Modifier,
     shape: Shape = CircleShape,
-    padding: Dp = 16.dp,
+    padding: Dp = 10.dp,
     active: Boolean = true,
     tint: Color = Color.White,
     size: Dp = 20.dp,

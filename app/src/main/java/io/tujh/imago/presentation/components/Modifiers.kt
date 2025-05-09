@@ -14,7 +14,7 @@ inline fun Modifier.applyIf(condition: () -> Boolean, block: Modifier.() -> Modi
     return this
 }
 
-fun Modifier.applyIf(condition: Boolean, block: Modifier.() -> Modifier) =
+inline fun Modifier.applyIf(condition: Boolean, block: Modifier.() -> Modifier) =
     applyIf({ condition }, block)
 
 inline fun <T> Modifier.applyWith(item: T, block: T.(Modifier) -> Modifier): Modifier {

@@ -1,5 +1,6 @@
 package io.tujh.imago.presentation.screens.post.list
 
+import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -25,6 +26,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import cafe.adriel.voyager.navigator.LocalNavigator
+import cafe.adriel.voyager.navigator.currentOrThrow
 import com.valentinilk.shimmer.Shimmer
 import com.valentinilk.shimmer.ShimmerBounds
 import com.valentinilk.shimmer.rememberShimmer
@@ -32,6 +35,7 @@ import com.valentinilk.shimmer.shimmer
 import io.tujh.imago.domain.paging.paginator.LoadState
 import io.tujh.imago.presentation.components.ShortPost
 import io.tujh.imago.presentation.components.postShape
+import io.tujh.imago.presentation.screens.post.view.PostViewScreen
 
 private val shimmerHeights = (200..400 step 20).map(Int::dp).shuffled()
 
@@ -53,6 +57,8 @@ fun PostListScreenContent(state: PostListScreen.State, onAction: (PostListScreen
             )
         } else {
             val shimmer = rememberShimmer(ShimmerBounds.View)
+            val navigator = LocalNavigator.currentOrThrow
+
             LazyVerticalStaggeredGrid(
                 modifier = Modifier.fillMaxSize(),
                 state = state.gridState,
@@ -65,7 +71,8 @@ fun PostListScreenContent(state: PostListScreen.State, onAction: (PostListScreen
                     ShortPost(
                         modifier = Modifier.fillMaxWidth(),
                         post = post,
-                        shimmer = shimmer
+                        shimmer = shimmer,
+                        onClick = { navigator.push(PostViewScreen(post)) }
                     )
                 }
 

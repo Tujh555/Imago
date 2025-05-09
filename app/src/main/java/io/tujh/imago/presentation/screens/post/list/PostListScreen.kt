@@ -10,7 +10,7 @@ import cafe.adriel.voyager.hilt.getScreenModel
 import io.tujh.imago.domain.paging.paginator.LoadState
 import io.tujh.imago.presentation.base.StateComponent
 import io.tujh.imago.presentation.lastVisibleItemIndex
-import io.tujh.imago.presentation.models.ShortPostItem
+import io.tujh.imago.presentation.models.PostItem
 import io.tujh.imago.presentation.screens.post.tab.InnerTabComponent
 
 class PostListScreen(
@@ -22,7 +22,7 @@ class PostListScreen(
     @Immutable
     data class State(
         val gridState: LazyStaggeredGridState = LazyStaggeredGridState(),
-        val posts: List<ShortPostItem> = emptyList(),
+        val posts: List<PostItem> = emptyList(),
         val loadState: LoadState = LoadState.Initial,
         val isRefreshing: Boolean = false,
         val isEmpty: Boolean = false,

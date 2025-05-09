@@ -10,9 +10,11 @@ import dagger.hilt.InstallIn
 import dagger.hilt.android.components.ActivityComponent
 import dagger.multibindings.IntoMap
 import io.tujh.imago.presentation.screens.edit.ImageEditScreenModel
+import io.tujh.imago.presentation.screens.post.comments.CommentsModel
 import io.tujh.imago.presentation.screens.post.create.PostCreateModel
 import io.tujh.imago.presentation.screens.post.list.PostListModel
 import io.tujh.imago.presentation.screens.post.tab.PostTabsModel
+import io.tujh.imago.presentation.screens.post.view.PostViewModel
 import io.tujh.imago.presentation.screens.signin.SignInModel
 import io.tujh.imago.presentation.screens.signup.SignUpModel
 import io.tujh.imago.presentation.screens.splash.SplashModel
@@ -47,11 +49,21 @@ interface PresentationModule {
 
     @Binds
     @IntoMap
-    @ScreenModelKey(PostCreateModel::class)
-    fun postCreate(model: PostCreateModel): ScreenModel
+    @ScreenModelFactoryKey(PostCreateModel.Factory::class)
+    fun postCreate(model: PostCreateModel.Factory): ScreenModelFactory
 
     @Binds
     @IntoMap
     @ScreenModelKey(PostTabsModel::class)
     fun postTabs(model: PostTabsModel): ScreenModel
+
+    @Binds
+    @IntoMap
+    @ScreenModelFactoryKey(PostViewModel.Factory::class)
+    fun postView(factory: PostViewModel.Factory): ScreenModelFactory
+
+    @Binds
+    @IntoMap
+    @ScreenModelFactoryKey(CommentsModel.Factory::class)
+    fun postComments(factory: CommentsModel.Factory): ScreenModelFactory
 }

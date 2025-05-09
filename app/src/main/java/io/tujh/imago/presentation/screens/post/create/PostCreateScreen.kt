@@ -8,11 +8,14 @@ import androidx.compose.runtime.NonRestartableComposable
 import androidx.compose.ui.util.packInts
 import androidx.compose.ui.util.unpackInt1
 import androidx.compose.ui.util.unpackInt2
+import androidx.work.Operation
 import cafe.adriel.voyager.hilt.getScreenModel
 import cafe.adriel.voyager.navigator.Navigator
 import io.tujh.imago.presentation.base.StateComponent
 
-class PostCreateScreen : StateComponent<PostCreateScreen.Action, PostCreateScreen.State> {
+class PostCreateScreen(
+    private val onAdded: (Operation) -> Unit
+) : StateComponent<PostCreateScreen.Action, PostCreateScreen.State> {
     @Immutable
     data class State(
         val photos: List<String> = emptyList(),
@@ -55,5 +58,5 @@ class PostCreateScreen : StateComponent<PostCreateScreen.Action, PostCreateScree
         PostCreateScreenContent(state, onAction)
 
     @Composable
-    override fun model(): PostCreateModel = getScreenModel()
+    override fun model() = getScreenModel<PostCreateModel, PostCreateModel.Factory> { it(onAdded) }
 }

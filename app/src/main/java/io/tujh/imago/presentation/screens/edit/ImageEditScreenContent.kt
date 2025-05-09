@@ -2,13 +2,11 @@ package io.tujh.imago.presentation.screens.edit
 
 import android.os.Build
 import androidx.annotation.RequiresApi
-import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
-import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -26,18 +24,14 @@ import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RichTooltip
 import androidx.compose.material3.Text
 import androidx.compose.material3.TooltipBox
 import androidx.compose.material3.TooltipDefaults
 import androidx.compose.material3.rememberTooltipState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.key
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -57,7 +51,6 @@ import io.tujh.imago.R
 import io.tujh.imago.presentation.components.IconButton
 import io.tujh.imago.presentation.components.LocalSharedNavVisibilityScope
 import io.tujh.imago.presentation.components.LocalSharedTransitionScope
-import io.tujh.imago.presentation.components.applyIf
 import io.tujh.imago.presentation.components.applyWith
 import io.tujh.imago.presentation.editor.components.filters.FiltersComponent
 import io.tujh.imago.presentation.editor.components.filters.shader.ShaderFilter

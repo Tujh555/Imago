@@ -3,7 +3,6 @@ package io.tujh.imago.presentation.screens.post.create
 import android.Manifest
 import android.content.pm.PackageManager
 import android.net.Uri
-import android.os.Build
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
@@ -32,8 +31,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.systemBarsPadding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.LazyRow
@@ -46,6 +45,7 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Close
@@ -88,14 +88,15 @@ import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import coil3.compose.AsyncImage
 import io.tujh.imago.R
+import io.tujh.imago.presentation.components.IconButton
 import io.tujh.imago.presentation.components.LocalSharedNavVisibilityScope
 import io.tujh.imago.presentation.components.LocalSharedTransitionScope
 import io.tujh.imago.presentation.components.applyWith
 import io.tujh.imago.presentation.components.end
-import io.tujh.imago.presentation.components.move
 import io.tujh.imago.presentation.components.rememberReorderHapticFeedback
 import io.tujh.imago.presentation.components.requestBuilder
 import io.tujh.imago.presentation.components.start
+import io.tujh.imago.presentation.editor.components.scaffold.asSource
 import io.tujh.imago.presentation.locals.LocalFullImageLoader
 import io.tujh.imago.presentation.locals.LocalUriProvider
 import io.tujh.imago.presentation.theme.colors.ImagoColors
@@ -191,6 +192,15 @@ fun PostCreateScreenContent(
                 )
             }
         }
+
+        IconButton(
+            modifier = Modifier
+                .align(Alignment.TopStart)
+                .statusBarsPadding()
+                .padding(start = 24.dp, top = 8.dp),
+            iconSource = Icons.AutoMirrored.Filled.KeyboardArrowLeft.asSource(),
+            onClick = { navigator.pop() }
+        )
 
         InputDialog(
             dialogVisible = dialogVisible,
