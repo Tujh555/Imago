@@ -2,7 +2,9 @@ package io.tujh.imago.presentation.screens.post.view
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.animation.SizeTransform
+import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleIn
@@ -23,20 +25,14 @@ import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.text.InlineTextContent
-import androidx.compose.foundation.text.appendInlineContent
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
 import androidx.compose.material.icons.filled.Favorite
-import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.blur
@@ -46,14 +42,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.TileMode
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.text.Placeholder
-import androidx.compose.ui.text.PlaceholderVerticalAlign
-import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
@@ -69,6 +61,7 @@ import io.tujh.imago.presentation.components.postShape
 import io.tujh.imago.presentation.components.requestBuilder
 import io.tujh.imago.presentation.editor.components.scaffold.asSource
 import io.tujh.imago.presentation.locals.LocalFullImageLoader
+import io.tujh.imago.presentation.screens.post.comments.PostCommentsScreen
 import io.tujh.imago.presentation.theme.colors.ImagoColors
 
 @OptIn(ExperimentalSharedTransitionApi::class)
@@ -217,7 +210,10 @@ fun PostViewScreenContent(state: PostViewScreen.State, onAction: (PostViewScreen
                             .align(Alignment.BottomEnd)
                             .padding(bottom = 24.dp, end = 8.dp),
                         iconSource = R.drawable.ic_comments.asSource(),
-                        onClick = {  }
+                        onClick = {
+                            val screen = PostCommentsScreen(state.post, backgroundUrl)
+                            navigator.push(screen)
+                        }
                     )
 
                     Box(

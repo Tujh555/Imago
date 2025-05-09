@@ -18,6 +18,7 @@ class PostTabsModel @Inject constructor() :
     private var refreshJob: Job? = null
 
     override fun onAction(action: PostTabsScreen.Action) {
+
         when (action) {
             is PostTabsScreen.Action.OnAdded -> {
                 refreshJob?.cancel()

@@ -84,6 +84,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import cafe.adriel.voyager.hilt.getNavigatorScreenModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import coil3.compose.AsyncImage
@@ -99,7 +100,10 @@ import io.tujh.imago.presentation.components.start
 import io.tujh.imago.presentation.editor.components.scaffold.asSource
 import io.tujh.imago.presentation.locals.LocalFullImageLoader
 import io.tujh.imago.presentation.locals.LocalUriProvider
+import io.tujh.imago.presentation.screens.post.tab.PostTabsModel
+import io.tujh.imago.presentation.screens.post.tab.PostTabsScreen
 import io.tujh.imago.presentation.theme.colors.ImagoColors
+import io.tujh.imago.work.PostUploadWorker
 import kotlinx.coroutines.launch
 import sh.calvin.reorderable.ReorderableItem
 import sh.calvin.reorderable.rememberReorderableLazyListState
@@ -179,8 +183,17 @@ fun PostCreateScreenContent(
             enter = fadeIn(),
             exit = fadeOut()
         ) {
+            val context = LocalContext.current
+            val model = LocalNavigator.currentOrThrow.getNavigatorScreenModel<PostTabsModel>()
+
             FloatingActionButton(
-                onClick = { onAction(PostCreateScreen.Action.Create(navigator)) },
+                onClick = {
+                    val operation = state.run {
+                        PostUploadWorker.start(context, title, photos.map(Uri::parse))
+                    }
+                    model.onAction(PostTabsScreen.Action.OnAdded(operation))
+                    navigator.pop()
+                },
                 shape = CircleShape,
                 containerColor = ImagoColors.red,
                 contentColor = Color.White

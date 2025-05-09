@@ -174,9 +174,7 @@ fun PostTabsScreenContent(state: PostTabsScreen.State, onAction: (PostTabsScreen
 
         FloatingActionButton(
             onClick = {
-                val screen = PostCreateScreen { operation ->
-                    onAction(PostTabsScreen.Action.OnAdded(operation))
-                }
+                val screen = PostCreateScreen()
                 navigator.push(screen)
             },
             modifier = Modifier

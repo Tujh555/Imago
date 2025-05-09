@@ -168,7 +168,7 @@ class ApiProvider {
             title: RequestBody,
             images: List<MultipartBody.Part>
         ): Result<Unit> {
-            delay(10_000)
+            delay(50_000)
             return Result.success(Unit)
         }
 

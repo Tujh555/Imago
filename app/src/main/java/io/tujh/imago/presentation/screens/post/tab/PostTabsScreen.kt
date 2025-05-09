@@ -5,7 +5,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.NonRestartableComposable
 import androidx.work.Operation
-import cafe.adriel.voyager.hilt.getScreenModel
+import cafe.adriel.voyager.hilt.getNavigatorScreenModel
+import cafe.adriel.voyager.navigator.LocalNavigator
+import cafe.adriel.voyager.navigator.currentOrThrow
 import io.tujh.imago.presentation.base.StateComponent
 import io.tujh.imago.presentation.screens.post.list.PostListScreen
 import io.tujh.imago.presentation.screens.post.list.PostListType
@@ -27,5 +29,5 @@ class PostTabsScreen : StateComponent<PostTabsScreen.Action, PostTabsScreen.Stat
         PostTabsScreenContent(state, onAction)
 
     @Composable
-    override fun model(): PostTabsModel = getScreenModel()
+    override fun model(): PostTabsModel = LocalNavigator.currentOrThrow.getNavigatorScreenModel()
 }
