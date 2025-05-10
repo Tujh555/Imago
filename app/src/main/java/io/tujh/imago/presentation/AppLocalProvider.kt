@@ -50,7 +50,7 @@ class AppLocalProvider @Inject constructor(
     private object RamNavigatorSaver {
         private val saverMap = MutableScatterMap<String, List<Screen>>()
         @OptIn(InternalVoyagerApi::class)
-        val saver = NavigatorSaver { initialScreens, key, stateHolder, disposeBehavior, parent ->
+        val saver = NavigatorSaver { initial, key, stateHolder, disposeBehavior, parent ->
             Saver(
                 save = {
                     val uuid = UUID.randomUUID().toString()
@@ -58,9 +58,7 @@ class AppLocalProvider @Inject constructor(
                     uuid
                 },
                 restore = { uuid ->
-                    val items = saverMap[uuid]
-                    saverMap.remove(uuid)
-                    Navigator(items ?: initialScreens, key, stateHolder, disposeBehavior, parent)
+                    Navigator(saverMap.remove(uuid) ?: initial, key, stateHolder, disposeBehavior, parent)
                 }
             )
         }

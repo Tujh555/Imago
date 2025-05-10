@@ -29,6 +29,8 @@ import cafe.adriel.voyager.transitions.FadeTransition
 import dagger.hilt.android.AndroidEntryPoint
 import io.tujh.imago.domain.ErrorHandler
 import io.tujh.imago.presentation.components.LocalSharedNavVisibilityScope
+import io.tujh.imago.presentation.models.PostItem
+import io.tujh.imago.presentation.screens.post.comments.PostCommentsScreen
 import io.tujh.imago.presentation.screens.post.create.PostCreateScreen
 import io.tujh.imago.presentation.screens.post.list.PostListScreen
 import io.tujh.imago.presentation.screens.post.tab.PostTabsScreen

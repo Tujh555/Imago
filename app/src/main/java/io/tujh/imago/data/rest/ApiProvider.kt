@@ -1,5 +1,6 @@
 package io.tujh.imago.data.rest
 
+import androidx.compose.ui.tooling.preview.datasource.LoremIpsum
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -28,6 +29,7 @@ import java.time.Instant
 import java.util.UUID
 import java.util.concurrent.ConcurrentHashMap
 import javax.inject.Singleton
+import kotlin.random.Random.Default.nextInt
 
 @Module
 @InstallIn(SingletonComponent::class)
@@ -180,12 +182,37 @@ class ApiProvider {
             return Result.success(FavoriteResponse(res))
         }
 
+        private val users = List(20) {
+            UserDto(
+                id = UUID.randomUUID().toString(),
+                avatar = null,
+                name = "Name #${it}",
+                email = "email #${it}"
+            )
+        }
+        private fun commentsPage(size: Int) = List(size) {
+            CommentDto(
+                id = UUID.randomUUID().toString(),
+                author = users.random(),
+                createdAt = Instant.now().toString(),
+                text = LoremIpsum(nextInt(10, 20)).values.joinToString(" ")
+            )
+        }
+
+        private var commentCnt = 0
         override suspend fun comments(
             postId: String,
             limit: Int,
             cursor: String
         ): Result<List<CommentDto>> {
-            TODO("Not yet implemented")
+            delay(1000)
+            commentCnt++
+
+            if (commentCnt == 5) {
+                return commentsPage(limit - 1).let { Result.success(it) }
+            }
+
+            return commentsPage(limit).let { Result.success(it) }
         }
 
         override suspend fun comment(body: CommentRequest): Result<CommentDto> {
