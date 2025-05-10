@@ -26,10 +26,12 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
 import androidx.compose.material.icons.automirrored.filled.Send
 import androidx.compose.material.icons.filled.Send
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -65,6 +67,7 @@ import io.tujh.imago.presentation.models.CommentItem
 import io.tujh.imago.presentation.screens.post.list.isLoading
 import io.tujh.imago.presentation.theme.colors.ImagoColors
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PostCommentSheetContent(
     state: PostCommentsScreen.State,
@@ -100,34 +103,40 @@ fun PostCommentSheetContent(
                 onClick = { navigator.pop() }
             )
 
-            val isEmpty = state.run { loadState == LoadState.Loaded && state.comments.isEmpty() }
+            PullToRefreshBox(
+                modifier = Modifier.fillMaxSize(),
+                isRefreshing = state.isRefreshing,
+                onRefresh = { onAction(PostCommentsScreen.Action.Refresh) }
+            ) {
+                val isEmpty = state.run { loadState == LoadState.Loaded && state.comments.isEmpty() }
 
-            if (isEmpty) {
-                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                    Text(
-                        text = "There are no comments here yet",
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 16.sp,
-                        color = Color.White
-                    )
-                }
-            } else {
-                val shimmer = rememberShimmer(ShimmerBounds.View)
-                LazyColumn(
-                    modifier = Modifier.fillMaxSize(),
-                    verticalArrangement = Arrangement.Bottom,
-                    state = state.lazyListState,
-                    contentPadding = PaddingValues(top = 16.dp, bottom = bottomPadding + 16.dp)
-                ) {
-                    items(state.comments, key = { it.id }, contentType = { "comment" }) { comment ->
-                        Comment(modifier = Modifier.fillMaxWidth(), comment = comment)
-                        Spacer(modifier = Modifier.height(16.dp))
+                if (isEmpty) {
+                    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                        Text(
+                            text = "There are no comments here yet",
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 16.sp,
+                            color = Color.White
+                        )
                     }
-
-                    if (state.loadState.isLoading()) {
-                        items(30, contentType = { "shimmer" }) {
-                            CommentShimmer(modifier = Modifier.fillMaxWidth(), shimmer = shimmer)
+                } else {
+                    val shimmer = rememberShimmer(ShimmerBounds.View)
+                    LazyColumn(
+                        modifier = Modifier.fillMaxSize(),
+                        verticalArrangement = Arrangement.Bottom,
+                        state = state.lazyListState,
+                        contentPadding = PaddingValues(top = 16.dp, bottom = bottomPadding + 16.dp)
+                    ) {
+                        items(state.comments, key = { it.id }, contentType = { "comment" }) { comment ->
+                            Comment(modifier = Modifier.fillMaxWidth(), comment = comment)
                             Spacer(modifier = Modifier.height(16.dp))
+                        }
+
+                        if (state.loadState.isLoading()) {
+                            items(30, contentType = { "shimmer" }) {
+                                CommentShimmer(modifier = Modifier.fillMaxWidth(), shimmer = shimmer)
+                                Spacer(modifier = Modifier.height(16.dp))
+                            }
                         }
                     }
                 }
@@ -144,7 +153,7 @@ fun PostCommentSheetContent(
                 .align(Alignment.BottomCenter)
                 .fillMaxWidth()
                 .background(color = MaterialTheme.colorScheme.surface)
-                .padding(vertical = 16.dp, horizontal = 16.dp)
+                .padding(vertical = 8.dp, horizontal = 16.dp)
                 .navigationBarsPadding()
                 .onSizeChanged {
                     bottomPadding = with(density) {

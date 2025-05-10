@@ -19,8 +19,11 @@ import io.tujh.imago.presentation.models.CommentItem
 import io.tujh.imago.presentation.models.PostItem
 import io.tujh.imago.presentation.models.UserItem
 import io.tujh.imago.presentation.models.toUi
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.time.Instant
 import java.util.UUID
@@ -39,6 +42,7 @@ class CommentsModel @AssistedInject constructor(
     interface Factory : ScreenModelFactory, (PostItem, String) -> CommentsModel
 
     private val comments = getComments(post.id)
+    private val sendingComments = MutableStateFlow<List<CommentItem>>(emptyList())
 
     init {
         paginate()
@@ -48,36 +52,29 @@ class CommentsModel @AssistedInject constructor(
         when (action) {
             is PostCommentsScreen.Action.Comment -> update { it.copy(commentText = action.value) }
             // TODO loader + ptr
-            PostCommentsScreen.Action.Refresh -> screenModelScope.io { comments.refresh() }
+            PostCommentsScreen.Action.Refresh -> {
+                update { it.copy(isRefreshing = true) }
+                screenModelScope.io { comments.refresh() }
+            }
             PostCommentsScreen.Action.SendComment -> sendComment()
         }
     }
 
     private fun sendComment() {
-        val comments = state.value.comments
-        val updatedComments = buildList(capacity = comments.size + 1) {
-            add(
-                CommentItem(
-                    id = UUID.randomUUID().toString(),
-                    author = UserItem(
-                        id = "123",
-                        avatar = null,
-                        name = "You test",
-                        email = ""
-                    ),
-                    createdAt = Instant.now().toString(),
-                    text = state.value.commentText
-                )
-            )
-
-            addAll(comments)
-        }
-
-        update {
-            it.copy(
-                commentText = "",
-                comments = updatedComments
-            )
+        val newComment = CommentItem(
+            id = UUID.randomUUID().toString(),
+            author = UserItem(
+                id = "123",
+                avatar = null,
+                name = "You test",
+                email = ""
+            ),
+            createdAt = Instant.now().toString(),
+            text = state.value.commentText
+        )
+        update { it.copy(commentText = "") }
+        sendingComments.update {
+            it.toMutableList().apply { add(0, newComment) }
         }
         screenModelScope.launch {
             emit(PostCommentsScreen.Event.ScrollTo(0, state.value.lazyListState))
@@ -87,14 +84,14 @@ class CommentsModel @AssistedInject constructor(
     private fun paginate() {
         comments
             .paginate(state.value.lastVisible)
-            .onEach { (elements, loadState) ->
+            .combine(sendingComments) { (elements, loadState), sending ->
                 if (loadState == LoadState.Failed) {
                     errorHandler("Something went wrong")
                 }
 
                 update {
                     it.copy(
-                        comments = elements.fastMap { it.toUi() },
+                        comments = sending + elements.fastMap { it.toUi() },
                         loadState = loadState,
                         isRefreshing = false
                     )
