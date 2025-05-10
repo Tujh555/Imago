@@ -49,8 +49,8 @@ interface PresentationModule {
 
     @Binds
     @IntoMap
-    @ScreenModelKey(PostCreateModel::class)
-    fun postCreate(model: PostCreateModel): ScreenModel
+    @ScreenModelFactoryKey(PostCreateModel.Factory::class)
+    fun postCreate(factory: PostCreateModel.Factory): ScreenModelFactory
 
     @Binds
     @IntoMap

@@ -42,7 +42,6 @@ class GetFullImageLoader @Inject constructor(
             .allowRgb565(false)
             .allowConversionToBitmap(true)
             .crossfade(true)
-            .logger(CoilLogger)
             .build()
     }
 }
