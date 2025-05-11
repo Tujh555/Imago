@@ -35,6 +35,7 @@ interface PostApi {
     @POST("/posts/add")
     suspend fun add(
         @Part("title") title: RequestBody,
+        @Part("sizes") sizes: RequestBody,
         @Part images: List<MultipartBody.Part>
     ): Result<Unit>
 

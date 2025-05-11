@@ -2,7 +2,6 @@ package io.tujh.imago.presentation.screens.profile
 
 import android.content.Context
 import android.net.Uri
-import android.util.Log
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.work.WorkInfo
 import cafe.adriel.voyager.core.model.screenModelScope
