@@ -1,7 +1,6 @@
 package io.tujh.imago.presentation.screens.post.tab
 
-import androidx.lifecycle.asFlow
-import androidx.work.Operation
+import androidx.work.WorkInfo
 import cafe.adriel.voyager.core.model.screenModelScope
 import io.tujh.imago.presentation.base.StateHolder
 import io.tujh.imago.presentation.base.StateModel
@@ -23,9 +22,10 @@ class PostTabsModel @Inject constructor() :
             is PostTabsScreen.Action.OnAdded -> {
                 refreshJob?.cancel()
                 refreshJob = screenModelScope.launch {
-                    action.operation.state.asFlow().collect { operationState ->
-                        val isSuccess = operationState is Operation.State.SUCCESS
+                    action.info.collect { info ->
+                        val isSuccess = info?.state == WorkInfo.State.SUCCEEDED
                         val isActive = currentCoroutineContext().isActive
+
                         if (isSuccess && isActive) {
                             update { PostTabsScreen.State() }
                         }

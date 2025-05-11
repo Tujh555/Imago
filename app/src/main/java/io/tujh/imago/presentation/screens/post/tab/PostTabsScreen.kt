@@ -5,10 +5,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.NonRestartableComposable
 import androidx.work.Operation
+import androidx.work.WorkInfo
 import cafe.adriel.voyager.hilt.getScreenModel
 import io.tujh.imago.presentation.base.StateComponent
 import io.tujh.imago.presentation.screens.post.list.PostListScreen
 import io.tujh.imago.presentation.screens.post.list.PostListType
+import kotlinx.coroutines.flow.Flow
 
 class PostTabsScreen : StateComponent<PostTabsScreen.Action, PostTabsScreen.State> {
     @Immutable
@@ -18,7 +20,7 @@ class PostTabsScreen : StateComponent<PostTabsScreen.Action, PostTabsScreen.Stat
     )
 
     sealed interface Action {
-        data class OnAdded(val operation: Operation): Action
+        data class OnAdded(val info: Flow<WorkInfo?>): Action
     }
 
     @Composable

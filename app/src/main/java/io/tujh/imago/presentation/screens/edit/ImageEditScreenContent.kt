@@ -1,7 +1,6 @@
 package io.tujh.imago.presentation.screens.edit
 
 import android.os.Build
-import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.fadeIn
@@ -32,7 +31,6 @@ import androidx.compose.material3.TooltipBox
 import androidx.compose.material3.TooltipDefaults
 import androidx.compose.material3.rememberTooltipState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.key
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
@@ -45,7 +43,6 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.util.fastFirst
 import androidx.compose.ui.util.fastForEach
 import androidx.compose.ui.util.fastForEachIndexed
 import cafe.adriel.voyager.navigator.LocalNavigator
@@ -59,7 +56,6 @@ import io.tujh.imago.presentation.editor.components.filters.FiltersComponent
 import io.tujh.imago.presentation.editor.components.filters.shader.ShaderFilter
 import io.tujh.imago.presentation.editor.components.filters.shader.rememberShaderFilters
 import io.tujh.imago.presentation.editor.components.scaffold.asSource
-import io.tujh.imago.presentation.screens.post.create.PostCreateScreen
 import io.tujh.imago.presentation.theme.colors.ImagoColors
 import kotlinx.coroutines.launch
 
@@ -93,12 +89,6 @@ private fun SuccessBody(
     val sharedScope = LocalSharedTransitionScope.current
     val navVisibilityScope = LocalSharedNavVisibilityScope.current
     val navigator = LocalNavigator.currentOrThrow
-    val postCreateScreen = navigator.items.fastFirst { it is PostCreateScreen } as PostCreateScreen
-    val model = postCreateScreen.model()
-    // TODO убрать лямбду из экрана, ImageBitmap переделать в Bitmap
-    LaunchedEffect(model) {
-        Log.d("--tag", "${model}")
-    }
 
     Column(modifier) {
         Row(

@@ -84,7 +84,7 @@ class ApiProvider {
     @Provides
     fun profileApi(retrofit: Retrofit): ProfileApi = object : ProfileApi {
         override suspend fun upload(file: MultipartBody.Part): Result<AvatarUpdateResponse> {
-            delay(4000)
+            delay(10000)
             return Result.success(
                 AvatarUpdateResponse(
                     "file:///android_asset/avatar_${nextInt(1, 50)}.webp"

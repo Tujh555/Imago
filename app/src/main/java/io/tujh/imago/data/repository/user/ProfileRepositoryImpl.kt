@@ -30,7 +30,9 @@ class ProfileRepositoryImpl @Inject constructor(
         val part = context.formDataOf("file", uri)
         return api
             .upload(part)
-            .onSuccess { resp -> userStore.put(current.copy(avatar = resp.url)) }
+            .onSuccess { resp ->
+                userStore.put(current.copy(avatar = uri.toString())) // FIXME !!!
+            }
             .map()
     }
 }

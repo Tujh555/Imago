@@ -9,12 +9,14 @@ import androidx.compose.ui.util.packInts
 import androidx.compose.ui.util.unpackInt1
 import androidx.compose.ui.util.unpackInt2
 import androidx.work.Operation
+import androidx.work.WorkInfo
 import cafe.adriel.voyager.hilt.getScreenModel
 import cafe.adriel.voyager.navigator.Navigator
 import io.tujh.imago.presentation.base.StateComponent
+import kotlinx.coroutines.flow.Flow
 
 class PostCreateScreen(
-    private val onAdded: (Operation) -> Unit
+    private val onAdded: (Flow<WorkInfo?>) -> Unit
 ) : StateComponent<PostCreateScreen.Action, PostCreateScreen.State> {
     @Immutable
     data class State(
@@ -28,9 +30,7 @@ class PostCreateScreen(
 
     sealed interface Action {
         @JvmInline
-        value class Picked(val uris: List<Uri>) : Action {
-            constructor(uri: Uri): this(listOf(uri))
-        }
+        value class Picked(val uris: List<Uri>) : Action
 
         @JvmInline
         value class Reorder(private val packed: Long) : Action {

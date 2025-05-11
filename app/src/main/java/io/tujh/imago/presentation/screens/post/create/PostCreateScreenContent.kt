@@ -58,6 +58,7 @@ import androidx.compose.material3.RichTooltip
 import androidx.compose.material3.Text
 import androidx.compose.material3.TooltipBox
 import androidx.compose.material3.TooltipDefaults
+import androidx.compose.material3.TooltipState
 import androidx.compose.material3.rememberTooltipState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -100,11 +101,12 @@ import io.tujh.imago.presentation.editor.components.scaffold.asSource
 import io.tujh.imago.presentation.locals.LocalFullImageLoader
 import io.tujh.imago.presentation.locals.LocalUriProvider
 import io.tujh.imago.presentation.theme.colors.ImagoColors
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import sh.calvin.reorderable.ReorderableItem
 import sh.calvin.reorderable.rememberReorderableLazyListState
 
-@OptIn(ExperimentalSharedTransitionApi::class)
+@OptIn(ExperimentalSharedTransitionApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun PostCreateScreenContent(
     state: PostCreateScreen.State,
@@ -166,7 +168,29 @@ fun PostCreateScreenContent(
                 )
             }
 
-            AddImageButton(state.canPickCount, onAction)
+            AddImageTooltip(
+                canPickCount = state.canPickCount,
+                onPicked = { onAction(PostCreateScreen.Action.Picked(it)) }
+            ) { scope, tooltipState ->
+                Row(
+                    modifier = Modifier
+                        .clip(RoundedCornerShape(8.dp))
+                        .background(MaterialTheme.colorScheme.inverseOnSurface)
+                        .clickable { scope.launch { tooltipState.show() } }
+                        .padding(8.dp),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Icon(
+                        modifier = Modifier.size(24.dp),
+                        contentDescription = null,
+                        imageVector = Icons.Filled.Add,
+                        tint = Color.White
+                    )
+
+                    Text(text = "Photo")
+                }
+            }
         }
 
         val navigator = LocalNavigator.currentOrThrow
@@ -361,9 +385,10 @@ private fun Images(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun ColumnScope.AddImageButton(
+fun ColumnScope.AddImageTooltip(
     canPickCount: Int,
-    onAction: (PostCreateScreen.Action) -> Unit
+    onPicked: (List<Uri>) -> Unit,
+    content: @Composable (CoroutineScope, TooltipState) -> Unit
 ) {
     val tooltipState = rememberTooltipState(isPersistent = true)
     var uriForCamera by remember { mutableStateOf<Uri?>(null) }
@@ -371,13 +396,13 @@ private fun ColumnScope.AddImageButton(
     val multipleGalleryLauncher = canPickCount.takeIf { it > 1 }?.let { count ->
         rememberLauncherForActivityResult(
             contract = ActivityResultContracts.PickMultipleVisualMedia(count),
-            onResult = { uris -> onAction(PostCreateScreen.Action.Picked(uris)) }
+            onResult = { uris -> onPicked(uris) }
         )
     }
     val singleGalleryLauncher = canPickCount.takeIf(1::equals)?.let {
         rememberLauncherForActivityResult(
             contract = ActivityResultContracts.PickVisualMedia(),
-            onResult = { uri -> uri?.let { onAction(PostCreateScreen.Action.Picked(it)) } }
+            onResult = { uri -> onPicked(listOfNotNull(uri)) }
         )
     }
     val scope = rememberCoroutineScope()
@@ -386,7 +411,7 @@ private fun ColumnScope.AddImageButton(
         contract = ActivityResultContracts.TakePicture(),
         onResult = { saved ->
             if (saved) {
-                uriForCamera?.let { onAction(PostCreateScreen.Action.Picked(it)) }
+                onPicked(listOfNotNull(uriForCamera))
             }
             uriForCamera = null
         }
@@ -462,27 +487,9 @@ private fun ColumnScope.AddImageButton(
                         }
                     }
                 )
-            }
-        ) {
-            Row(
-                modifier = Modifier
-                    .clip(RoundedCornerShape(8.dp))
-                    .background(MaterialTheme.colorScheme.inverseOnSurface)
-                    .clickable { scope.launch { tooltipState.show() } }
-                    .padding(8.dp),
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Icon(
-                    modifier = Modifier.size(24.dp),
-                    contentDescription = null,
-                    imageVector = Icons.Filled.Add,
-                    tint = Color.White
-                )
-
-                Text(text = "Photo")
-            }
-        }
+            },
+            content = { content(scope, tooltipState) }
+        )
     }
 }
 

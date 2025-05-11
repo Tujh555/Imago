@@ -12,6 +12,7 @@ import androidx.work.ForegroundInfo
 import androidx.work.NetworkType
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.Operation
+import androidx.work.WorkInfo
 import androidx.work.WorkManager
 import androidx.work.WorkerParameters
 import androidx.work.workDataOf
@@ -20,6 +21,7 @@ import dagger.assisted.AssistedInject
 import io.tujh.imago.R
 import io.tujh.imago.domain.post.repository.PostRepository
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.withContext
 
 @HiltWorker
@@ -71,16 +73,19 @@ class PostUploadWorker @AssistedInject constructor(
         private const val TITLE = "title"
         private const val URIS = "uris"
 
-        fun start(context: Context, title: String, uris: List<Uri>): Operation {
+        fun start(context: Context, title: String, uris: List<Uri>): Flow<WorkInfo?> {
             val constraints = Constraints.Builder()
                 .setRequiredNetworkType(NetworkType.CONNECTED)
                 .build()
-
-            return OneTimeWorkRequestBuilder<PostUploadWorker>()
+            val request = OneTimeWorkRequestBuilder<PostUploadWorker>()
                 .setConstraints(constraints)
                 .setInputData(buildData(title, uris))
                 .build()
-                .let(WorkManager.getInstance(context)::enqueue)
+
+            val wm = WorkManager.getInstance(context)
+            wm.enqueue(request)
+
+            return wm.getWorkInfoByIdFlow(request.id)
         }
 
         private fun buildData(title: String, uris: List<Uri>) = workDataOf(

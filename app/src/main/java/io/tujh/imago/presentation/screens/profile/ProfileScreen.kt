@@ -19,7 +19,8 @@ class ProfileScreen : StateComponent<ProfileScreen.Action, ProfileScreen.State> 
         val id: String = "",
         val avatar: String? = null,
         val name: String = "",
-        val finishVisible: Boolean = false
+        val finishVisible: Boolean = false,
+        val isLoading: Boolean = false
     )
 
     sealed interface Action {

@@ -15,6 +15,7 @@ import androidx.work.ForegroundInfo
 import androidx.work.NetworkType
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.Operation
+import androidx.work.WorkInfo
 import androidx.work.WorkManager
 import androidx.work.WorkerParameters
 import androidx.work.workDataOf
@@ -23,6 +24,7 @@ import dagger.assisted.AssistedInject
 import io.tujh.imago.R
 import io.tujh.imago.domain.user.ProfileRepository
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.withContext
 
 @HiltWorker
@@ -73,16 +75,19 @@ class ProfileUpdateWorker @AssistedInject constructor(
     companion object {
         private const val URI = "uri"
 
-        fun start(context: Context, uri: Uri): Operation {
+        fun start(context: Context, uri: Uri): Flow<WorkInfo?> {
             val constraints = Constraints.Builder()
                 .setRequiredNetworkType(NetworkType.CONNECTED)
                 .build()
 
-            return OneTimeWorkRequestBuilder<ProfileUpdateWorker>()
+            val request = OneTimeWorkRequestBuilder<ProfileUpdateWorker>()
                 .setConstraints(constraints)
                 .setInputData(buildData(uri))
                 .build()
-                .let(WorkManager.getInstance(context)::enqueue)
+            val wm = WorkManager.getInstance(context)
+            wm.enqueue(request)
+
+            return wm.getWorkInfoByIdFlow(request.id)
         }
 
         private fun buildData(uri: Uri) = workDataOf(

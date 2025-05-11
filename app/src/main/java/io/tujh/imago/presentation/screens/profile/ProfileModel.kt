@@ -2,7 +2,9 @@ package io.tujh.imago.presentation.screens.profile
 
 import android.content.Context
 import android.net.Uri
+import android.util.Log
 import androidx.compose.ui.graphics.asImageBitmap
+import androidx.work.WorkInfo
 import cafe.adriel.voyager.core.model.screenModelScope
 import cafe.adriel.voyager.navigator.Navigator
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -20,6 +22,7 @@ import io.tujh.imago.work.ProfileUpdateWorker
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class ProfileModel @Inject constructor(
@@ -46,8 +49,11 @@ class ProfileModel @Inject constructor(
     }
 
     private fun save() {
+        update { it.copy(isLoading = true) }
         screenModelScope.io {
             profileRepository.updateName(state.value.name)
+
+            update { it.copy(isLoading = false) }
         }
     }
 
@@ -63,10 +69,22 @@ class ProfileModel @Inject constructor(
             }
 
             val screen = ImageEditScreen("profile_avatar", bitmap) { edited ->
-                ProfileUpdateWorker.start(context, edited)
+                upload(edited)
+                navigator.pop()
             }
 
             navigator.push(screen)
+        }
+    }
+
+    private fun upload(uri: Uri) {
+        update { it.copy(isLoading = true) }
+        screenModelScope.launch {
+            ProfileUpdateWorker.start(context, uri).collect { info ->
+                if (info?.state in terminalStates) {
+                    update { it.copy(isLoading = false) }
+                }
+            }
         }
     }
 
@@ -74,7 +92,7 @@ class ProfileModel @Inject constructor(
         update {
             it.copy(
                 name = value,
-                finishVisible = value.isEmpty() && value != currentUser.value?.name
+                finishVisible = value.isNotBlank() && value != currentUser.value?.name
             )
         }
     }
@@ -93,5 +111,13 @@ class ProfileModel @Inject constructor(
                 update { it.copy(id = user.id, name = user.name, avatar = user.avatar) }
             }
             .launchIn(screenModelScope)
+    }
+
+    companion object {
+        private val terminalStates = arrayOf(
+            WorkInfo.State.SUCCEEDED,
+            WorkInfo.State.FAILED,
+            WorkInfo.State.CANCELLED,
+        )
     }
 }

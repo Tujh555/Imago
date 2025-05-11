@@ -4,6 +4,7 @@ import android.content.Context
 import android.net.Uri
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.work.Operation
+import androidx.work.WorkInfo
 import cafe.adriel.voyager.hilt.ScreenModelFactory
 import cafe.adriel.voyager.navigator.Navigator
 import coil3.BitmapImage
@@ -17,9 +18,10 @@ import io.tujh.imago.presentation.base.StateHolder
 import io.tujh.imago.presentation.base.StateModel
 import io.tujh.imago.presentation.screens.edit.ImageEditScreen
 import io.tujh.imago.work.PostUploadWorker
+import kotlinx.coroutines.flow.Flow
 
 class PostCreateModel @AssistedInject constructor(
-    @Assisted private val onAdded: @JvmSuppressWildcards (Operation) -> Unit,
+    @Assisted private val onAdded: @JvmSuppressWildcards (Flow<WorkInfo?>) -> Unit,
     private val imageLoader: FullImageLoader,
     @ApplicationContext private val context: Context
 ) : StateModel<PostCreateScreen.Action, PostCreateScreen.State>,
@@ -27,7 +29,7 @@ class PostCreateModel @AssistedInject constructor(
 
     @AssistedFactory
     interface Factory : ScreenModelFactory,
-            (@JvmSuppressWildcards (Operation) -> Unit) -> PostCreateModel
+            (@JvmSuppressWildcards (Flow<WorkInfo?>) -> Unit) -> PostCreateModel
 
     override fun onAction(action: PostCreateScreen.Action) {
         when (action) {
