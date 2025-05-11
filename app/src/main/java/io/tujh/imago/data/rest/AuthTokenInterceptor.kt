@@ -1,6 +1,7 @@
 package io.tujh.imago.data.rest
 
 import io.tujh.imago.data.store.Store
+import io.tujh.imago.domain.utils.runBlockingWithCancellation
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 import okhttp3.Interceptor
@@ -12,7 +13,9 @@ class AuthTokenInterceptor @Inject constructor(
 ) : Interceptor {
     override fun intercept(chain: Interceptor.Chain): Response {
         val builder = chain.request().newBuilder()
-        val token = runBlocking { tokenStore.data.first() }
+        val token = runBlockingWithCancellation(chain.call()::isCanceled) {
+            tokenStore.data.first()
+        }
 
         if (token != null) {
             builder.addHeader("Authorization", "Bearer $token")

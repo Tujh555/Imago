@@ -7,6 +7,7 @@ import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import io.tujh.imago.domain.ErrorHandler
 import io.tujh.imago.domain.post.repository.PostEditor
+import io.tujh.imago.domain.post.repository.PostRepository
 import io.tujh.imago.presentation.base.StateHolder
 import io.tujh.imago.presentation.base.StateModel
 import io.tujh.imago.presentation.base.io
@@ -17,7 +18,8 @@ import kotlinx.coroutines.launch
 class PostViewModel @AssistedInject constructor(
     @Assisted private val post: PostItem,
     editor: PostEditor.Factory,
-    private val errorHandler: ErrorHandler
+    private val errorHandler: ErrorHandler,
+    private val postRepository: PostRepository
 ) : StateModel<PostViewScreen.Action, PostViewScreen.State>,
     StateHolder<PostViewScreen.State> by StateHolder(PostViewScreen.State(post)) {
 
@@ -28,12 +30,21 @@ class PostViewModel @AssistedInject constructor(
     private val channel = Channel<Unit>(Channel.CONFLATED)
 
     init {
+        checkInFavorite()
         observeChannel()
     }
 
     override fun onAction(action: PostViewScreen.Action) {
         when (action) {
             PostViewScreen.Action.MarkFavorite -> markFavorite()
+        }
+    }
+
+    private fun checkInFavorite() {
+        screenModelScope.io {
+            postRepository
+                .checkInFavorite(post.id)
+                .onSuccess { inFavorite -> update { it.copy(inFavorite = inFavorite) } }
         }
     }
 

@@ -17,8 +17,11 @@ import io.tujh.imago.data.rest.post.CommentRequest
 import io.tujh.imago.data.rest.post.FavoriteResponse
 import io.tujh.imago.data.rest.post.PostApi
 import io.tujh.imago.data.rest.post.RequestId
+import io.tujh.imago.data.rest.profile.AvatarUpdateResponse
+import io.tujh.imago.data.rest.profile.ProfileApi
 import io.tujh.imago.data.retrofit.ResultAdapterFactory
 import io.tujh.imago.domain.user.CurrentUser
+import io.tujh.imago.presentation.components.uuidIndex
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.first
@@ -27,13 +30,14 @@ import okhttp3.OkHttpClient
 import okhttp3.RequestBody
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import retrofit2.create
 import java.time.Instant
 import java.util.UUID
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.atomic.AtomicInteger
 import javax.inject.Singleton
 import kotlin.random.Random.Default.nextInt
+
+private val fm = ConcurrentHashMap<String, Boolean>()
 
 @Module
 @InstallIn(SingletonComponent::class)
@@ -78,6 +82,23 @@ class ApiProvider {
 
         override suspend fun logout(request: LogoutRequest): Result<Unit> {
             delay(500)
+            return Result.success(Unit)
+        }
+    }
+
+    @Provides
+    fun profileApi(retrofit: Retrofit): ProfileApi = object : ProfileApi {
+        override suspend fun upload(file: MultipartBody.Part): Result<AvatarUpdateResponse> {
+            delay(4000)
+            return Result.success(
+                AvatarUpdateResponse(
+                    "file:///android_asset/avatar_${nextInt(1, 50)}.webp"
+                )
+            )
+        }
+
+        override suspend fun changeName(name: String): Result<Unit> {
+            delay(1500)
             return Result.success(Unit)
         }
     }
@@ -177,13 +198,16 @@ class ApiProvider {
             delay(50_000)
             return Result.success(Unit)
         }
-
-        private val fm = ConcurrentHashMap<String, Boolean>()
         override suspend fun addToFavorite(body: RequestId): Result<FavoriteResponse> {
             delay(1500)
             val res = (fm[body.id] ?: false).not()
             fm[body.id] = res
             return Result.success(FavoriteResponse(res))
+        }
+
+        override suspend fun checkInFavorite(body: RequestId): Result<FavoriteResponse> {
+            delay(1000)
+            return Result.success(FavoriteResponse(fm[body.id] ?: false))
         }
 
         private val users = List(20) {

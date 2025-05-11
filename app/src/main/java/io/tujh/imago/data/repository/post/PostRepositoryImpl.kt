@@ -3,6 +3,7 @@ package io.tujh.imago.data.repository.post
 import android.content.Context
 import android.net.Uri
 import dagger.hilt.android.qualifiers.ApplicationContext
+import io.tujh.imago.data.rest.post.FavoriteResponse
 import io.tujh.imago.data.rest.post.PostApi
 import io.tujh.imago.data.rest.post.RequestId
 import io.tujh.imago.data.retrofit.formDataOf
@@ -21,4 +22,7 @@ class PostRepositoryImpl @Inject constructor(
 
         return api.add(titleBody, images)
     }
+
+    override suspend fun checkInFavorite(id: String) =
+        api.checkInFavorite(RequestId(id)).map(FavoriteResponse::inFavorite)
 }

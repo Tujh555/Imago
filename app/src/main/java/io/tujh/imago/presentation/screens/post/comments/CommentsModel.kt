@@ -67,7 +67,7 @@ class CommentsModel @AssistedInject constructor(
             .paginate(state.value.lastVisible)
             .onEach { (elements, loadState) ->
                 if (loadState == LoadState.Failed) {
-                    errorHandler("Something went wrong")
+                    errorHandler("Error loading comments")
                 }
 
                 update {

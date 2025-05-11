@@ -1,10 +1,17 @@
 package io.tujh.imago.domain.utils
 
 import io.tujh.imago.domain.paging.source.PageableSource
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.isActive
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import java.time.Instant
+import kotlin.coroutines.CoroutineContext
+import kotlin.coroutines.EmptyCoroutineContext
 
 suspend inline fun <T> withMinDelay(delay: Long = 600, block: () -> T): T {
     val startTime = System.currentTimeMillis()
@@ -35,4 +42,25 @@ inline fun <T, R> Result<T>.flatMap(block: (T) -> R): Result<R> = if (isSuccess)
     kotlin.runCatching { getOrThrow() }.map(block)
 } else {
     Result.failure(exceptionOrNull() ?: RuntimeException())
+}
+
+fun <T> runBlockingWithCancellation(
+    isCancelled: () -> Boolean,
+    context: CoroutineContext = EmptyCoroutineContext,
+    interval: Long = 16L,
+    block: suspend CoroutineScope.() -> T
+) = runBlocking(context) {
+    val outer = this
+    val job = launch {
+        while (isActive) {
+            delay(interval)
+            if (isCancelled()) {
+                outer.cancel()
+            }
+        }
+    }
+
+    block().also {
+        job.cancel()
+    }
 }
