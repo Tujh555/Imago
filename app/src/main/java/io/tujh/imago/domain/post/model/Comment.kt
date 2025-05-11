@@ -8,4 +8,13 @@ data class Comment(
     val author: User,
     val createdAt: Instant,
     val text: String
+) {
+    enum class Status {
+        Sending, Error, Empty
+    }
+}
+
+data class StatusComment(
+    val comment: Comment,
+    val status: Comment.Status
 )

@@ -18,7 +18,10 @@ import io.tujh.imago.data.rest.post.FavoriteResponse
 import io.tujh.imago.data.rest.post.PostApi
 import io.tujh.imago.data.rest.post.RequestId
 import io.tujh.imago.data.retrofit.ResultAdapterFactory
+import io.tujh.imago.domain.user.CurrentUser
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.first
 import okhttp3.MultipartBody
 import okhttp3.OkHttpClient
 import okhttp3.RequestBody
@@ -28,6 +31,7 @@ import retrofit2.create
 import java.time.Instant
 import java.util.UUID
 import java.util.concurrent.ConcurrentHashMap
+import java.util.concurrent.atomic.AtomicInteger
 import javax.inject.Singleton
 import kotlin.random.Random.Default.nextInt
 
@@ -79,7 +83,7 @@ class ApiProvider {
     }
 
     @Provides
-    fun postApi(retrofit: Retrofit): PostApi = object : PostApi {
+    fun postApi(retrofit: Retrofit, currentUser: CurrentUser): PostApi = object : PostApi {
         private val sizes = listOf(800 to 2500, 1920 to 1080, 2560 to 1440, 1920 to 1200, 3840 to 2160)
         private val another = listOf(
             PostImageDto(
@@ -215,8 +219,27 @@ class ApiProvider {
             return commentsPage(limit).let { Result.success(it) }
         }
 
+        private val comReqCnt =  AtomicInteger(0)
         override suspend fun comment(body: CommentRequest): Result<CommentDto> {
-            TODO("Not yet implemented")
+            delay(3500)
+            if (comReqCnt.getAndIncrement() % 3 == 0) {
+                return Result.failure(RuntimeException())
+            }
+
+            val u = currentUser.filterNotNull().first()
+            val c = CommentDto(
+                id = UUID.randomUUID().toString(),
+                author = UserDto(
+                    id = u.id,
+                    avatar = u.avatar,
+                    name = u.name,
+                    email = u.email
+                ),
+                createdAt = Instant.now().toString(),
+                text = body.text
+            )
+
+            return Result.success(c)
         }
     }
 }

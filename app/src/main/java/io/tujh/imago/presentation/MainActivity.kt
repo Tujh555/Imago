@@ -35,6 +35,7 @@ import io.tujh.imago.presentation.screens.post.create.PostCreateScreen
 import io.tujh.imago.presentation.screens.post.list.PostListScreen
 import io.tujh.imago.presentation.screens.post.tab.PostTabsScreen
 import io.tujh.imago.presentation.screens.signin.SignInScreen
+import io.tujh.imago.presentation.screens.splash.SplashScreen
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -76,7 +77,7 @@ class MainActivity : ComponentActivity() {
                         },
                     ) {
                         // FIXME splash
-                        Navigator(PostTabsScreen()) { navigator ->
+                        Navigator(SplashScreen()) { navigator ->
                             FadeTransition(navigator) {
                                 CompositionLocalProvider(
                                     LocalSharedNavVisibilityScope provides this

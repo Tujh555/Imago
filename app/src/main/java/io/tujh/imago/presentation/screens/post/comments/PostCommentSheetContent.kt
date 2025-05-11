@@ -1,6 +1,12 @@
 package io.tujh.imago.presentation.screens.post.comments
 
-import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.expandHorizontally
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkHorizontally
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -25,11 +31,9 @@ import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
 import androidx.compose.material.icons.automirrored.filled.Send
-import androidx.compose.material.icons.filled.Send
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
@@ -45,19 +49,31 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.graphics.BlendModeColorFilterCompat
+import androidx.core.graphics.BlendModeCompat
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import coil3.compose.AsyncImage
+import com.airbnb.lottie.LottieProperty
+import com.airbnb.lottie.compose.LottieAnimation
+import com.airbnb.lottie.compose.LottieCompositionSpec
+import com.airbnb.lottie.compose.animateLottieCompositionAsState
+import com.airbnb.lottie.compose.rememberLottieComposition
+import com.airbnb.lottie.compose.rememberLottieDynamicProperties
+import com.airbnb.lottie.compose.rememberLottieDynamicProperty
 import com.valentinilk.shimmer.Shimmer
 import com.valentinilk.shimmer.ShimmerBounds
 import com.valentinilk.shimmer.rememberShimmer
 import com.valentinilk.shimmer.shimmer
+import io.tujh.imago.R
 import io.tujh.imago.domain.paging.paginator.LoadState
+import io.tujh.imago.domain.post.model.Comment
 import io.tujh.imago.presentation.components.IconButton
 import io.tujh.imago.presentation.components.UserAvatar
 import io.tujh.imago.presentation.components.requestBuilder
@@ -67,13 +83,17 @@ import io.tujh.imago.presentation.models.CommentItem
 import io.tujh.imago.presentation.screens.post.list.isLoading
 import io.tujh.imago.presentation.theme.colors.ImagoColors
 
+private val keyPath = arrayOf("**")
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PostCommentSheetContent(
     state: PostCommentsScreen.State,
     onAction: (PostCommentsScreen.Action) -> Unit
 ) {
-    Box(modifier = Modifier.fillMaxSize().imePadding()) {
+    Box(modifier = Modifier
+        .fillMaxSize()
+        .imePadding()) {
         AsyncImage(
             modifier = Modifier
                 .fillMaxSize()
@@ -128,7 +148,10 @@ fun PostCommentSheetContent(
                         contentPadding = PaddingValues(top = 16.dp, bottom = bottomPadding + 16.dp)
                     ) {
                         items(state.comments, key = { it.id }, contentType = { "comment" }) { comment ->
-                            Comment(modifier = Modifier.fillMaxWidth(), comment = comment)
+                            Comment(
+                                modifier = Modifier.fillMaxWidth(),
+                                comment = comment
+                            )
                             Spacer(modifier = Modifier.height(16.dp))
                         }
 
@@ -176,12 +199,25 @@ fun PostCommentSheetContent(
                 }
             }
 
+            val sendActive = state.run {
+                commentText.isNotBlank() && isRefreshing.not()
+            }
+            val tint by animateColorAsState(
+                targetValue = if (sendActive.not()) {
+                    Color.White.copy(alpha = 0.5f)
+                } else {
+                    Color.White
+                }
+            )
+
             Icon(
-                modifier = Modifier.size(32.dp).clip(CircleShape).clickable {
-                    onAction(PostCommentsScreen.Action.SendComment)
-                },
+                modifier = Modifier
+                    .size(32.dp)
+                    .clip(CircleShape)
+                    .clickable { onAction(PostCommentsScreen.Action.SendComment) },
                 imageVector = Icons.AutoMirrored.Filled.Send,
-                contentDescription = null
+                contentDescription = null,
+                tint = tint
             )
         }
     }
@@ -231,7 +267,7 @@ private fun CommentShimmer(
 @Composable
 private fun Comment(
     modifier: Modifier = Modifier,
-    comment: CommentItem
+    comment: CommentItem,
 ) {
     Row(
         modifier = modifier,
@@ -259,12 +295,54 @@ private fun Comment(
                 fontSize = 14.sp,
                 color = Color.White,
             )
-            Text(
-                text = comment.createdAt,
-                fontWeight = FontWeight.Normal,
-                fontSize = 12.sp,
-                color = Color(0xFFADADB8),
-            )
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(4.dp)
+            ) {
+                Text(
+                    text = comment.createdAt,
+                    fontWeight = FontWeight.Normal,
+                    fontSize = 12.sp,
+                    color = Color(0xFFADADB8),
+                )
+
+                AnimatedContent(
+                    targetState = comment.status,
+                    transitionSpec = {
+                        expandHorizontally() + fadeIn() togetherWith shrinkHorizontally() + fadeOut()
+                    }
+                ) { status ->
+                    when (status) {
+                        Comment.Status.Sending -> {
+                            val composition = rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.anim_clock))
+                            val progress = animateLottieCompositionAsState(composition.value, iterations = Int.MAX_VALUE)
+                            val dynamicProperties = rememberLottieDynamicProperties(
+                                rememberLottieDynamicProperty(
+                                    property = LottieProperty.COLOR_FILTER,
+                                    value = BlendModeColorFilterCompat.createBlendModeColorFilterCompat(
+                                        Color.White.hashCode(),
+                                        BlendModeCompat.SRC_ATOP
+                                    ),
+                                    keyPath = keyPath
+                                )
+                            )
+                            LottieAnimation(
+                                modifier = Modifier.size(16.dp),
+                                composition = composition.value,
+                                progress = { progress.value },
+                                dynamicProperties = dynamicProperties
+                            )
+                        }
+                        Comment.Status.Error -> Icon(
+                            modifier = Modifier.size(16.dp),
+                            painter = painterResource(R.drawable.ic_error),
+                            contentDescription = null,
+                            tint = Color(0xFFA63232)
+                        )
+                        Comment.Status.Empty -> Unit
+                    }
+                }
+            }
         }
     }
 }

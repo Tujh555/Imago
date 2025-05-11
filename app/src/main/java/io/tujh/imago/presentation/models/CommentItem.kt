@@ -2,6 +2,7 @@ package io.tujh.imago.presentation.models
 
 import androidx.compose.runtime.Immutable
 import io.tujh.imago.domain.post.model.Comment
+import io.tujh.imago.domain.post.model.StatusComment
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 
@@ -18,11 +19,13 @@ data class CommentItem(
     val author: UserItem,
     val createdAt: String,
     val text: String,
+    val status: Comment.Status
 )
 
-fun Comment.toUi() = CommentItem(
-    id = id,
-    author = author.toUi(),
-    createdAt = timeFormatter.format(createdAt),
-    text = text,
+fun StatusComment.toUi() = CommentItem(
+    id = comment.id,
+    author = comment.author.toUi(),
+    createdAt = timeFormatter.format(comment.createdAt),
+    text = comment.text,
+    status = status
 )
