@@ -15,6 +15,7 @@ import io.tujh.imago.presentation.screens.post.create.PostCreateModel
 import io.tujh.imago.presentation.screens.post.list.PostListModel
 import io.tujh.imago.presentation.screens.post.tab.PostTabsModel
 import io.tujh.imago.presentation.screens.post.view.PostViewModel
+import io.tujh.imago.presentation.screens.profile.ProfileModel
 import io.tujh.imago.presentation.screens.signin.SignInModel
 import io.tujh.imago.presentation.screens.signup.SignUpModel
 import io.tujh.imago.presentation.screens.splash.SplashModel
@@ -66,4 +67,9 @@ interface PresentationModule {
     @IntoMap
     @ScreenModelFactoryKey(CommentsModel.Factory::class)
     fun postComments(factory: CommentsModel.Factory): ScreenModelFactory
+
+    @Binds
+    @IntoMap
+    @ScreenModelKey(ProfileModel::class)
+    fun profileModel(model: ProfileModel): ScreenModel
 }

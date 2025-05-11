@@ -20,6 +20,7 @@ import io.tujh.imago.data.repository.post.FavoritesSource
 import io.tujh.imago.data.repository.post.OwnSource
 import io.tujh.imago.data.repository.post.PostEditorImpl
 import io.tujh.imago.data.repository.post.PostRepositoryImpl
+import io.tujh.imago.data.repository.user.ProfileRepositoryImpl
 import io.tujh.imago.data.repository.user.UserFlow
 import io.tujh.imago.data.store.jsonStore
 import io.tujh.imago.data.store.stringStore
@@ -35,6 +36,7 @@ import io.tujh.imago.domain.post.repository.PostEditor
 import io.tujh.imago.domain.post.repository.PostRepository
 import io.tujh.imago.domain.post.repository.PostSource
 import io.tujh.imago.domain.user.CurrentUser
+import io.tujh.imago.domain.user.ProfileRepository
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -80,6 +82,9 @@ interface DataModule {
 
     @Binds
     fun saver(impl: Saver): BitmapSaver
+
+    @Binds
+    fun profileRepository(impl: ProfileRepositoryImpl): ProfileRepository
 
     companion object {
         @Provides

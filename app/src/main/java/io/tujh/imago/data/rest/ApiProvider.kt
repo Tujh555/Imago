@@ -79,11 +79,6 @@ class ApiProvider {
                 AuthResponse(user = user, token = UUID.randomUUID().toString())
             )
         }
-
-        override suspend fun logout(request: LogoutRequest): Result<Unit> {
-            delay(500)
-            return Result.success(Unit)
-        }
     }
 
     @Provides

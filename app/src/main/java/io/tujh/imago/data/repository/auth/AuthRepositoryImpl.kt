@@ -22,12 +22,9 @@ class AuthRepositoryImpl @Inject constructor(
 
     override suspend fun signUp(data: AuthData) = request(data, api::signUp)
 
-    override suspend fun logout(): Result<Unit> {
-        val request = userStore.data.filterNotNull().first().id.let(::LogoutRequest)
-        return api.logout(request).onSuccess {
-            tokenStore.clear()
-            userStore.clear()
-        }
+    override suspend fun logout() {
+        tokenStore.clear()
+        userStore.clear()
     }
 
     private suspend fun request(

@@ -1,9 +1,12 @@
 package io.tujh.imago.work
 
+import android.app.NotificationChannel
+import android.app.NotificationManager
 import android.content.Context
 import android.content.pm.ServiceInfo
 import android.net.Uri
 import androidx.core.app.NotificationCompat
+import androidx.core.net.toUri
 import androidx.hilt.work.HiltWorker
 import androidx.work.Constraints
 import androidx.work.CoroutineWorker
@@ -18,24 +21,24 @@ import androidx.work.workDataOf
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import io.tujh.imago.R
-import io.tujh.imago.domain.post.repository.PostRepository
+import io.tujh.imago.domain.user.ProfileRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
 @HiltWorker
-class PostUploadWorker @AssistedInject constructor(
+class ProfileUpdateWorker @AssistedInject constructor(
     @Assisted context: Context,
     @Assisted params: WorkerParameters,
-    private val repository: PostRepository,
+    private val repository: ProfileRepository
 ) : CoroutineWorker(context, params) {
 
     override suspend fun doWork(): Result {
-        val (title, uris) = inputData.parse()
+        val uri = inputData.parse()?.toUri() ?: return Result.failure()
 
         setForeground(buildInfo())
 
         val res = withContext(Dispatchers.IO) {
-            repository.create(title, uris)
+            repository.uploadAvatar(uri)
         }
 
         return if (res.isSuccess) {
@@ -46,7 +49,7 @@ class PostUploadWorker @AssistedInject constructor(
     }
 
     private fun buildInfo(): ForegroundInfo {
-        val title = "Uploading photos..."
+        val title = "Uploading photo"
         val cancelIntent = WorkManager
             .getInstance(applicationContext)
             .createCancelPendingIntent(id)
@@ -68,27 +71,24 @@ class PostUploadWorker @AssistedInject constructor(
     }
 
     companion object {
-        private const val TITLE = "title"
-        private const val URIS = "uris"
+        private const val URI = "uri"
 
-        fun start(context: Context, title: String, uris: List<Uri>): Operation {
+        fun start(context: Context, uri: Uri): Operation {
             val constraints = Constraints.Builder()
                 .setRequiredNetworkType(NetworkType.CONNECTED)
                 .build()
 
-            return OneTimeWorkRequestBuilder<PostUploadWorker>()
+            return OneTimeWorkRequestBuilder<ProfileUpdateWorker>()
                 .setConstraints(constraints)
-                .setInputData(buildData(title, uris))
+                .setInputData(buildData(uri))
                 .build()
                 .let(WorkManager.getInstance(context)::enqueue)
         }
 
-        private fun buildData(title: String, uris: List<Uri>) = workDataOf(
-            TITLE to title,
-            URIS to uris.map { it.toString() }.toTypedArray()
+        private fun buildData(uri: Uri) = workDataOf(
+            URI to uri.toString()
         )
 
-        private fun Data.parse() =
-            getString(TITLE).orEmpty() to getStringArray(URIS).orEmpty().map(Uri::parse)
+        private fun Data.parse() = getString(URI)
     }
 }

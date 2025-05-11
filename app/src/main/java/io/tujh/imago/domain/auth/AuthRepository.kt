@@ -5,7 +5,7 @@ interface AuthRepository {
 
     suspend fun signUp(data: AuthData): Result<Unit>
 
-    suspend fun logout(): Result<Unit>
+    suspend fun logout()
 }
 
 class AuthData(

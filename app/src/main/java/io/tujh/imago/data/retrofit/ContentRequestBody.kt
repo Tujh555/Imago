@@ -21,7 +21,6 @@ private class ContentRequestBody(private val source: () -> BufferedSource) : Req
     }
 }
 
-@Throws(FileNotFoundException::class)
 fun Context.formDataOf(name: String, uri: Uri): MultipartBody.Part {
     val resolver = contentResolver
     val body = ContentRequestBody { resolver.openOrThrow(uri).source().buffer() }
