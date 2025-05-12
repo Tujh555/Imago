@@ -15,6 +15,7 @@ import io.tujh.imago.data.image.Saver
 import io.tujh.imago.data.repository.auth.AuthRepositoryImpl
 import io.tujh.imago.data.repository.image.DrawRepository
 import io.tujh.imago.data.repository.post.AllSource
+import io.tujh.imago.data.repository.post.CommentSender
 import io.tujh.imago.data.repository.post.CommentSourceImpl
 import io.tujh.imago.data.repository.post.FavoritesSource
 import io.tujh.imago.data.repository.post.OwnSource
@@ -31,6 +32,7 @@ import io.tujh.imago.domain.image.FullImageLoader
 import io.tujh.imago.domain.image.WriteableUriProvider
 import io.tujh.imago.domain.image.draw.DrawSettings
 import io.tujh.imago.domain.image.draw.DrawSettingsRepository
+import io.tujh.imago.domain.post.repository.CommentRepository
 import io.tujh.imago.domain.post.repository.CommentsSource
 import io.tujh.imago.domain.post.repository.PostEditor
 import io.tujh.imago.domain.post.repository.PostRepository
@@ -85,6 +87,9 @@ interface DataModule {
 
     @Binds
     fun profileRepository(impl: ProfileRepositoryImpl): ProfileRepository
+
+    @Binds
+    fun commentRepository(factory: CommentSender.Factory): CommentRepository.Factory
 
     companion object {
         @Provides

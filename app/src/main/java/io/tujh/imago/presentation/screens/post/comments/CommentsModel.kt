@@ -15,7 +15,9 @@ import io.tujh.imago.presentation.base.StateHolder
 import io.tujh.imago.presentation.base.io
 import io.tujh.imago.presentation.models.PostItem
 import io.tujh.imago.presentation.models.toUi
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 
@@ -54,11 +56,11 @@ class CommentsModel @AssistedInject constructor(
         update { it.copy(commentText = "") }
 
         screenModelScope.io {
-            comments.send(text) {
-                launch {
-                    emit(PostCommentsScreen.Event.ScrollTo(0, state.value.lazyListState))
-                }
-            }
+            val currentComments = state.value.comments
+            launch { comments.send(text) }
+
+            state.map { it.comments }.first { it.size > currentComments.size }
+            emit(PostCommentsScreen.Event.ScrollTo(0, state.value.lazyListState))
         }
     }
 

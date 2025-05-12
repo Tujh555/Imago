@@ -91,9 +91,11 @@ fun PostCommentSheetContent(
     state: PostCommentsScreen.State,
     onAction: (PostCommentsScreen.Action) -> Unit
 ) {
-    Box(modifier = Modifier
-        .fillMaxSize()
-        .imePadding()) {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .imePadding()
+    ) {
         AsyncImage(
             modifier = Modifier
                 .fillMaxSize()
@@ -128,7 +130,8 @@ fun PostCommentSheetContent(
                 isRefreshing = state.isRefreshing,
                 onRefresh = { onAction(PostCommentsScreen.Action.Refresh) }
             ) {
-                val isEmpty = state.run { loadState == LoadState.Loaded && state.comments.isEmpty() }
+                val isEmpty =
+                    state.run { loadState == LoadState.Loaded && state.comments.isEmpty() }
 
                 if (isEmpty) {
                     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
@@ -147,7 +150,10 @@ fun PostCommentSheetContent(
                         state = state.lazyListState,
                         contentPadding = PaddingValues(top = 16.dp, bottom = bottomPadding + 16.dp)
                     ) {
-                        items(state.comments, key = { it.id }, contentType = { "comment" }) { comment ->
+                        items(
+                            state.comments,
+                            key = { it.id },
+                            contentType = { "comment" }) { comment ->
                             Comment(
                                 modifier = Modifier.fillMaxWidth(),
                                 comment = comment
@@ -157,7 +163,10 @@ fun PostCommentSheetContent(
 
                         if (state.loadState.isLoading()) {
                             items(30, contentType = { "shimmer" }) {
-                                CommentShimmer(modifier = Modifier.fillMaxWidth(), shimmer = shimmer)
+                                CommentShimmer(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    shimmer = shimmer
+                                )
                                 Spacer(modifier = Modifier.height(16.dp))
                             }
                         }
@@ -214,7 +223,7 @@ fun PostCommentSheetContent(
                 modifier = Modifier
                     .size(32.dp)
                     .clip(CircleShape)
-                    .clickable { onAction(PostCommentsScreen.Action.SendComment) },
+                    .clickable(enabled = sendActive) { onAction(PostCommentsScreen.Action.SendComment) },
                 imageVector = Icons.AutoMirrored.Filled.Send,
                 contentDescription = null,
                 tint = tint
@@ -314,8 +323,12 @@ private fun Comment(
                 ) { status ->
                     when (status) {
                         Comment.Status.Sending -> {
-                            val composition = rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.anim_clock))
-                            val progress = animateLottieCompositionAsState(composition.value, iterations = Int.MAX_VALUE)
+                            val composition =
+                                rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.anim_clock))
+                            val progress = animateLottieCompositionAsState(
+                                composition.value,
+                                iterations = Int.MAX_VALUE
+                            )
                             val dynamicProperties = rememberLottieDynamicProperties(
                                 rememberLottieDynamicProperty(
                                     property = LottieProperty.COLOR_FILTER,
@@ -333,12 +346,14 @@ private fun Comment(
                                 dynamicProperties = dynamicProperties
                             )
                         }
+
                         Comment.Status.Error -> Icon(
                             modifier = Modifier.size(16.dp),
                             painter = painterResource(R.drawable.ic_error),
                             contentDescription = null,
                             tint = Color(0xFFA63232)
                         )
+
                         Comment.Status.Empty -> Unit
                     }
                 }
