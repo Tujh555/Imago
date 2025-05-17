@@ -121,7 +121,19 @@ class ApiProvider {
             PostImageDto(
                 url = "https://img.freepik.com/free-photo/closeup-scarlet-macaw-from-side-view-scarlet-macaw-closeup-head_488145-3540.jpg?semt=ais_hybrid&w=740",
                 originalWidth = 740, originalHeight = 1109
-            )
+            ),
+            PostImageDto(
+                url = "https://image-processor-storage.s3.us-west-2.amazonaws.com/images/281c2d4581ed27c8a258b0e79bc504ad/halo-of-neon-ring-illuminated-in-the-stunning-landscape-of-yosemite.jpg",
+                originalWidth = 1400, originalHeight = 933
+            ),
+            PostImageDto(
+                url = "https://bkacontent.com/wp-content/uploads/2016/06/Depositphotos_31146757_l-2015.jpg",
+                originalWidth = 1920, originalHeight = 1752
+            ),
+            PostImageDto(
+                url = "https://static01.nytimes.com/newsgraphics/2024-12-06-disinfo-ai-inserts/a0ffc5e3-43da-426b-85eb-db663e12de7b/_assets/field.jpg",
+                originalWidth = 1200, originalHeight = 1491
+            ),
         )
         private val images = another + sizes.flatMap { (w, h) ->
             testUrls(w, h).map { url ->
@@ -188,11 +200,13 @@ class ApiProvider {
 
         override suspend fun add(
             title: RequestBody,
+            sizes: RequestBody,
             images: List<MultipartBody.Part>
         ): Result<Unit> {
             delay(50_000)
             return Result.success(Unit)
         }
+
         override suspend fun addToFavorite(body: RequestId): Result<FavoriteResponse> {
             delay(1500)
             val res = (fm[body.id] ?: false).not()

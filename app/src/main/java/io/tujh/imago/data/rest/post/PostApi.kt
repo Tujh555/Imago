@@ -52,6 +52,6 @@ interface PostApi {
         @Query("cursor") cursor: String,
     ): Result<List<CommentDto>>
 
-    @POST("/comments/add")
+    @POST("/posts/comments/add")
     suspend fun comment(@Body body: CommentRequest): Result<CommentDto>
 }
