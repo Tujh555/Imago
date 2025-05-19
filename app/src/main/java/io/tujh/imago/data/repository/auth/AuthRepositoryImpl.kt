@@ -4,13 +4,10 @@ import io.tujh.imago.data.dto.UserDto
 import io.tujh.imago.data.rest.auth.AuthApi
 import io.tujh.imago.data.rest.auth.AuthRequest
 import io.tujh.imago.data.rest.auth.AuthResponse
-import io.tujh.imago.data.rest.auth.LogoutRequest
 import io.tujh.imago.data.store.Store
 import io.tujh.imago.domain.auth.AuthData
 import io.tujh.imago.domain.auth.AuthRepository
 import io.tujh.imago.domain.utils.map
-import kotlinx.coroutines.flow.filterNotNull
-import kotlinx.coroutines.flow.first
 import javax.inject.Inject
 
 class AuthRepositoryImpl @Inject constructor(

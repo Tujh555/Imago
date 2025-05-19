@@ -12,7 +12,6 @@ import io.tujh.imago.data.dto.UserDto
 import io.tujh.imago.data.rest.auth.AuthApi
 import io.tujh.imago.data.rest.auth.AuthRequest
 import io.tujh.imago.data.rest.auth.AuthResponse
-import io.tujh.imago.data.rest.auth.LogoutRequest
 import io.tujh.imago.data.rest.post.CommentRequest
 import io.tujh.imago.data.rest.post.FavoriteResponse
 import io.tujh.imago.data.rest.post.PostApi
