@@ -9,6 +9,7 @@ import retrofit2.http.GET
 import retrofit2.http.Multipart
 import retrofit2.http.POST
 import retrofit2.http.Part
+import retrofit2.http.Path
 import retrofit2.http.Query
 import java.util.concurrent.ConcurrentHashMap
 
@@ -25,7 +26,7 @@ interface PostApi {
         @Query("cursor") cursor: String,
     ): Result<List<PostDto>>
 
-    @GET("/posts/favorite")
+    @GET("/posts/favorites")
     suspend fun favorites(
         @Query("limit") limit: Int,
         @Query("cursor") cursor: String,
@@ -42,12 +43,12 @@ interface PostApi {
     @POST("/posts/favorites/add")
     suspend fun addToFavorite(@Body body: RequestId): Result<FavoriteResponse>
 
-    @GET("/posts/favorites/check")
-    suspend fun checkInFavorite(@Body body: RequestId): Result<FavoriteResponse>
+    @GET("/posts/favorites/check/{id}")
+    suspend fun checkInFavorite(@Path("id") id: String): Result<FavoriteResponse>
 
     @GET("/posts/comments")
     suspend fun comments(
-        @Query("postId") postId: String,
+        @Query("post_id") postId: String,
         @Query("limit") limit: Int,
         @Query("cursor") cursor: String,
     ): Result<List<CommentDto>>

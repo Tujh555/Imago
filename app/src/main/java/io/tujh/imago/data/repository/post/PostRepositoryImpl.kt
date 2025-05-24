@@ -32,7 +32,7 @@ class PostRepositoryImpl @Inject constructor(
     }
 
     override suspend fun checkInFavorite(id: String) =
-        api.checkInFavorite(RequestId(id)).map(FavoriteResponse::inFavorite)
+        api.checkInFavorite(id).map(FavoriteResponse::inFavorite)
 
     private fun Uri.size(): Pair<Int, Int> {
         val options = BitmapFactory.Options().apply { inJustDecodeBounds = true }
