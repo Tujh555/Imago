@@ -31,7 +31,7 @@ class ProfileRepositoryImpl @Inject constructor(
         return api
             .upload(part)
             .onSuccess { resp ->
-                userStore.put(current.copy(avatar = uri.toString())) // FIXME !!!
+                userStore.put(current.copy(avatar = resp.url))
             }
             .map()
     }

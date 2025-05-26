@@ -22,6 +22,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -53,7 +54,8 @@ fun PostListScreenContent(state: PostListScreen.State, onAction: (PostListScreen
             Text(
                 text = "There will be something interesting here in the future.",
                 color = Color.White,
-                fontSize = 24.sp
+                fontSize = 24.sp,
+                textAlign = TextAlign.Center
             )
         } else {
             val shimmer = rememberShimmer(ShimmerBounds.View)

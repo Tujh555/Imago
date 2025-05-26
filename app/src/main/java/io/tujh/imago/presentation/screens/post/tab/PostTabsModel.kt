@@ -1,5 +1,6 @@
 package io.tujh.imago.presentation.screens.post.tab
 
+import android.util.Log
 import androidx.work.WorkInfo
 import cafe.adriel.voyager.core.model.screenModelScope
 import io.tujh.imago.presentation.base.StateHolder
@@ -23,6 +24,7 @@ class PostTabsModel @Inject constructor() :
                 refreshJob?.cancel()
                 refreshJob = screenModelScope.launch {
                     action.info.collect { info ->
+                        Log.d("OkHttpClient", "info = $info; state = ${info?.state}")
                         val isSuccess = info?.state == WorkInfo.State.SUCCEEDED
                         val isActive = currentCoroutineContext().isActive
 

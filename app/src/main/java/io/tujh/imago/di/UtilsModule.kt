@@ -5,6 +5,7 @@ import dagger.Module
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import io.tujh.imago.domain.ErrorHandler
+import io.tujh.imago.domain.NotAuthorizedHandler
 import io.tujh.imago.presentation.MainActivity
 import javax.inject.Singleton
 
@@ -14,4 +15,8 @@ interface UtilsModule {
     @Binds
     @Singleton
     fun handler(impl: MainActivity.Handler): ErrorHandler
+
+    @Binds
+    @Singleton
+    fun unauthorized(impl: MainActivity.UnauthorizedHandler): NotAuthorizedHandler
 }

@@ -1,6 +1,7 @@
 package io.tujh.imago.data.rest.profile
 
 import okhttp3.MultipartBody
+import retrofit2.http.Body
 import retrofit2.http.Multipart
 import retrofit2.http.PATCH
 import retrofit2.http.POST
@@ -12,5 +13,5 @@ interface ProfileApi {
     suspend fun upload(@Part file: MultipartBody.Part): Result<AvatarUpdateResponse>
 
     @PATCH("user/name")
-    suspend fun changeName(name: String): Result<Unit>
+    suspend fun changeName(@Body name: String): Result<Unit>
 }

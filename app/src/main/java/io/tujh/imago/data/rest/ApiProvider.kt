@@ -27,6 +27,7 @@ import kotlinx.coroutines.flow.first
 import okhttp3.MultipartBody
 import okhttp3.OkHttpClient
 import okhttp3.RequestBody
+import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.create
@@ -44,9 +45,15 @@ private val fm = ConcurrentHashMap<String, Boolean>()
 class ApiProvider {
     @Provides
     @Singleton
-    fun retrofit(tokenInterceptor: AuthTokenInterceptor): Retrofit {
+    fun retrofit(
+        tokenInterceptor: AuthTokenInterceptor,
+        notAuthorizedInterceptor: NotAuthorizedInterceptor
+    ): Retrofit {
+        val logging = HttpLoggingInterceptor().apply { level = HttpLoggingInterceptor.Level.BASIC }
         val client = OkHttpClient.Builder()
+            .addInterceptor(notAuthorizedInterceptor)
             .addInterceptor(tokenInterceptor)
+            .addInterceptor(logging)
             .build()
 
         return Retrofit.Builder()

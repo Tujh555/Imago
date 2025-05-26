@@ -28,6 +28,7 @@ import cafe.adriel.voyager.navigator.bottomSheet.BottomSheetNavigator
 import cafe.adriel.voyager.transitions.FadeTransition
 import dagger.hilt.android.AndroidEntryPoint
 import io.tujh.imago.domain.ErrorHandler
+import io.tujh.imago.domain.NotAuthorizedHandler
 import io.tujh.imago.presentation.components.LocalSharedNavVisibilityScope
 import io.tujh.imago.presentation.models.PostItem
 import io.tujh.imago.presentation.screens.post.comments.PostCommentsScreen
@@ -50,6 +51,8 @@ class MainActivity : ComponentActivity() {
     lateinit var handler: Handler
     @Inject
     lateinit var localProvider: AppLocalProvider
+    @Inject
+    lateinit var unauthorizedHandler: UnauthorizedHandler
 
     @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -76,8 +79,8 @@ class MainActivity : ComponentActivity() {
                             )
                         },
                     ) {
-                        // FIXME splash
                         Navigator(SplashScreen()) { navigator ->
+                            unauthorizedHandler.navigator = navigator
                             FadeTransition(navigator) {
                                 CompositionLocalProvider(
                                     LocalSharedNavVisibilityScope provides this
@@ -101,6 +104,19 @@ class MainActivity : ComponentActivity() {
         override fun invoke(p1: String) {
             scope?.launch {
                 hostState.showSnackbar(message = p1, withDismissAction = true)
+            }
+        }
+    }
+
+    @Singleton
+    class UnauthorizedHandler @Inject constructor() : NotAuthorizedHandler {
+        var navigator: Navigator? = null
+
+        override fun handle() {
+            navigator?.run {
+                if (lastItemOrNull !is SignInScreen) {
+                    replaceAll(SignInScreen())
+                }
             }
         }
     }

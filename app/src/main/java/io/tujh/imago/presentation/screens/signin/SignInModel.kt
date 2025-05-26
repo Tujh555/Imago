@@ -28,7 +28,7 @@ class SignInModel @Inject constructor(
                     val authData = state.value.run {
                         AuthData(email = email, password = password, name = "")
                     }
-                    repository.signUp(authData)
+                    repository.signIn(authData)
                 }
 
                 result

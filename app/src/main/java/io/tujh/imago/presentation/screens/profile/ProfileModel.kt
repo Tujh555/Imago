@@ -12,6 +12,7 @@ import io.tujh.imago.domain.auth.AuthRepository
 import io.tujh.imago.domain.image.BitmapLoader
 import io.tujh.imago.domain.user.CurrentUser
 import io.tujh.imago.domain.user.ProfileRepository
+import io.tujh.imago.domain.utils.withMinDelay
 import io.tujh.imago.presentation.base.StateHolder
 import io.tujh.imago.presentation.base.StateModel
 import io.tujh.imago.presentation.base.io
@@ -50,7 +51,9 @@ class ProfileModel @Inject constructor(
     private fun save() {
         update { it.copy(isLoading = true) }
         screenModelScope.io {
-            profileRepository.updateName(state.value.name)
+            withMinDelay {
+                profileRepository.updateName(state.value.name)
+            }
 
             update { it.copy(isLoading = false) }
         }

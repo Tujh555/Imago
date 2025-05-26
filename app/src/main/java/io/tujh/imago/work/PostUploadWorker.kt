@@ -3,6 +3,7 @@ package io.tujh.imago.work
 import android.content.Context
 import android.content.pm.ServiceInfo
 import android.net.Uri
+import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.hilt.work.HiltWorker
 import androidx.work.Constraints
@@ -20,6 +21,7 @@ import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import io.tujh.imago.R
 import io.tujh.imago.domain.post.repository.PostRepository
+import io.tujh.imago.domain.utils.withMinDelay
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.withContext
@@ -37,7 +39,7 @@ class PostUploadWorker @AssistedInject constructor(
         setForeground(buildInfo())
 
         val res = withContext(Dispatchers.IO) {
-            repository.create(title, uris)
+            withMinDelay(3000) { repository.create(title, uris) }
         }
 
         return if (res.isSuccess) {

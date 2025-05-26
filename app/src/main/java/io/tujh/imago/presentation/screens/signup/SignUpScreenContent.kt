@@ -104,7 +104,7 @@ fun SignUpScreenContent(state: SignUpScreen.State, onAction: (SignUpScreen.Actio
             TextButton(
                 modifier = Modifier.fillMaxWidth(),
                 shape = TextFieldShape,
-                text = "Log in",
+                text = "Sign Up",
                 active = state.isLoading.not(),
                 onClick = { onAction(SignUpScreen.Action.SignUp(navigator)) }
             )
