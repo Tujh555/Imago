@@ -36,7 +36,9 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
+import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -128,10 +130,11 @@ fun PostCommentSheetContent(
             PullToRefreshBox(
                 modifier = Modifier.fillMaxSize(),
                 isRefreshing = state.isRefreshing,
-                onRefresh = { onAction(PostCommentsScreen.Action.Refresh) }
+                onRefresh = { onAction(PostCommentsScreen.Action.Refresh) },
             ) {
-                val isEmpty =
-                    state.run { loadState == LoadState.Loaded && state.comments.isEmpty() }
+                val isEmpty = state.run {
+                    loadState == LoadState.Loaded && state.comments.isEmpty()
+                }
 
                 if (isEmpty) {
                     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
@@ -153,7 +156,8 @@ fun PostCommentSheetContent(
                         items(
                             state.comments,
                             key = { it.id },
-                            contentType = { "comment" }) { comment ->
+                            contentType = { "comment" }
+                        ) { comment ->
                             Comment(
                                 modifier = Modifier.fillMaxWidth(),
                                 comment = comment

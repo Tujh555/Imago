@@ -11,6 +11,7 @@ import io.tujh.imago.presentation.base.Component
 import io.tujh.imago.presentation.lastVisibleItemIndex
 import io.tujh.imago.presentation.models.CommentItem
 import io.tujh.imago.presentation.models.PostItem
+import java.time.Instant
 
 class PostCommentsScreen(
     private val post: PostItem,
@@ -19,6 +20,7 @@ class PostCommentsScreen(
     @Immutable
     data class State(
         val currentUrl: String,
+        val pof: Instant = Instant.now(),
         val comments: List<CommentItem> = emptyList(),
         val loadState: LoadState = LoadState.Initial,
         val commentText: String = "",

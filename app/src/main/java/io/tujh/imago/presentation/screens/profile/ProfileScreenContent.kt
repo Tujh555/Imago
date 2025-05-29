@@ -29,7 +29,6 @@ import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
-import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.material3.pulltorefresh.PullToRefreshDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -45,11 +44,8 @@ import io.tujh.imago.presentation.components.IconButton
 import io.tujh.imago.presentation.components.UserAvatar
 import io.tujh.imago.presentation.editor.components.scaffold.asSource
 import io.tujh.imago.presentation.screens.post.create.AddImageTooltip
-import io.tujh.imago.presentation.screens.post.create.PostCreateScreen
-import io.tujh.imago.presentation.screens.post.list.PostListScreen
 import io.tujh.imago.presentation.screens.signin.TextFieldShape
 import io.tujh.imago.presentation.screens.signin.imagoTFColors
-import io.tujh.imago.presentation.screens.signup.SignUpScreen
 import io.tujh.imago.presentation.theme.colors.ImagoColors
 import kotlinx.coroutines.launch
 

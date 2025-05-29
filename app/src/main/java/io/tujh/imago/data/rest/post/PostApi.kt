@@ -43,8 +43,8 @@ interface PostApi {
     @POST("/posts/favorites/add")
     suspend fun addToFavorite(@Body body: RequestId): Result<FavoriteResponse>
 
-    @GET("/posts/favorites/check/{id}")
-    suspend fun checkInFavorite(@Path("id") id: String): Result<FavoriteResponse>
+    @GET("/posts/favorites/check")
+    suspend fun checkInFavorite(@Query("id") id: String): Result<FavoriteResponse>
 
     @GET("/posts/comments")
     suspend fun comments(

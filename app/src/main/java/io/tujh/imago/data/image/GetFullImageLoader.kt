@@ -44,23 +44,6 @@ class GetFullImageLoader @Inject constructor(
             .allowRgb565(false)
             .allowConversionToBitmap(true)
             .crossfade(true)
-            .logger(object : Logger {
-                override var minLevel = Logger.Level.Debug
-
-                override fun log(
-                    tag: String,
-                    level: Logger.Level,
-                    message: String?,
-                    throwable: Throwable?
-                ) {
-                    if (throwable == null) {
-                        Log.d("--tag", message.orEmpty())
-                    } else {
-                        Log.e("--tag", message, throwable)
-                    }
-                }
-
-            })
             .build()
     }
 }

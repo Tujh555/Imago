@@ -116,9 +116,7 @@ fun PostViewScreenContent(state: PostViewScreen.State, onAction: (PostViewScreen
                                 .skipToLookaheadSize()
                                 .renderInSharedTransitionScopeOverlay(zIndexInOverlay = 1f)
                                 .sharedElement(
-                                    state = rememberSharedContentState(
-                                        key = "${state.post.id}_title"
-                                    ),
+                                    state = rememberSharedContentState(state.titleSharedKey),
                                     animatedVisibilityScope = LocalSharedNavVisibilityScope.current
                                 ),
                             text = state.post.title,
@@ -192,7 +190,7 @@ fun PostViewScreenContent(state: PostViewScreen.State, onAction: (PostViewScreen
                                     }
                                     .applyIf(page == 0) {
                                         sharedElement(
-                                            state = rememberSharedContentState(key = url),
+                                            state = rememberSharedContentState(state.imageSharedKey),
                                             animatedVisibilityScope = LocalSharedNavVisibilityScope.current,
                                             clipInOverlayDuringTransition = OverlayClip(postShape)
                                         )

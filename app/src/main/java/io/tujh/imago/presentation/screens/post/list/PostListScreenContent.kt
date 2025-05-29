@@ -1,13 +1,15 @@
 package io.tujh.imago.presentation.screens.post.list
 
-import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBarsPadding
@@ -68,13 +70,18 @@ fun PostListScreenContent(state: PostListScreen.State, onAction: (PostListScreen
                 reverseLayout = false,
                 verticalItemSpacing = 16.dp,
                 horizontalArrangement = Arrangement.spacedBy(16.dp),
+                contentPadding = WindowInsets.navigationBars.asPaddingValues()
             ) {
                 items(state.posts, key = { it.id }, contentType = { "post" }) { post ->
+                    val imageSharedKey = "${post.images.first().url}_${state.type}"
+                    val titleSharedKey = "${post.id}_title_${state.type}"
                     ShortPost(
-                        modifier = Modifier.fillMaxWidth(),
+                        modifier = Modifier.fillMaxWidth().animateItem(),
                         post = post,
                         shimmer = shimmer,
-                        onClick = { navigator.push(PostViewScreen(post)) }
+                        onClick = { navigator.push(PostViewScreen(post, imageSharedKey, titleSharedKey)) },
+                        imageSharedKey = imageSharedKey,
+                        titleSharedKey = titleSharedKey,
                     )
                 }
 

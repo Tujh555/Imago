@@ -50,6 +50,8 @@ fun ShortPost(
     modifier: Modifier = Modifier,
     post: PostItem,
     shimmer: Shimmer,
+    imageSharedKey: String,
+    titleSharedKey: String,
     onClick: () -> Unit
 ) {
     BoxWithConstraints(modifier = modifier.clip(postShape).clickable(onClick = onClick)) {
@@ -69,7 +71,7 @@ fun ShortPost(
                         .matchParentSize()
                         .clip(postShape)
                         .sharedElement(
-                            state = rememberSharedContentState(key = url),
+                            state = rememberSharedContentState(key = imageSharedKey),
                             animatedVisibilityScope = LocalSharedNavVisibilityScope.current,
                             clipInOverlayDuringTransition = OverlayClip(postShape),
                         ),
@@ -98,9 +100,7 @@ fun ShortPost(
                     modifier = Modifier
                         .applyWith(LocalSharedTransitionScope.current) {
                             it.sharedElement(
-                                state = rememberSharedContentState(
-                                    key = "${post.id}_title"
-                                ),
+                                state = rememberSharedContentState(titleSharedKey),
                                 animatedVisibilityScope = LocalSharedNavVisibilityScope.current,
                             )
                         }

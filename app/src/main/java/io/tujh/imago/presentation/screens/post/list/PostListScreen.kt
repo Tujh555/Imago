@@ -24,6 +24,7 @@ class PostListScreen(
 
     @Immutable
     data class State(
+        val type: PostListType,
         val gridState: LazyStaggeredGridState = LazyStaggeredGridState(),
         val posts: List<PostItem> = emptyList(),
         val loadState: LoadState = LoadState.Initial,

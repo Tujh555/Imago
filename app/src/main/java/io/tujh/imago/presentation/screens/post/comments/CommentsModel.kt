@@ -15,16 +15,19 @@ import io.tujh.imago.presentation.base.StateHolder
 import io.tujh.imago.presentation.base.io
 import io.tujh.imago.presentation.models.PostItem
 import io.tujh.imago.presentation.models.toUi
+import io.tujh.imago.presentation.screens.post.list.isLoading
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
+import java.time.Instant
 
 class CommentsModel @AssistedInject constructor(
     @Assisted private val post: PostItem,
     @Assisted currentUrl: String,
-    getComments: Comments.Factory,
+    private val getComments: Comments.Factory,
     private val errorHandler: ErrorHandler,
 ) : Model<PostCommentsScreen.Action, PostCommentsScreen.State, PostCommentsScreen.Event>,
     StateHolder<PostCommentsScreen.State> by StateHolder(PostCommentsScreen.State(currentUrl)),
@@ -33,7 +36,7 @@ class CommentsModel @AssistedInject constructor(
     @AssistedFactory
     interface Factory : ScreenModelFactory, (PostItem, String) -> CommentsModel
 
-    private val comments = getComments(post.id)
+    private var _comments: Comments? = null
 
     init {
         paginate()
@@ -43,14 +46,18 @@ class CommentsModel @AssistedInject constructor(
         when (action) {
             is PostCommentsScreen.Action.Comment -> update { it.copy(commentText = action.value) }
             PostCommentsScreen.Action.Refresh -> {
-                update { it.copy(isRefreshing = true) }
-                screenModelScope.io { comments.pager.refresh() }
+                update { it.copy(isRefreshing = true, pof = Instant.now()) }
+                screenModelScope.launch {
+                    delay(1000)
+                    update { it.copy(isRefreshing = false) }
+                }
             }
             PostCommentsScreen.Action.SendComment -> sendComment()
         }
     }
 
     private fun sendComment() {
+        val comments = _comments ?: return
         val text = state.value.commentText
 
         update { it.copy(commentText = "") }
@@ -65,21 +72,30 @@ class CommentsModel @AssistedInject constructor(
     }
 
     private fun paginate() {
-        comments.pager
-            .paginate(state.value.lastVisible)
-            .onEach { (elements, loadState) ->
-                if (loadState == LoadState.Failed) {
-                    errorHandler("Error loading comments")
-                }
+        screenModelScope.io {
+            state.map { it.pof }.distinctUntilChanged().collectLatest {
+                val comments = getComments(post.id).also { _comments = it }
+                comments.pager.paginate(state.value.lastVisible).collect { (elements, loadState) ->
+                    if (loadState == LoadState.Failed) {
+                        errorHandler("Error loading comments")
+                    }
 
-                update {
-                    it.copy(
-                        comments = elements.fastMap { it.toUi() },
-                        loadState = loadState,
-                        isRefreshing = false
-                    )
+                    update {
+                        it.copy(
+                            comments = if (elements.isEmpty() && it.comments.isNotEmpty()) {
+                                it.comments
+                            } else {
+                                elements.fastMap { it.toUi() }
+                            },
+                            loadState = if (loadState.isLoading() && elements.isEmpty()) {
+                                it.loadState
+                            } else {
+                                loadState
+                            },
+                        )
+                    }
                 }
             }
-            .launchIn(screenModelScope)
+        }
     }
 }

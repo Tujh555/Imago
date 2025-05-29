@@ -9,11 +9,15 @@ import io.tujh.imago.presentation.base.StateComponent
 import io.tujh.imago.presentation.models.PostItem
 
 class PostViewScreen(
-    private val post: PostItem
+    private val post: PostItem,
+    private val imageSharedKey: String,
+    private val titleSharedKey: String
 ) : StateComponent<PostViewScreen.Action, PostViewScreen.State> {
     @Immutable
     data class State(
         val post: PostItem,
+        val imageSharedKey: String,
+        val titleSharedKey: String,
         val pagerState: PagerState = PagerState { post.images.size },
         val inFavorite: Boolean = false
     )
@@ -28,5 +32,7 @@ class PostViewScreen(
         PostViewScreenContent(state, onAction)
 
     @Composable
-    override fun model() = getScreenModel<PostViewModel, PostViewModel.Factory> { it(post) }
+    override fun model() = getScreenModel<PostViewModel, PostViewModel.Factory> {
+        it.create(post, imageSharedKey, titleSharedKey)
+    }
 }

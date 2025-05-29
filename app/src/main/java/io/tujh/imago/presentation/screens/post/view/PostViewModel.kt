@@ -12,19 +12,30 @@ import io.tujh.imago.presentation.base.StateHolder
 import io.tujh.imago.presentation.base.StateModel
 import io.tujh.imago.presentation.base.io
 import io.tujh.imago.presentation.models.PostItem
+import io.tujh.imago.presentation.screens.post.list.PostListType
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.launch
 
 class PostViewModel @AssistedInject constructor(
     @Assisted private val post: PostItem,
+    @Assisted("image") imageKey: String,
+    @Assisted("title") titleKey: String,
     editor: PostEditor.Factory,
     private val errorHandler: ErrorHandler,
-    private val postRepository: PostRepository
+    private val postRepository: PostRepository,
+    private val refreshes: MutableSharedFlow<Set<PostListType>>,
 ) : StateModel<PostViewScreen.Action, PostViewScreen.State>,
-    StateHolder<PostViewScreen.State> by StateHolder(PostViewScreen.State(post)) {
+    StateHolder<PostViewScreen.State> by StateHolder(PostViewScreen.State(post, imageKey, titleKey)) {
 
     @AssistedFactory
-    interface Factory : ScreenModelFactory, (PostItem) -> PostViewModel
+    interface Factory : ScreenModelFactory {
+        fun create(
+            post: PostItem,
+            @Assisted("image") imageKey: String,
+            @Assisted("title") titleKey: String
+        ): PostViewModel
+    }
 
     private val editor = editor(post.id)
     private val channel = Channel<Unit>(Channel.CONFLATED)
@@ -55,6 +66,7 @@ class PostViewModel @AssistedInject constructor(
                     .markFavorite()
                     .onSuccess { inFavorite ->
                         update { it.copy(inFavorite = inFavorite) }
+                        refreshes.emit(setOf(PostListType.Favorites))
                     }
                     .onFailure {
                         errorHandler("Cannot add to favorites")

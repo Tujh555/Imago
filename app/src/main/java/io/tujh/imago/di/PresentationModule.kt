@@ -6,19 +6,25 @@ import cafe.adriel.voyager.hilt.ScreenModelFactoryKey
 import cafe.adriel.voyager.hilt.ScreenModelKey
 import dagger.Binds
 import dagger.Module
+import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.components.ActivityComponent
+import dagger.hilt.android.scopes.ActivityScoped
 import dagger.multibindings.IntoMap
 import io.tujh.imago.presentation.screens.edit.ImageEditScreenModel
 import io.tujh.imago.presentation.screens.post.comments.CommentsModel
 import io.tujh.imago.presentation.screens.post.create.PostCreateModel
 import io.tujh.imago.presentation.screens.post.list.PostListModel
+import io.tujh.imago.presentation.screens.post.list.PostListType
 import io.tujh.imago.presentation.screens.post.tab.PostTabsModel
 import io.tujh.imago.presentation.screens.post.view.PostViewModel
 import io.tujh.imago.presentation.screens.profile.ProfileModel
 import io.tujh.imago.presentation.screens.signin.SignInModel
 import io.tujh.imago.presentation.screens.signup.SignUpModel
 import io.tujh.imago.presentation.screens.splash.SplashModel
+import kotlinx.coroutines.channels.BufferOverflow
+import kotlinx.coroutines.flow.MutableSharedFlow
+import javax.inject.Singleton
 
 @Module
 @InstallIn(ActivityComponent::class)
@@ -72,4 +78,14 @@ interface PresentationModule {
     @IntoMap
     @ScreenModelKey(ProfileModel::class)
     fun profileModel(model: ProfileModel): ScreenModel
+
+    companion object {
+        @Provides
+        @ActivityScoped
+        fun uploadRefreshes() = MutableSharedFlow<Set<PostListType>>(
+            replay = 0,
+            extraBufferCapacity = 1,
+            onBufferOverflow = BufferOverflow.DROP_OLDEST
+        )
+    }
 }

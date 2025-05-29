@@ -39,7 +39,7 @@ class PostUploadWorker @AssistedInject constructor(
         setForeground(buildInfo())
 
         val res = withContext(Dispatchers.IO) {
-            withMinDelay(3000) { repository.create(title, uris) }
+            withMinDelay(1000) { repository.create(title, uris) }
         }
 
         return if (res.isSuccess) {
