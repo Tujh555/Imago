@@ -1,7 +1,9 @@
 package io.tujh.imago.presentation.screens.signin
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -32,6 +34,7 @@ import io.tujh.imago.presentation.components.PasswordTextField
 import io.tujh.imago.presentation.components.TextButton
 import io.tujh.imago.presentation.components.screenPadding
 import io.tujh.imago.presentation.screens.signup.SignUpScreen
+import io.tujh.imago.presentation.screens.stand.StandSelectionScreen
 
 @Composable
 fun imagoTFColors() = OutlinedTextFieldDefaults.colors().copy(
@@ -46,12 +49,18 @@ fun imagoTFColors() = OutlinedTextFieldDefaults.colors().copy(
 
 val TextFieldShape = RoundedCornerShape(8.dp)
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun SignInScreenContent(state: SignInScreen.State, onAction: (SignInScreen.Action) -> Unit) {
     BlurredBackground {
+        val navigator = LocalNavigator.currentOrThrow
         Column(
             modifier = Modifier
                 .fillMaxSize()
+                .combinedClickable(
+                    onClick = {},
+                    onLongClick = { navigator.push(StandSelectionScreen()) }
+                )
                 .systemBarsPadding()
                 .screenPadding()
                 .imePadding()
@@ -86,7 +95,6 @@ fun SignInScreenContent(state: SignInScreen.State, onAction: (SignInScreen.Actio
                 onValueChange = { onAction(SignInScreen.Action.Password(it)) },
             )
 
-            val navigator = LocalNavigator.currentOrThrow
             TextButton(
                 modifier = Modifier.fillMaxWidth(),
                 shape = TextFieldShape,

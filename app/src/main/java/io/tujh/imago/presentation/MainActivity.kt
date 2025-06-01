@@ -5,7 +5,6 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -20,7 +19,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalView
-import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.unit.dp
 import androidx.core.view.WindowCompat
 import cafe.adriel.voyager.navigator.Navigator
@@ -30,11 +28,6 @@ import dagger.hilt.android.AndroidEntryPoint
 import io.tujh.imago.domain.ErrorHandler
 import io.tujh.imago.domain.NotAuthorizedHandler
 import io.tujh.imago.presentation.components.LocalSharedNavVisibilityScope
-import io.tujh.imago.presentation.models.PostItem
-import io.tujh.imago.presentation.screens.post.comments.PostCommentsScreen
-import io.tujh.imago.presentation.screens.post.create.PostCreateScreen
-import io.tujh.imago.presentation.screens.post.list.PostListScreen
-import io.tujh.imago.presentation.screens.post.tab.PostTabsScreen
 import io.tujh.imago.presentation.screens.signin.SignInScreen
 import io.tujh.imago.presentation.screens.splash.SplashScreen
 import kotlinx.coroutines.CoroutineScope

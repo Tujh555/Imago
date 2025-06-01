@@ -76,7 +76,7 @@ class PostListModel @AssistedInject constructor(
                             } else {
                                 elements.fastMap(Post::toUi)
                             },
-                            loadState = if (it.isRefreshing && loadState == LoadState.Loading) {
+                            loadState = if (loadState.isLoading() && elements.isEmpty() || it.isRefreshing) {
                                 it.loadState
                             } else {
                                 loadState

@@ -12,6 +12,7 @@ import dagger.hilt.android.components.ActivityComponent
 import dagger.hilt.android.scopes.ActivityScoped
 import dagger.multibindings.IntoMap
 import io.tujh.imago.presentation.screens.edit.ImageEditScreenModel
+import io.tujh.imago.presentation.screens.stand.StandSelectionModel
 import io.tujh.imago.presentation.screens.post.comments.CommentsModel
 import io.tujh.imago.presentation.screens.post.create.PostCreateModel
 import io.tujh.imago.presentation.screens.post.list.PostListModel
@@ -24,7 +25,6 @@ import io.tujh.imago.presentation.screens.signup.SignUpModel
 import io.tujh.imago.presentation.screens.splash.SplashModel
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.MutableSharedFlow
-import javax.inject.Singleton
 
 @Module
 @InstallIn(ActivityComponent::class)
@@ -78,6 +78,11 @@ interface PresentationModule {
     @IntoMap
     @ScreenModelKey(ProfileModel::class)
     fun profileModel(model: ProfileModel): ScreenModel
+
+    @Binds
+    @IntoMap
+    @ScreenModelKey(StandSelectionModel::class)
+    fun ipSelectionModel(model: StandSelectionModel): ScreenModel
 
     companion object {
         @Provides

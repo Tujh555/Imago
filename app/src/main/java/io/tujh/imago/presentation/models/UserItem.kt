@@ -11,4 +11,4 @@ data class UserItem(
     val email: String
 )
 
-fun User.toUi() = UserItem(id, avatar, name, email)
+fun User.toUi() = UserItem(id, avatar, name.replace("\"", ""), email)

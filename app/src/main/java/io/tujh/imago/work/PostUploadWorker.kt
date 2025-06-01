@@ -39,7 +39,7 @@ class PostUploadWorker @AssistedInject constructor(
         setForeground(buildInfo())
 
         val res = withContext(Dispatchers.IO) {
-            withMinDelay(1000) { repository.create(title, uris) }
+            withMinDelay(1500) { repository.create(title, uris) }
         }
 
         return if (res.isSuccess) {
@@ -76,11 +76,7 @@ class PostUploadWorker @AssistedInject constructor(
         private const val URIS = "uris"
 
         fun start(context: Context, title: String, uris: List<Uri>): Flow<WorkInfo?> {
-            val constraints = Constraints.Builder()
-                .setRequiredNetworkType(NetworkType.CONNECTED)
-                .build()
             val request = OneTimeWorkRequestBuilder<PostUploadWorker>()
-                .setConstraints(constraints)
                 .setInputData(buildData(title, uris))
                 .build()
 

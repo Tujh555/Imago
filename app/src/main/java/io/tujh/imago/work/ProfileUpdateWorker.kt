@@ -76,12 +76,7 @@ class ProfileUpdateWorker @AssistedInject constructor(
         private const val URI = "uri"
 
         fun start(context: Context, uri: Uri): Flow<WorkInfo?> {
-            val constraints = Constraints.Builder()
-                .setRequiredNetworkType(NetworkType.CONNECTED)
-                .build()
-
             val request = OneTimeWorkRequestBuilder<ProfileUpdateWorker>()
-                .setConstraints(constraints)
                 .setInputData(buildData(uri))
                 .build()
             val wm = WorkManager.getInstance(context)

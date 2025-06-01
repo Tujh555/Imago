@@ -7,6 +7,7 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import io.tujh.imago.data.StandRepositoryImpl
 import io.tujh.imago.data.dto.UserDto
 import io.tujh.imago.data.files.UriProvider
 import io.tujh.imago.data.image.GetFullImageLoader
@@ -24,6 +25,7 @@ import io.tujh.imago.data.repository.post.PostRepositoryImpl
 import io.tujh.imago.data.repository.user.ProfileRepositoryImpl
 import io.tujh.imago.data.repository.user.UserFlow
 import io.tujh.imago.data.store.jsonStore
+import io.tujh.imago.data.store.preferencesStore
 import io.tujh.imago.data.store.stringStore
 import io.tujh.imago.domain.auth.AuthRepository
 import io.tujh.imago.domain.image.BitmapLoader
@@ -32,6 +34,8 @@ import io.tujh.imago.domain.image.FullImageLoader
 import io.tujh.imago.domain.image.WriteableUriProvider
 import io.tujh.imago.domain.image.draw.DrawSettings
 import io.tujh.imago.domain.image.draw.DrawSettingsRepository
+import io.tujh.imago.domain.ip.Stand
+import io.tujh.imago.domain.ip.StandRepository
 import io.tujh.imago.domain.post.repository.CommentRepository
 import io.tujh.imago.domain.post.repository.CommentsSource
 import io.tujh.imago.domain.post.repository.PostEditor
@@ -91,6 +95,10 @@ interface DataModule {
     @Binds
     fun commentRepository(factory: CommentSender.Factory): CommentRepository.Factory
 
+    @Binds
+    @Singleton
+    fun ipRepository(impl: StandRepositoryImpl): StandRepository
+
     companion object {
         @Provides
         @Singleton
@@ -112,6 +120,15 @@ interface DataModule {
         fun tokenStore(@ApplicationContext context: Context) = stringStore(
             context = context,
             name = "token"
+        )
+
+        @Provides
+        @Singleton
+        fun ipStore(@ApplicationContext context: Context) = preferencesStore(
+            context = context,
+            name = "ip",
+            serialize = Stand::value,
+            deserialize = ::Stand
         )
 
         @Provides

@@ -46,6 +46,7 @@ import io.tujh.imago.presentation.editor.components.scaffold.asSource
 import io.tujh.imago.presentation.screens.post.create.AddImageTooltip
 import io.tujh.imago.presentation.screens.signin.TextFieldShape
 import io.tujh.imago.presentation.screens.signin.imagoTFColors
+import io.tujh.imago.presentation.screens.stand.StandSelectionScreen
 import io.tujh.imago.presentation.theme.colors.ImagoColors
 import kotlinx.coroutines.launch
 
@@ -90,7 +91,8 @@ fun ProfileScreenContent(state: ProfileScreen.State, onAction: (ProfileScreen.Ac
                     modifier = Modifier.size(128.dp),
                     url = state.avatar,
                     userId = state.id,
-                    onClick = { scope.launch { tooltipState.show() } }
+                    onClick = { scope.launch { tooltipState.show() } },
+                    onLongClick = { navigator.push(StandSelectionScreen()) }
                 )
             }
 
