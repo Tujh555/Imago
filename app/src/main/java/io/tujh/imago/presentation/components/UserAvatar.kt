@@ -10,6 +10,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.layout.ContentScale
 import coil3.compose.AsyncImage
+import io.tujh.imago.presentation.locals.LocalFullImageLoader
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -30,6 +31,7 @@ fun UserAvatar(
         contentDescription = null,
         model = targetUrl,
         contentScale = ContentScale.Crop,
+        imageLoader = LocalFullImageLoader.current
     )
 }
 
